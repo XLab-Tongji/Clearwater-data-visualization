@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<!-- 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 -->
+	<context:component-scan base-package="service"/>
+	<context:component-scan base-package="neo4j" />
+	<context:component-scan base-package="neo4jrepository" />
+
+	<cache:annotation-driven/>
+	<!-- 配置缓存管理器 -->
+	<bean id="cacheManager" class="org.springframework.cache.guava.GuavaCacheManager">
+	</bean>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		  destroy-method="close"
+		  p:driverClassName="com.mysql.jdbc.Driver"
+		  p:url="jdbc:mysql://115.159.34.252:3306/sampledb"
+		  p:username="root"
+		  p:password="zhaoliang" />
+
+	<!-- 配置Jdbc模板  -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+		  p:dataSource-ref="dataSource" />
+
+	<!-- 配置事务管理器
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource" /> -->
+
+
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"
+		  p:messageConverters-ref="messageConverters"/>
+	<util:list id="messageConverters">
+		<bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter"/>
+		<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+		<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+		<bean class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter"/>
+		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	</util:list>
+
+</beans>
+
