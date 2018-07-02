@@ -148,14 +148,17 @@ public class Neo4jDriver {
         Driver driver = GraphDatabase.driver("bolt://45.77.214.60:7687",
                 AuthTokens.basic("neo4j","pzkpfw38t"));
         HashMap<String, Object> result = new HashMap<>();
+        //System.out.println();
         result.put("state", "Operation failed");
         try(Session session = driver.session()) {
-            session.run("CREATE (n: "+label+") "+
+            StatementResult newID = session.run("CREATE (n: "+label+") "+
                             "SET n.id = $id "+"SET n.name = $name "+"SET n.type = $type "+"SET n.layer = $layer "+
-                            "SET n.performance = $performance "+"return n as newNode",
+                            "SET n.performance = $performance "+"return id(n)",
                     parameters("id",id,"name",name,"type",type,"layer",layer,"performance",performance));
+            int trueId = newID.single().get(0).asInt();
+            System.out.println(relations);
             for(int i=0; i<relations.size(); i++) {
-                session.run("Match (from{id: $id}),(to(id: "+ relations.get(i) +")) Merge (from)-[r:rel{type:'Have'}]->(to)",parameters("id",id,"name"));
+                session.run("Start a=node("+trueId+"),b=node("+relations.get(i)+") Merge (a)-[r:rel{type:'Have'}]->(b)");
             }
             result.remove("state");
             result.put("state", "Operation succeeded");
