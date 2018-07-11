@@ -8,7 +8,7 @@
 ## 关于Neo4j
 后端所连接的Neo4j数据库服务器因为需要经费维持现在已经关闭，并且还有其他用途。所以无法访问到服务45.77.214.60:7474是正常现象，如果需要重新跑整个项目可以在本机或者自己的其他服务器上装一个Neo4j。然后利用在Clearwater终极版文件夹中我已经整理好的数据，利用loadcsv导入进去就可以了，当然在后端的Neo4j driver相应模块的代码里也要将连接的服务器url、用户名和密码变成你们自己的。下面是相关的Cypher语句，先确保你已经上传了csv文件到你的服务器文件目录下。
 导入节点的操作：适用于我这里除了Edge.csv之外的所有csv文件
-注意资源名称我预设的有4个：ResourceNode, Failure_Node, ADR_Node, TestCase_Node，你们可以直接用也可以更改名字，或者添加新的，但是要注意在Spring MVC的controller里也要更改响应的代码。
+注意资源名称我预设的有4个：ResourceNode, Failure_Node, ADR_Node, TestCase_Node，你们可以直接用也可以更改名字，或者添加新的，但是要注意在Spring MVC的controller里也要更改相应的代码。
 ```
 USING PERIODIC COMMIT 10   
 LOAD CSV FROM "file:///node.csv（这里替换成你要导入的csv名称）" AS line  
