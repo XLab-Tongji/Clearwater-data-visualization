@@ -4,7 +4,8 @@ function getAll() {
         type: 'get',
         async: false,
         crossDomain: true,
-        url: 'http://localhost:8088/bbs/api/getAll',
+        // url: 'http://localhost:8088/bbs/api/getAll',
+        url: '/bbs/api/getAll',
         success: function (res) {
             temp = res
             console.log(res)
@@ -25,7 +26,8 @@ function addOne(inputData) {
         type: 'post',
         async: false,
         crossDomain: true,
-        url: 'http://localhost:8088/bbs/api/addOneNode',
+        // url: 'http://localhost:8088/bbs/api/addOneNode',
+        url: '/bbs/api/addOneNode',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Content-type', 'application/json')
         },
@@ -48,7 +50,8 @@ function getLabel(label) {
         type: 'post',
         async: false,
         crossDomain: true,
-        url: 'http://localhost:8088/bbs/api/getLabel',
+        // url: 'http://localhost:8088/bbs/api/getLabel',
+        url: '/bbs/api/addOneNode',
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
         },

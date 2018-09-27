@@ -179,7 +179,8 @@
                 type: 'get',
                 async: true,
                 crossDomain: true,
-                url: 'http://localhost:8088/bbs/api/getAll',
+                // url: 'http://localhost:8088/bbs/api/getAll',
+                url: '/bbs/api/getAll',
                 success: function (res) {
                     self.nodes = res.nodes;
                     self.links = res.links;
@@ -216,7 +217,8 @@
                     type: 'post',
                     async: true,
                     crossDomain: true,
-                    url: 'http://localhost:8088/bbs/api/getLabel',
+                    // url: 'http://localhost:8088/bbs/api/getLabel',
+                    url: '/bbs/api/getLabel',
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
                     },

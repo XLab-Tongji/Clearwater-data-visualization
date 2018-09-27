@@ -2,7 +2,7 @@ const resolve = require('path').resolve
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const url = require('url')
-const publicPath = ''
+const publicPath = '/'
 
 module.exports = (options = {}) => ({
   entry: {
@@ -58,12 +58,13 @@ module.exports = (options = {}) => ({
     host: '127.0.0.1',
     port: 8010,
     proxy: {
-      '/api/': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
+      '/bbs/*': {
+        target: 'http://localhost:8088',
+        // pathRewrite: {
+        //   '^/api': ''
+        // }
+        secure: false,
+        changeOrigin: true
       }
     },
     historyApiFallback: {
