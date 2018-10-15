@@ -31,7 +31,7 @@
 
 ## K8s对象模型
 
-![image-20181015125842736](/Users/chenyulei/Library/Application Support/typora-user-images/image-20181015125842736.png)
+![image-object](/Users/chenyulei/Library/Application Support/typora-user-images/image-20181015125842736.png)
 
 **Namespace**
 
