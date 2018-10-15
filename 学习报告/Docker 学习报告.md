@@ -1,6 +1,8 @@
 # Docker 学习报告
 
 > 2018 / 10 / 12   陈雨蕾
+>
+> 2018 / 10 / 15   梁琛
 
 [TOC]
 
@@ -63,6 +65,71 @@ $ brew cask install docker
 ![docker_alicloud](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/docker_alicloud.png?raw=true)
 
 **步骤二： 配置镜像加速器：**右键点击桌面顶栏的 docker 图标，选择 Preferences ，在 Daemon 标签下的 Registry mirrors 列表中将加速器地址加到"registry-mirrors"的数组里，点击 Apply & Restart按钮，等待Docker重启并应用配置的镜像加速器。
+
+### 补充： Ubuntu 系统 Docker安装 与问题总结
+
+> 2018 / 10 / 15   梁琛
+
+具体的安装步骤在此省略，详情见官网文档：https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce
+
+#### 常见问题1：在Ubuntu x64 16.04下安装docker-ce出现的错误
+
+```
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Package docker-ce is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'docker-ce' has no installation candidate
+```
+
+问题原因与解决方法：
+
+没找到合适的更新源，手动加入源
+
+```
+cd /etc/apt/sources.list.d
+sudo vi docker.list
+```
+
+加入以下信息：（键入`i`进入insert模式）
+
+```
+deb https://download.docker.com/linux/ubuntu zesty edge
+```
+
+更新`apt-get`，并进行安装
+
+```
+sudo apt update
+sudo apt install docker-ce
+```
+
+参考：
+
+> [http://www.cnblogs.com/zhaiji...](http://www.cnblogs.com/zhaijiahui/p/6932820.html)
+
+#### 常见问题2：sudo docker 频繁使用问题的解决
+
+Docker 需要用户具有 sudo 权限，为了避免每次命令都输入`sudo docker cmd`，可以把用户加入 Docker 用户组。
+
+1. 创建 `docker` 用户组
+
+   ```
+   $ sudo groupadd docker
+   ```
+
+2. 把当前用户加入 `docker` 用户组
+
+   ```
+   $ sudo usermod -aG docker $USER
+   ```
+
+3. 退出登录，并重新登入即可。
+
+   1. 如果使用虚拟机，可能需要重新启动Ubuntu。亲测 parallel desktop 不需要。
 
 ## 三、Docker 常用命令
 
