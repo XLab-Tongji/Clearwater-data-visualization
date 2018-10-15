@@ -8,7 +8,7 @@
 
 **架构图**
 
-![image-20181015125418008](/Users/chenyulei/Library/Application Support/typora-user-images/image-20181015125418008.png)
+![image](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/k8s_arche.png?raw=true)
 
 **核心组件**
 
@@ -31,7 +31,7 @@
 
 ## K8s对象模型
 
-![image-object](/Users/chenyulei/Library/Application Support/typora-user-images/image-20181015125842736.png)
+![image-object](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/k8s_object.png?raw=true)
 
 **Namespace**
 

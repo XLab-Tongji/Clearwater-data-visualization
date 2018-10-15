@@ -46,13 +46,13 @@ $ brew cask install docker
 
 点击以下链接下载 [Stable](https://download.docker.com/mac/stable/Docker.dmg) 或 [Edge](https://download.docker.com/mac/edge/Docker.dmg) 版本的 Docker for Mac。
 
-![img](https://yeasy.gitbooks.io/docker_practice/install/_images/install-mac-dmg.png)
+![img](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/docker_app.png?raw=true)
 
 **运行**
 
 运行之后，会在右上角菜单栏看到多了一个鲸鱼图标，这个图标表明了 Docker 的运行状态。
 
-![img](https://yeasy.gitbooks.io/docker_practice/install/_images/install-mac-menubar.png)
+![img](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/docker_top.png?raw=true)
 
 ### 2. 配置阿里云镜像加速器
 
@@ -60,7 +60,7 @@ $ brew cask install docker
 
 **步骤一：获取加速器地址：**进入[阿里云开发者平台官网](http://dev.aliyun.com/search.html)，注册一个账户并登陆，进入管理中心，在左侧导航中依次点击容器镜像服务-镜像加速器，复制加速器地址。如下图。
 
-![image-20181012225831879](/Users/chenyulei/Library/Application Support/typora-user-images/image-20181012225831879.png)
+![docker_alicloud](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/docker_alicloud.png?raw=true)
 
 **步骤二： 配置镜像加速器：**右键点击桌面顶栏的 docker 图标，选择 Preferences ，在 Daemon 标签下的 Registry mirrors 列表中将加速器地址加到"registry-mirrors"的数组里，点击 Apply & Restart按钮，等待Docker重启并应用配置的镜像加速器。
 
@@ -266,7 +266,7 @@ Dockerfile 是用来构建 Docker 镜像的构建文件，是由一系列命令�
 
 ## 七、本地镜像发布到阿里云
 
-![âdockerfileâçå¾çæç´¢ç"æ](http://ofc9x1ccn.bkt.clouddn.com/docker/docker-images.png)
+![DockerArchetecture](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/docker_allSteps.png?raw=true)
 
 如上图所示发布就是Images->docker registry的过程，**步骤：**
 
