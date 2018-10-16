@@ -156,7 +156,9 @@
 
 <script>
   import {getAll, addOne, getLabel} from './assets/API'
-  import {showData2} from "~/assets/dataV";
+  import {showData2} from "./assets/dataV";
+  import $ from 'jquery'
+
 
   export default {
     data() {
