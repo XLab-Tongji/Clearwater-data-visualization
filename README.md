@@ -13,6 +13,23 @@
 5. 打开浏览器，键入`http://localhost:8010`检视项目内容
    * p.s. 需要先运行后端才可以在前端执行相关功能
 
+### 前端Docker镜像18v 使用方法
+
+1. 如果您没有安装过Docker，请先安装Docker。（您可以参考学习报告目录下的Docker学习报告）
+2. 拉取远端仓库
+
+```
+docker pull leonnnop/operation_knowledgegraph_tj18:frontendv1
+```
+
+3. 运行Docker 镜像
+
+```
+docker run -d -p 8080:8080 leonnnop/operation_knowledgegraph_tj18:frontendv1
+```
+
+
+
 ## 关于Neo4j
 后端所连接的Neo4j数据库服务器因为需要经费维持现在已经关闭，并且还有其他用途。所以无法访问到服务45.77.214.60:7474是正常现象，如果需要重新跑整个项目可以在本机或者自己的其他服务器上装一个Neo4j。然后利用在Clearwater终极版文件夹中我已经整理好的数据，利用loadcsv导入进去就可以了，当然在后端的Neo4j driver相应模块的代码里也要将连接的服务器url、用户名和密码变成你们自己的。下面是相关的Cypher语句，先确保你已经上传了csv文件到你的服务器文件目录下。
 导入节点的操作：适用于我这里除了Edge.csv之外的所有csv文件
