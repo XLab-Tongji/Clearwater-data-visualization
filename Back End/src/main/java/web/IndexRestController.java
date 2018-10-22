@@ -6,10 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
+import org.yaml.snakeyaml.Yaml;
+
 
 @RestController
 public class IndexRestController {
@@ -64,5 +71,34 @@ public class IndexRestController {
     public HashMap<String, List<HashMap<String,Object>>> getLabel(@RequestParam("label") String label) {
         HashMap<String, HashMap<String, List<HashMap<String,Object>>>> hashMap = new HashMap();
         return neo4jDriver.getLabel(label);
+    }
+//    @PostMapping("/yamldeal")
+//    @ResponseBody
+    @RequestMapping(value = "/api/yamldeal",method = RequestMethod.POST)
+    public ArrayList yamldeal(@RequestParam("file") MultipartFile file) {
+        Yaml yaml = new Yaml();
+        //Object load = yaml.loadAll(new FileInputStream(file));
+        Map<String, Object> map = null;
+        //System.out.println(yaml.dump(load));
+        ArrayList arrayList = new ArrayList();
+        try {
+            for (Object data : yaml.loadAll(new FileInputStream(file.getOriginalFilename()))) {
+                HashMap hashMap = new HashMap();
+                map = (Map<String, Object>) data;
+                neo4jDriver.Deal("", map, hashMap);
+                arrayList.add(hashMap);
+            }
+            for (int i = 0; i < arrayList.size(); i++) {
+                HashMap hashMap = (HashMap) arrayList.get(i);
+                for (Object key : hashMap.keySet()) {
+                    System.out.println("Key: " + (String) key + " Value: " + hashMap.get(key));
+                }
+                System.out.println("---------------");
+            }
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        return arrayList;
+
     }
 }
