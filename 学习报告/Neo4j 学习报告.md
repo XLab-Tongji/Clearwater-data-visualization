@@ -8,7 +8,7 @@
 
 > *Neo4j is an open-source, high-performance, enterprise-grade NOSQL graph database.*
 
-![The Labeled Property Graph Model]()
+![The Labeled Property Graph Model](https://github.com/XLab-Tongji/Operation_KnowledgeGraph/blob/master/学习报告/img/neo4j_model.png?raw=true)
 
 ### Node（节点）
 
