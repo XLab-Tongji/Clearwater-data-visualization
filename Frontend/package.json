@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "d3": "^5.7.0",
     "element-ui": "^2.4.5",
     "jquery": "^3.3.1",
+    "neo4jd3": "0.0.5",
     "vue": "^2.5.17"
   },
   "devDependencies": {
