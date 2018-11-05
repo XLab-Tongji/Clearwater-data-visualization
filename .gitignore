@@ -23,4 +23,8 @@
 hs_err_pid*
 
 # node_modules plugin files
+<<<<<<< HEAD
 Frontend/node_modules/
+=======
+Frontend/node_modules/
+>>>>>>> frontend18
