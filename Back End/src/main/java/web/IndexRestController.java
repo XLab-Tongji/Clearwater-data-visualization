@@ -74,6 +74,23 @@ public class IndexRestController {
     }
 //    @PostMapping("/yamldeal")
 //    @ResponseBody
+    @RequestMapping(value = "/api/getDeployment" , method = RequestMethod.GET ,produces = "application/json")
+    public HashMap<String, List<HashMap<String,Object>>> getDeployment() {
+        HashMap<String, HashMap<String, List<HashMap<String,Object>>>> hashMap = new HashMap();
+        System.out.println("1243568");
+        return neo4jDriver.getDeploymentNodes();
+    }
+    @RequestMapping(value = "/api/getService" , method = RequestMethod.GET ,produces = "application/json")
+    public HashMap<String, List<HashMap<String,Object>>> getService() {
+        HashMap<String, HashMap<String, List<HashMap<String,Object>>>> hashMap = new HashMap();
+        return neo4jDriver.getServiceNodes();
+    }
+    @RequestMapping(value = "/api/getContainer" , method = RequestMethod.GET ,produces = "application/json")
+    public HashMap<String, List<HashMap<String,Object>>> getContainer() {
+        HashMap<String, HashMap<String, List<HashMap<String,Object>>>> hashMap = new HashMap();
+        return neo4jDriver.getContainerNodes();
+    }
+
     @RequestMapping(value = "/api/yamldeal",method = RequestMethod.POST)
     public ArrayList yamldeal(@RequestParam("file") MultipartFile file) {
         Yaml yaml = new Yaml();
@@ -88,10 +105,42 @@ public class IndexRestController {
                 neo4jDriver.Deal("", map, hashMap);
                 arrayList.add(hashMap);
             }
+            int deploymentID =0;
+            int containerID =0;
+            int serviceID = 0;
             for (int i = 0; i < arrayList.size(); i++) {
                 HashMap hashMap = (HashMap) arrayList.get(i);
                 for (Object key : hashMap.keySet()) {
                     System.out.println("Key: " + (String) key + " Value: " + hashMap.get(key));
+                }
+                if (i % 2 ==0){
+                    deploymentID =0;
+                    containerID =0;
+                    serviceID = 0;
+                }
+                if (hashMap.get("kind").equals("Deployment")){
+                    String containerPort= hashMap.get("spec-template-spec-containers-ports-containerPort").toString();
+                    String name = (String)hashMap.get("metadata-name");
+                    String nameSpace = (String)hashMap.get("metadata-namespace");
+                    String image = (String)hashMap.get("spec-template-spec-containers-image");
+
+                    String containerName = (String)hashMap.get("spec-template-spec-containers-name");
+                    String volumeMount = (String)hashMap.get("spec-template-spec-containers-volumeMounts-name");
+                    ArrayList arrayListAdd = (ArrayList)hashMap.get("spec-template-spec-containers-securityContext-capabilities-add");
+                    ArrayList arrayListDrop = (ArrayList)hashMap.get("spec-template-spec-containers-securityContext-capabilities-drop");
+                    deploymentID = neo4jDriver.AddDeploymentNode("Deployment_Node",containerPort,name,nameSpace,image);
+                    containerID = neo4jDriver.AddContainerNode("Container_Node",containerName,volumeMount,arrayListAdd,arrayListDrop);
+                }else if (hashMap.get("kind").equals("Service")){
+                    String name = (String)hashMap.get("metadata-name");
+                    String nameSpace = (String)hashMap.get("metadata-namespace");
+                    String port = hashMap.get("spec-ports-port").toString();
+                    String targetPort = hashMap.get("spec-ports-targetPort").toString();
+                    serviceID = neo4jDriver.AddServiceNode("Service_Node",port,name,nameSpace,targetPort);
+                }
+                System.out.print(deploymentID+" "+containerID+" "+serviceID);
+                if (deploymentID==0 || containerID==0 || serviceID==0) continue;
+                else {
+                    neo4jDriver.AddYamlRelation(deploymentID,containerID,serviceID);
                 }
                 System.out.println("---------------");
             }

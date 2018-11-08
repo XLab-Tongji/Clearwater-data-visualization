@@ -6,7 +6,7 @@ public class JDBCNeo4j {
     public static void main(String[] args) throws SQLException,ClassNotFoundException{
           //这里可以使用localhost,最好还是使用ip地址,
         Class.forName("org.neo4j.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:neo4j://149.28.125.166:7474","neo4j","pzkpfw38t");
+        Connection con = DriverManager.getConnection("jdbc:neo4j://127.0.0.1:7687","neo4j","1234");
         //Querying
         try(Statement stmt = con.createStatement())
         {
