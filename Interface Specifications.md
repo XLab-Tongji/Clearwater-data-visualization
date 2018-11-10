@@ -118,7 +118,7 @@ api/k8s/getServices?
 #### Request Sample (示例请求)
 
 ```
-api/k8s/getService_Node?nodeID=
+api/k8s/getService_Node/:id
 ```
 
 #### Response Sample (示例结果)
