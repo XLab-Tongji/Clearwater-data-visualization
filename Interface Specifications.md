@@ -27,7 +27,7 @@ None
 #### Request Sample (示例请求)
 
 ```
-api/k8s/availableNodes?
+api/k8s/availableNodes
 ```
 
 #### Response Sample (示例结果)
@@ -71,7 +71,7 @@ None
 #### Request Sample (示例请求)
 
 ```
-api/k8s/getServices?
+api/k8s/getServices
 ```
 
 #### Response Sample (示例结果)
