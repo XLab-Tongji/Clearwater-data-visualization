@@ -42,7 +42,7 @@ create (a:Node(Node可以替换成你要创建的资源名称){id:line[0], name:
 导入关系的操作：适用于这里的Edge.csv
 ```
 LOAD CSV WITH HEADERS FROM "file:///Edge.csv" AS line
-match (from:{id:line.From_id}),(to:{id:line.To_id})
+match (from{id:line.From_id}),(to{id:line.To_id})
 merge (from)-[r:rel{type:line.Type}]->(to)
 ```
 关于其他的Cypher操作可以自己去stack overflow和CSDN上搜索阅读，同时建议理解了一部分操作后再运行我这边的代码，这样即使出现问题也会大概知道原因。
