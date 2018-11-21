@@ -26,7 +26,7 @@ import static org.neo4j.driver.v1.Values.parameters;
 public class Neo4jDriver {
     @Cacheable(cacheNames = "query",cacheManager = "cacheManager")
     public HashMap<String, List<HashMap<String,Object>>> getresult(String name1, String name2, int step1, int step2) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
@@ -67,7 +67,7 @@ public class Neo4jDriver {
 
     }
     public HashMap<String, List<HashMap<String,Object>>> getOneNoderesult(String name1, int step1, int step2) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
@@ -108,7 +108,7 @@ public class Neo4jDriver {
         return resultgraph;
     }
     public HashMap<String, List<HashMap<String,Object>>> getAllNodes() {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
@@ -149,7 +149,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, Object> addOneNode(String label, int id, String name, String type, String layer, String performance, ArrayList<Integer> relations) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, Object> result = new HashMap<>();
         //System.out.println();
@@ -172,7 +172,7 @@ public class Neo4jDriver {
     }
 
     public int AddDeploymentNode(String label, String containerPort, String name, String nameSpace, String image) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, Object> result = new HashMap<>();
         //System.out.println();
@@ -197,7 +197,7 @@ public class Neo4jDriver {
     }
 
     public int AddServiceNode(String label, String port, String name, String nameSpace, String targetPort) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, Object> result = new HashMap<>();
         //System.out.println();
@@ -223,7 +223,7 @@ public class Neo4jDriver {
     }
 
     public int AddContainerNode(String label, String name, String volumeMount, ArrayList arrayListAdd, ArrayList arrayListDrop) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, Object> result = new HashMap<>();
         //System.out.println();
@@ -249,7 +249,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, Object> AddYamlRelation(int deploymentID,int containerID,int serviceID){
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, Object> result = new HashMap<>();
         //System.out.println();
@@ -267,7 +267,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, List<HashMap<String,Object>>> getDeploymentNodes() {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j", "1234"));
 
         Map<Long, String> map = new HashMap<>();
@@ -308,7 +308,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, List<HashMap<String,Object>>> getServiceNodes() {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j", "1234"));
 
         System.out.println("sdfghjkl");
@@ -350,7 +350,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, List<HashMap<String,Object>>> getContainerNodes() {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j", "1234"));
 
         Map<Long, String> map = new HashMap<>();
@@ -391,7 +391,7 @@ public class Neo4jDriver {
 
 
     public HashMap<String, List<HashMap<String,Object>>> getNeighbors(String name) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
@@ -432,7 +432,7 @@ public class Neo4jDriver {
     }
 
     public HashMap<String, List<HashMap<String,Object>>> getLabel(String label) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
+        Driver driver = GraphDatabase.driver("bolt://10.60.38.182:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
