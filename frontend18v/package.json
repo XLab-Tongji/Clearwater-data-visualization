@@ -7,8 +7,12 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "alchemyjs": "^0.3.1",
+    "axios": "^0.18.0",
     "echarts": "^4.2.0-rc.2",
     "element-ui": "^2.4.5",
+    "neo4jd3": "0.0.5",
+    "popoto": "^2.0.12",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

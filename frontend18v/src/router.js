@@ -28,6 +28,11 @@ export default new Router({
           path: 'modify',
           name: 'ModiData',
           component: () => import('./views/ModifyView.vue'),
+        },
+        {
+          path: 'graph',
+          name: 'ERChara',
+          component: () => import('./views/GraphView.vue'),
         }
       ]
     }

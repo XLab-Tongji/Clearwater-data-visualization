@@ -2,9 +2,9 @@
     <el-container style="margin:20px;">
         <el-card class="box-card" v-for="card in cards" :key="card.name" style="margin-right:25px;">
             <div slot="header" class="clearfix">
-                <span>上传{{card.name}}
+                <span>{{card.name}}
                 </span>
-                <el-button style="float: right; padding: 3px 0" type="text" @click="handleUpload(card.type)">上传文件</el-button>
+                <el-button style="float: right; padding: 3px 0" type="text" @click="handleUpload(card.type)">{{card.uploadText}}</el-button>
             </div>
             <div class="text item">
                 {{card.escri}}
@@ -24,6 +24,16 @@
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog title="输入地址" :visible.sync="dialogURLVisible" width="30%" :before-close="handleClose">
+            <el-input placeholder="请输入内容" v-model="inputURL" style="margin: 15px 0px;">
+                <template slot="prepend">http://</template>
+            </el-input>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogURLVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogURLVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </el-container>
 </template>
 
@@ -34,6 +44,10 @@
 
     .item {
         margin-bottom: 15px;
+    }
+
+    .input-with-select .el-input-group__prepend {
+        background-color: #fff;
     }
 
     .clearfix:before,
@@ -56,7 +70,9 @@
         name: 'modify',
         data() {
             return {
+                inputURL: '',
                 dialogVisible: false,
+                dialogURLVisible: false,
                 fileList: [
                     //     {
                     //     name: 'food.jpeg',
@@ -67,19 +83,22 @@
                     // }
                 ],
                 cards: [{
-                        name: 'yaml部署文件',
+                        name: '上传yaml部署文件',
                         type: '.yaml',
-                        escri: '上传部署配置文件，系统将自动提取节点间的关系。'
+                        escri: '上传部署配置文件，系统将自动提取节点间的关系。',
+                        uploadText: '上传文件'
                     },
                     {
-                        name: 'pod配置文件',
+                        name: '输入目标URL地址',
                         type: '.pod',
-                        escri: '上传pod配置文件，系统将自动提取pods与节点间的关系。（其实我没懂这里要干嘛？？救命。）'
+                        escri: '输入目标URL地址，系统将自动提取pods与节点间的关系。',
+                        uploadText: '输入地址'
                     },
                     {
-                        name: 'csv数据集文件',
+                        name: '上传csv数据集文件',
                         type: '.csv',
-                        escri: '输入csv数据集，系统将自动提取性能与数据集列间的关系。'
+                        escri: '输入csv数据集，系统将自动提取性能与数据集列间的关系。',
+                        uploadText: '上传文件'
                     },
                 ],
                 fileType: '.yaml'
@@ -89,7 +108,12 @@
         methods: {
             handleUpload(fileType) {
                 this.fileType = fileType;
-                this.dialogVisible = true
+                console.log(fileType)
+                if (fileType == '.pod') {
+                    this.dialogURLVisible = true
+                } else {
+                    this.dialogVisible = true
+                }
             },
             handleClose(done) {
                 this.$confirm('确认关闭？')
