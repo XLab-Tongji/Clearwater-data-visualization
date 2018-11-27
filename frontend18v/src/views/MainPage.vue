@@ -9,7 +9,7 @@
         </el-header>
 
         <el-main>
-            <el-row type="flex" >
+            <el-row type="flex">
                 <el-col :style="{width:this.sideBarWidth()}">
                     <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
                         @select="handleSelect" :collapse="isCollapse">
@@ -53,7 +53,7 @@
 </template>
 
 
-<style>
+<style scoped>
     .el-menu-vertical-demo:not(.el-menu--collapse) {
         width: 250px;
         min-height: 700px;
@@ -83,14 +83,15 @@
             sideBarWidth() {
                 if (!this.isCollapse) {
                     return '350px';
-                }
-                else {
+                } else {
                     return '100px';
                 }
             },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
-                this.$router.push({name: key})
+                this.$router.push({
+                    name: key
+                })
             },
             handleOpen(key, keyPath) {
                 console.log(key, keyPath);

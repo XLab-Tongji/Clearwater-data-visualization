@@ -14,7 +14,7 @@
         <el-dialog title="上传文件" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
             <el-upload class="upload-demo" ref="upload" action="https://jsonplaceholder.typicode.com/posts/"
                 :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false"
-                :accept="fileType">
+                :accept="fileType" :on-progress="uploadOnProgress">
                 <el-button slot="trigger" size="small" plain type="primary">选取文件</el-button>
                 <el-button style="margin-left: 15px;" size="small" type="success" plain @click="submitUpload">上传到服务器</el-button>
                 <div slot="tip" class="el-upload__tip" style="margin-bottom:15px;">只能上传{{this.fileType}}文件，且不超过500kb</div>
@@ -66,6 +66,7 @@
 </style>
 
 <script>
+    let axios = require('axios')
     export default {
         name: 'modify',
         data() {
@@ -106,6 +107,35 @@
             };
         },
         methods: {
+            uploadOnProgress(e, file, fileList) { //开始上传
+
+                console.log('file', file)
+                console.log(fileList)
+
+                var oneFile = file.raw;
+                var formdata = new FormData(); // 创建form对象
+                formdata.append('file', oneFile);
+
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }; //添加请求头
+
+                let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
+
+                if (this.fileType == '.yaml') {
+                    let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
+                } else { // .csv
+                    let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
+                }
+
+                axios.post(uploadURL,
+                    formdata,
+                    config).then((response) => { //这里的/xapi/upimage为接口
+                    console.log(response.data);
+                })
+            },
             handleUpload(fileType) {
                 this.fileType = fileType;
                 console.log(fileType)
