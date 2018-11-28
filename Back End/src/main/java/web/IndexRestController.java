@@ -1,14 +1,13 @@
 package web;
 
+import com.csvreader.CsvReader;
 import neo4j.Neo4jDriver;
 import org.neo4j.ogm.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,12 @@ import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.Yaml;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static neo4j.Neo4jDriver.csvOperationData;
+import static neo4j.Neo4jDriver.csvTimestamp;
 
 
 @RestController
@@ -90,6 +95,29 @@ public class IndexRestController {
         HashMap<String, HashMap<String, List<HashMap<String,Object>>>> hashMap = new HashMap();
         return neo4jDriver.getContainerNodes();
     }
+    @RequestMapping(value = "/api/getTimestamp" , method = RequestMethod.POST ,produces = "application/json")
+    public HashMap<String,ArrayList> getTimestamp(HttpServletRequest request,
+                                  HttpServletResponse response,@RequestParam("filename") String filename) {
+        String savePath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
+        savePath = savePath.replace("file:", "");
+        String filePath = savePath + "/"  + filename;
+        ArrayList arrayList = csvTimestamp(filePath);
+        HashMap<String,ArrayList> map = new HashMap<>();
+        map.put("Timestamp",arrayList);
+        return map;
+    }
+    @RequestMapping(value = "/api/getOperationData" , method = RequestMethod.POST ,produces = "application/json")
+    public HashMap<String,HashMap<String,ArrayList>> getOperationData(HttpServletRequest request,
+                                              HttpServletResponse response,@RequestParam("filename") String filename) {
+        String savePath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
+        savePath = savePath.replace("file:", "");
+        String filePath = savePath + "/"  + filename;
+        HashMap<String,ArrayList> hashMap = csvOperationData(filePath);
+        HashMap<String,HashMap<String,ArrayList>> map = new HashMap<>();
+        map.put("Operations",hashMap);
+        return map;
+    }
+
 
     @RequestMapping(value = "/api/yamldeal",method = RequestMethod.POST)
     public ArrayList yamldeal(@RequestParam("file") MultipartFile file) {
@@ -150,4 +178,47 @@ public class IndexRestController {
         return arrayList;
 
     }
+    @RequestMapping(value = "/api/csvdeal",method = RequestMethod.POST)
+    public String csvdeal(HttpServletRequest request,
+                             HttpServletResponse response, @RequestParam("file") MultipartFile file) {
+        String savePath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
+        savePath = savePath.replace("file:", "");
+        File file1 = new File(savePath);
+        if (!file1.exists() && !file1.isDirectory()) {
+            file1.mkdir();
+        }
+        //delAllFil(savePath);
+
+        try {
+            InputStream is = file.getInputStream();
+            byte[] b = new byte[(int) file.getSize()];
+            int read = 0;
+            int i = 0;
+            while ((read = is.read()) != -1) {
+                b[i] = (byte) read;
+                i++;
+            }
+            is.close();
+            String filePath = savePath + "/"  + file.getOriginalFilename();
+
+            File file2 = new File(filePath);
+            if (file2.exists()){
+                return "file already upload";
+            }
+            if (!file2.exists()) {
+                //file2.createNewFile();
+                //log.info("临时文件保存路径：" + savePath + "/" + "temp" + "_" + buildInfo[0].getOriginalFilename());
+               // arrayList.add(filePath);
+                OutputStream os = new FileOutputStream(new File(savePath + "/" + file.getOriginalFilename()));// 文件原名,如a.txt
+                os.write(b);
+                os.flush();
+                os.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
+
 }

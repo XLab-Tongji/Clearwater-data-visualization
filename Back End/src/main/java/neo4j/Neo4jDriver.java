@@ -1,5 +1,7 @@
 package neo4j;
 
+import com.csvreader.CsvReader;
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import org.neo4j.driver.internal.value.PathValue;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.Node;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 import util.CommonUtil;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -528,6 +532,72 @@ public class Neo4jDriver {
         }
         return true;
     }
+    public static ArrayList csvTimestamp(String filePath) {
+        ArrayList arrayList = new ArrayList();
+        try {
+            // 创建CSV读对象
+            CsvReader csvReader = new CsvReader(filePath);
+
+            // 读表头
+            csvReader.readHeaders();
+            while (csvReader.readRecord()){
+                System.out.println(csvReader.get("timestamp"));
+                arrayList.add(csvReader.get("timestamp"));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+    }
+    public static ArrayList CurrentArray(String header,String filePath){
+        try {
+            ArrayList arrayList = new ArrayList();
+            CsvReader csvReader = new CsvReader(filePath);
+            csvReader.readHeaders();
+            while (csvReader.readRecord()){
+                String string = csvReader.get(header);
+                if (!string.equals("")){
+                    arrayList.add(string);
+                }
+            }
+            return arrayList;
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static HashMap<String,ArrayList> csvOperationData(String filePath) {
+        HashMap<String,ArrayList> hashMap = new HashMap();
+        try {
+            // 创建CSV读对象
+            CsvReader csvReader = new CsvReader(filePath);
+
+            // 读表头
+            String header[] = null;
+            while (csvReader.readRecord()){
+                header = csvReader.getRawRecord().split(",");
+                break;
+            }
+            csvReader.close();
+            csvReader = new CsvReader(filePath);
+            csvReader.readHeaders();
+            try {
+                for (int i = 1; i < header.length; i++) {
+                    hashMap.put(header[i],CurrentArray(header[i],filePath));
+                    //hashMap.put(header[i], arrayList);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return hashMap;
+
+    }
+
+
 
 
 
