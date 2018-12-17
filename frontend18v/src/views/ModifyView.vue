@@ -15,8 +15,17 @@
             <el-upload class="upload-demo" ref="upload" action="https://jsonplaceholder.typicode.com/posts/"
                 :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false"
                 :accept="fileType" :on-progress="uploadOnProgress">
+                <!-- <el-row> -->
                 <el-button slot="trigger" size="small" plain type="primary">选取文件</el-button>
                 <el-button style="margin-left: 15px;" size="small" type="success" plain @click="submitUpload">上传到服务器</el-button>
+                <!-- </el-row> -->
+                <el-row style="width:40%;margin: 15px 0;">
+                    <el-input v-model="systemNameYaml" placeholder="请输入系统名称" v-if="isYaml" size="small"></el-input>
+                    <el-select v-model="systemNameCSV" placeholder="请选择系统名称" v-if="!isYaml" size="small">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-row>
                 <div slot="tip" class="el-upload__tip" style="margin-bottom:15px;">只能上传{{this.fileType}}文件，且不超过500kb</div>
             </el-upload>
             <span slot="footer" class="dialog-footer">
@@ -71,6 +80,26 @@
         name: 'modify',
         data() {
             return {
+                systemNameYaml: '',
+                systemNameCSV: '',
+                options: [{
+                    value: '选项1',
+                    label: '黄金糕'
+                }, {
+                    value: '选项2',
+                    label: '双皮奶'
+                }, {
+                    value: '选项3',
+                    label: '蚵仔煎'
+                }, {
+                    value: '选项4',
+                    label: '龙须面'
+                }, {
+                    value: '选项5',
+                    label: '北京烤鸭'
+                }],
+                isYaml: true,
+                fileName: '',
                 inputURL: '',
                 dialogVisible: false,
                 dialogURLVisible: false,
@@ -112,6 +141,13 @@
                 console.log('file', file)
                 console.log(fileList)
 
+
+                if (this.fileName == file.name) {
+                    return;
+                } else {
+                    this.fileName = file.name;
+                }
+
                 var oneFile = file.raw;
                 var formdata = new FormData(); // 创建form对象
                 formdata.append('file', oneFile);
@@ -124,21 +160,35 @@
 
                 let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
 
+                console.log(this.fileType)
+
                 if (this.fileType == '.yaml') {
-                    let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
+                    uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal?systemName=' + this.systemNameYaml;
+                    console.log('yaml')
                 } else { // .csv
-                    let uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal';
+                    uploadURL = 'http://10.60.38.182:9999/bbs/api/fileupdate?systemName=' + this.systemNameCSV;
+                    console.log('csv')
                 }
 
+                console.log(uploadURL)
                 axios.post(uploadURL,
                     formdata,
                     config).then((response) => { //这里的/xapi/upimage为接口
                     console.log(response.data);
+                    this.$message({
+                        message: '文件上传成功！',
+                        type: 'success'
+                    });
                 })
             },
             handleUpload(fileType) {
                 this.fileType = fileType;
                 console.log(fileType)
+                if (this.fileType == '.yaml') {
+                    this.isYaml = true;
+                } else {
+                    this.isYaml = false;
+                }
                 if (fileType == '.pod') {
                     this.dialogURLVisible = true
                 } else {
@@ -161,6 +211,18 @@
             handlePreview(file) {
                 console.log(file);
             }
+        },
+        created() {
+            axios.get('http://10.60.38.182:9999/bbs/api/getSystem')
+                .then((response) => {
+                    this.options = [];
+                    response.data.nodes.forEach(element => {
+                        this.options.push({
+                            value: element.name,
+                            label: element.name,
+                        })
+                    });
+                })
         }
     }
 </script>

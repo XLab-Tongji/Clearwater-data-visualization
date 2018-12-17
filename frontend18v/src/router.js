@@ -30,6 +30,11 @@ export default new Router({
           component: () => import('./views/ModifyView.vue'),
         },
         {
+          path: 'enterRel',
+          name: 'EnterRel',
+          component: () => import('./views/EnterRel.vue'),
+        },
+        {
           path: 'graph',
           name: 'ERChara',
           component: () => import('./views/GraphView.vue'),

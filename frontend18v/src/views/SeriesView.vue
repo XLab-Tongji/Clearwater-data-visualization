@@ -1,11 +1,11 @@
 <template>
     <el-container>
         <el-row style="width:100%;height:100%">
-            <el-col class="box2">
-                <el-col style="width:80px;">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+            <el-col class="box2" style="width:350px;">
+                <el-col style="width:200px;">
+                    <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox> -->
                     <!-- <div style="margin: 15px 0;"></div> -->
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange" :min="0" :max="1">>
                         <el-checkbox v-for="city in cities" :label="city" :key="city" style="margin-top:15px;">{{city}}</el-checkbox>
                     </el-checkbox-group>
                 </el-col>
@@ -55,7 +55,8 @@
 
 <script>
     const echarts = require('echarts');
-    const cityOptions = ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'];
+    const axios = require('axios');
+    // var cityOptions = ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'];
 
     var option = {
         title: {
@@ -124,7 +125,7 @@
             return {
                 checkAll: false,
                 checkedCities: ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'],
-                cities: cityOptions,
+                cities: ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'],
                 isIndeterminate: false,
                 myChart: '',
                 series: [{
@@ -178,7 +179,7 @@
                 });
             },
             handleCheckAllChange(val) {
-                this.checkedCities = val ? cityOptions : [];
+                this.checkedCities = val ? this.cities : [];
                 this.isIndeterminate = false;
 
                 this.chartUpdate(this.checkedCities);
@@ -189,15 +190,53 @@
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
 
                 this.chartUpdate(value);
+                console.log(this.checkedCities)
             }
         },
         mounted() {
             this.checkAll = true;
             this.myChart = echarts.init(document.getElementById('chart'));
             // var myChart = echarts.init(this.$refs.chart);
+
             this.myChart.setOption(option);
 
-        }
+            axios.get('/series.json')
+                .then((response) => {
+                    console.log(response.data)
+                    // response.data = JSON.parse(response.data)
+                    let yData = response.data.Operations;
+                    let yCData = [];
+                    this.checkedCities = [];
+                    this.cities = [];
 
+                    for (const key in yData) {
+                        var tempElement = {}
+                        if (yData.hasOwnProperty(key)) {
+                            const element = yData[key];
+                            tempElement.name = key;
+                            tempElement.name = tempElement.name.substring(15);
+                            tempElement.data = element;
+
+                            yCData.push(tempElement)
+                            // this.checkedCities.push(tempElement.name);
+                            this.cities.push(tempElement.name);
+                        }
+                    }
+                    console.log(yData)
+                    console.log(yCData)
+                    yCData.forEach(element => {
+                        element.type = 'line';
+                        element.stack = '总量';
+                    });
+
+                    option.xAxis.data = response.data.TimeStamp;
+
+                    option.series = yCData;
+                    this.series = yCData;
+                    this.myChart.setOption(option, {
+                        notMerge: true
+                    });
+                })
+        }
     }
 </script>

@@ -17,10 +17,22 @@
                             <i class="el-icon-view"></i>
                             <span slot="title">Entity/Relation Characteristic</span>
                         </el-menu-item>
-                        <el-menu-item index="ModiData">
+                        <!-- <el-menu-item index="ModiData">
                             <i class="el-icon-edit"></i>
                             <span slot="title">Modify Dataset</span>
-                        </el-menu-item>
+                        </el-menu-item> -->
+                        <el-submenu index="ModiDataMenu">
+                            <template slot="title">
+                                <i class="el-icon-edit"></i>
+                                <span slot="title">Modify Dataset</span>
+                            </template>
+                            <el-menu-item-group>
+                                <span slot="title">Entering Information</span>
+                                <el-menu-item index="ModiData">KnowledgeGraph Maniplation</el-menu-item>
+                                <el-menu-item index="EnterRel">Entering Relationship</el-menu-item>
+                            </el-menu-item-group>
+
+                        </el-submenu>
                         <el-submenu index="DecisionRep">
                             <template slot="title">
                                 <i class="el-icon-document"></i>
@@ -28,16 +40,11 @@
                             </template>
                             <el-menu-item-group>
                                 <span slot="title">Time Series Diagram</span>
-                                <el-menu-item index="series">Waiting</el-menu-item>
-                                <el-menu-item index="series">Waiting</el-menu-item>
+                                <el-menu-item index="series">Dashboard</el-menu-item>
                             </el-menu-item-group>
                             <el-menu-item-group title="Casual Loop Diagram">
-                                <el-menu-item index="1-3">Waiting</el-menu-item>
+                                <el-menu-item index="1-3">Dashboard</el-menu-item>
                             </el-menu-item-group>
-                            <el-submenu index="1-4">
-                                <span slot="title">Waiting</span>
-                                <el-menu-item index="1-4-1">Waiting</el-menu-item>
-                            </el-submenu>
                         </el-submenu>
                     </el-menu>
                 </el-col>
