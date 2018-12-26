@@ -15,6 +15,12 @@
                     </el-transfer>
                 </el-row> -->
                 <el-form ref="form" :model="form" label-width="80px">
+                    <el-form-item label="选择数据集">
+                        <el-select v-model="form.csv" placeholder="请选择" @change="onDatasetChange">
+                            <el-option v-for="item in csvOptions" :key="item.value" :label="item.label" :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="实体名称">
                         <el-select v-model="form.entity" filterable remote reserve-keyword placeholder="请输入关键词"
                             :remote-method="remoteMethod" :loading="loading">
@@ -131,6 +137,7 @@
                     entity: [],
                     relation: '',
                     property: [],
+                    csv: 'result.csv'
                 },
                 properties: [],
                 allEntityIndexed: generateEntity(),
@@ -196,6 +203,8 @@
                 }],
 
                 options4: [],
+                csvOptions: [],
+                datasetOptions: [],
                 value9: [],
                 list: [],
                 loading: false,
@@ -224,12 +233,102 @@
             deleteRow(index, rows) {
                 rows.splice(index, 1);
             },
+            onDatasetChange(value) {
+
+
+                axios.get('http://10.60.38.182:9999/bbs/api/metricInfo?filename=' + value)
+                    .then((response) => {
+                        var Container = response.data.Node;
+                        let entity = [];
+                        let firstCasc = {
+                            label: value,
+                            value: value
+                        }
+                        firstCasc.children = []
+
+                        Container.name.forEach(element => {
+                            let secondCasc = {};
+                            secondCasc.label = element
+                            secondCasc.value = element
+
+                            secondCasc.children = [];
+
+                            for (const key in response.data) {
+                                if (response.data.hasOwnProperty(key)) {
+                                    if (key == element) {
+                                        const containerElement = response.data[key];
+                                        let service = containerElement.place;
+                                        service.forEach(element => {
+                                            entity.push(element);
+                                        });
+
+                                        delete containerElement.place;
+
+
+                                        for (const key in containerElement) {
+                                            if (containerElement.hasOwnProperty(key)) {
+                                                const element = containerElement[key];
+                                                let thirdCasc = {}
+                                                thirdCasc.label = key;
+                                                thirdCasc.value = key;
+                                                thirdCasc.children = element;
+
+                                                console.log(thirdCasc)
+
+                                                let tempChildren = []
+
+                                                thirdCasc.children.forEach(element => {
+                                                    let temp = {}
+                                                    temp.label = element;
+                                                    temp.value = element;
+                                                    tempChildren.push(temp)
+
+                                                });
+
+                                                thirdCasc.children = tempChildren;
+                                                console.log(thirdCasc)
+
+                                                // console.log(children)
+                                                secondCasc.children.push(thirdCasc);
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                            firstCasc.children.push(secondCasc)
+                        });
+
+                        let tempEntity = []
+                        entity.forEach(element => {
+                            tempEntity.push({
+                                label: element,
+                                value: element,
+                            })
+                        });
+
+                        // this.form.entity = tempEntity;
+                        this.options4 = tempEntity;
+                        this.properties = [firstCasc];
+                    })
+
+
+
+
+            },
             onSubmit() {
+                let csv = ''
+                this.datasetOptions.forEach(element => {
+                    if (element.value.indexOf(this.form.csv) > -1) {
+                        csv = element.value
+                    }
+                })
 
                 axios.post(
-                        'http://10.60.38.182:9999/bbs/api/addMetric?pod=' + this.form.property[2] + '&metric=' + this.form
+                        'http://10.60.38.182:9999/bbs/api/addMetric?pod=' + this.form.property[2] + '&metric=' +
+                        this.form
                         .property[
-                            3] + '&container=' + this.form.property[1] + '&dateset=' + this.form.property[0] +
+                            3] + '&Type=' + this.form.property[1] + '&dateset=' + csv +
                         '&relation=' + this.form.relation
                     ).then((response) => {
                         let log = response.data.state;
@@ -255,6 +354,7 @@
                     entity: [],
                     relation: '',
                     property: [],
+                    csv: ''
                 }
             },
             transferClick() {
@@ -286,22 +386,38 @@
             }
         },
         created() {
-            axios.get('http://lab:409@10.60.38.182:5525/tool/api/v1.0/get_namespace')
-            .then((response)=>{
-                console.log(response.data)
-            })
             this.tableData4 = [];
             // this.form.property =
+            axios.get('http://10.60.38.182:9999/bbs/api/getCSV')
+                .then((response) => {
+                    response.data.CSV.forEach(element => {
+                        this.csvOptions.push({
+                            label: element,
+                            value: element
+                        })
+                    });
+
+                })
+
+            axios.get('http://10.60.38.182:9999/bbs/api/getDataset')
+                .then((response) => {
+                    response.data.nodes.forEach(element => {
+                        this.datasetOptions.push({
+                            label: element.name,
+                            value: element.name
+                        })
+                    });
+                })
+
             axios.get('http://10.60.38.182:9999/bbs/api/metricInfo?filename=result.csv')
                 .then((response) => {
-                    var Container = response.data.Container;
+                    var Container = response.data.Node;
                     let entity = [];
                     let firstCasc = {
                         label: 'result.csv',
                         value: 'result.csv'
                     }
                     firstCasc.children = []
-
 
                     Container.name.forEach(element => {
                         let secondCasc = {};
@@ -314,12 +430,12 @@
                             if (response.data.hasOwnProperty(key)) {
                                 if (key == element) {
                                     const containerElement = response.data[key];
-                                    let service = containerElement.service;
+                                    let service = containerElement.place;
                                     service.forEach(element => {
                                         entity.push(element);
                                     });
 
-                                    delete containerElement.service;
+                                    delete containerElement.place;
 
 
                                     for (const key in containerElement) {
