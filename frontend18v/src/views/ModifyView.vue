@@ -35,12 +35,17 @@
         </el-dialog>
 
         <el-dialog title="输入地址" :visible.sync="dialogURLVisible" width="30%" :before-close="handleClose">
-            <el-input placeholder="请输入内容" v-model="inputURL" style="margin: 15px 0px;">
+            <!-- <el-input placeholder="请输入内容" v-model="inputURL" style="margin: 15px 0px;">
                 <template slot="prepend">http://</template>
-            </el-input>
+            </el-input> -->
+            <el-select v-model="selectedElement" placeholder="请选择element">
+                <el-option v-for="item in elements" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+            </el-select>
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogURLVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogURLVisible = false">确 定</el-button>
+                <el-button type="primary" @click="URLConfirmClick">确 定</el-button>
             </span>
         </el-dialog>
     </el-container>
@@ -80,6 +85,8 @@
         name: 'modify',
         data() {
             return {
+                selectedElement: '',
+                elements: [],
                 systemNameYaml: '',
                 systemNameCSV: '',
                 options: [{
@@ -119,9 +126,15 @@
                         uploadText: '上传文件'
                     },
                     {
-                        name: '输入目标URL地址',
+                        name: '上传json服务调用关系文件',
+                        type: '.json',
+                        escri: '上传服务调用关系文件，系统将自动提取节点间的关系。',
+                        uploadText: '上传文件'
+                    },
+                    {
+                        name: '获取目标系统部署数据',
                         type: '.pod',
-                        escri: '输入目标URL地址，系统将自动提取pods与节点间的关系。',
+                        escri: '获取目标系统部署数据，系统将自动提取pods与节点间的关系。',
                         uploadText: '输入地址'
                     },
                     {
@@ -136,6 +149,17 @@
             };
         },
         methods: {
+            URLConfirmClick() {
+                this.dialogURLVisible = false;
+                axios.post('http://10.60.38.182:9999/bbs/api/addNods?Url=http://10.60.38.182:5525/tool/api/v1.0/get_pods/' + this.selectedElement)
+                    .then((response) => {
+                        console.log(response.data);
+                        this.$message({
+                            message: 'Nodes信息输入成功！',
+                            type: 'success'
+                        });
+                    })
+            },
             uploadOnProgress(e, file, fileList) { //开始上传
 
                 console.log('file', file)
@@ -165,9 +189,12 @@
                 if (this.fileType == '.yaml') {
                     uploadURL = 'http://10.60.38.182:9999/bbs/api/yamldeal?systemName=' + this.systemNameYaml;
                     console.log('yaml')
-                } else { // .csv
+                } else if (this.fileType == '.csv') { // .csv
                     uploadURL = 'http://10.60.38.182:9999/bbs/api/fileupdate?systemName=' + this.systemNameCSV;
                     console.log('csv')
+                } else {
+                    uploadURL = 'http://10.60.38.182:9999/bbs/api/addServiceRelation?systemName=' + this.systemNameCSV;
+                    console.log('json')
                 }
 
                 console.log(uploadURL)
@@ -213,6 +240,16 @@
             }
         },
         created() {
+            axios.get('http://10.60.38.182:9999/bbs/api/getElementName')
+            .then((response)=>{
+                let element = response.data.Element;
+                element.forEach(element => {
+                    this.elements.push({
+                        label: element,
+                        value: element
+                    })
+                });
+            })
             axios.get('http://10.60.38.182:9999/bbs/api/getSystem')
                 .then((response) => {
                     this.options = [];

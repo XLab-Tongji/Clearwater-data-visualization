@@ -43,13 +43,13 @@
                                 <el-menu-item index="series">Dashboard</el-menu-item>
                             </el-menu-item-group>
                             <el-menu-item-group title="Casual Loop Diagram">
-                                <el-menu-item index="1-3">Dashboard</el-menu-item>
+                                <el-menu-item index="CausaView">Dashboard</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
                     </el-menu>
                 </el-col>
 
-                <el-col>
+                <el-col style="width:100%;height:100%">
                     <!-- <el-button>test</el-button> -->
                     <router-view></router-view>
                 </el-col>
@@ -61,6 +61,10 @@
 
 
 <style scoped>
+    svg {
+        left: 50%;
+    }
+    
     .el-menu-vertical-demo:not(.el-menu--collapse) {
         width: 250px;
         min-height: 700px;

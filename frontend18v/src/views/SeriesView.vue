@@ -1,17 +1,30 @@
 <template>
-    <el-container>
+    <el-container v-loading.fullscreen.lock="loading">
         <el-row style="width:100%;height:100%">
-            <el-col class="box2" style="width:350px;">
-                <el-col style="width:200px;">
-                    <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox> -->
-                    <!-- <div style="margin: 15px 0;"></div> -->
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange" :min="0" :max="1">>
-                        <el-checkbox v-for="city in cities" :label="city" :key="city" style="margin-top:15px;">{{city}}</el-checkbox>
-                    </el-checkbox-group>
+            <el-col :span="6">
+                <el-row style="margin-left:10%;margin-top:20px;">
+                    <el-select v-model="datasetName" placeholder="请选择Dataset" @change="onDatasetChange">
+                        <el-option v-for="item in datasets" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-row>
+
+
+                <el-col class="box2" style="width:350px; height:700px;">
+                    <el-col style="width:350px;height:650px; overflow-y:scroll; overflow-x:hidden;">
+                        <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox> -->
+                        <!-- <div style="margin: 15px 0;"></div> -->
+                        <!-- <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange" :min="0" :max="1">
+                            <el-checkbox v-for="city in cities" :label="city" :key="city" style="margin-top:15px;">{{city}}</el-checkbox>
+                        </el-checkbox-group> -->
+                        <el-radio-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                            <el-radio v-for="city in cities" :label="city" :key="city" style="margin-top:15px;margin-left:0px;">{{city}}</el-radio>
+                        </el-radio-group>
+                    </el-col>
                 </el-col>
             </el-col>
 
-            <el-col style="width:60%;height:600px;margin-left:8%;margin-top:30px;">
+            <el-col style="height:600px;margin-left:8%;margin-top:30px;" :span="16">
                 <div refs="chart" id="chart" style="width:100%;height:100%"></div>
             </el-col>
         </el-row>
@@ -20,6 +33,10 @@
 </template>
 
 <style scoped>
+    svg {
+        left: 50%;
+    }
+
     .el-checkbox+.el-checkbox {
         margin-left: 0px;
     }
@@ -123,6 +140,12 @@
         name: 'series',
         data() {
             return {
+                loading: true,
+                datasetName: '',
+                datasets: [{
+                    label: 'example.csv',
+                    value: 'example.csv'
+                }],
                 checkAll: false,
                 checkedCities: ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'],
                 cities: ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'],
@@ -162,6 +185,59 @@
             };
         },
         methods: {
+            onDatasetChange(value) {
+                this.loading = true;
+                let initData = () => {
+                    return axios.get('http://10.60.38.182:9999/bbs/api/getOperationData?filename=' + this.datasets[
+                        0].label);
+                }
+
+                let initTimeStamp = () => {
+                    return axios.get('http://10.60.38.182:9999/bbs/api/getTimestamp?filename=' + this.datasets[
+                        0].label);
+                }
+
+                // 获取数据集后，再申请数据。
+                axios.all([initData(), initTimeStamp()])
+                    .then(axios.spread((responseData, responseStamp) => {
+                        console.log(responseData.data)
+                        // responseData.data = JSON.parse(responseData.data)
+                        let yData = responseData.data.Operations;
+                        let yCData = [];
+                        this.checkedCities = [];
+                        this.cities = [];
+
+                        for (const key in yData) {
+                            var tempElement = {}
+                            if (yData.hasOwnProperty(key)) {
+                                const element = yData[key];
+                                tempElement.name = key;
+                                tempElement.name = tempElement.name.substring(15);
+                                tempElement.data = element;
+
+                                yCData.push(tempElement)
+                                // this.checkedCities.push(tempElement.name);
+                                this.cities.push(tempElement.name);
+                            }
+                        }
+                        console.log(yData)
+                        console.log(yCData)
+                        yCData.forEach(element => {
+                            element.type = 'line';
+                            element.stack = '总量';
+                        });
+
+                        option.xAxis.data = responseStamp.data.TimeStamp;
+
+                        option.series = yCData;
+                        this.series = yCData;
+                        this.myChart.setOption(option, {
+                            notMerge: true
+                        });
+
+                        this.loading = false;
+                    }))
+            },
             chartUpdate(value) {
                 let currentSeries = []
                 this.series.forEach(serie => {
@@ -184,7 +260,8 @@
 
                 this.chartUpdate(this.checkedCities);
             },
-            handleCheckedCitiesChange(value) {
+            handleCheckedCitiesChange(inValue) {
+                let value = [].push(inValue);
                 let checkedCount = value.length;
                 this.checkAll = checkedCount === this.cities.length;
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
@@ -200,43 +277,77 @@
 
             this.myChart.setOption(option);
 
-            axios.get('/series.json')
-                .then((response) => {
-                    console.log(response.data)
-                    // response.data = JSON.parse(response.data)
-                    let yData = response.data.Operations;
-                    let yCData = [];
-                    this.checkedCities = [];
-                    this.cities = [];
+            axios.get('http://10.60.38.182:9999/bbs/api/getCSV').then((response) => {
+                let data = response.data.CSV;
+                this.datasets = []
 
-                    for (const key in yData) {
-                        var tempElement = {}
-                        if (yData.hasOwnProperty(key)) {
-                            const element = yData[key];
-                            tempElement.name = key;
-                            tempElement.name = tempElement.name.substring(15);
-                            tempElement.data = element;
+                data.forEach(element => {
+                    this.datasets.push({
+                        label: element,
+                        value: element
+                    })
+                });
+                this.datasetName = this.datasets[0].label;
 
-                            yCData.push(tempElement)
-                            // this.checkedCities.push(tempElement.name);
-                            this.cities.push(tempElement.name);
+                let initData = () => {
+                    return axios.get('http://10.60.38.182:9999/bbs/api/getOperationData?filename=' + this.datasets[
+                        0].label);
+                }
+
+                let initTimeStamp = () => {
+                    return axios.get('http://10.60.38.182:9999/bbs/api/getTimestamp?filename=' + this.datasets[
+                        0].label);
+                }
+
+                // 获取数据集后，再申请数据。
+                axios.all([initData(), initTimeStamp()])
+                    .then(axios.spread((responseData, responseStamp) => {
+                        console.log(responseData.data)
+                        // responseData.data = JSON.parse(responseData.data)
+                        let yData = responseData.data.Operations;
+                        let yCData = [];
+                        this.checkedCities = [];
+                        this.cities = [];
+
+                        for (const key in yData) {
+                            var tempElement = {}
+                            if (yData.hasOwnProperty(key)) {
+                                const element = yData[key];
+                                tempElement.name = key;
+                                tempElement.name = tempElement.name.substring(15);
+                                tempElement.data = element;
+
+                                yCData.push(tempElement)
+                                // this.checkedCities.push(tempElement.name);
+                                this.cities.push(tempElement.name);
+                            }
                         }
-                    }
-                    console.log(yData)
-                    console.log(yCData)
-                    yCData.forEach(element => {
-                        element.type = 'line';
-                        element.stack = '总量';
-                    });
+                        console.log(yData)
+                        console.log(yCData)
+                        yCData.forEach(element => {
+                            element.type = 'line';
+                            element.stack = '总量';
+                        });
 
-                    option.xAxis.data = response.data.TimeStamp;
+                        option.xAxis.data = responseStamp.data.TimeStamp;
 
-                    option.series = yCData;
-                    this.series = yCData;
-                    this.myChart.setOption(option, {
-                        notMerge: true
-                    });
-                })
+                        option.series = yCData;
+                        this.series = yCData;
+                        this.myChart.setOption(option, {
+                            notMerge: true
+                        });
+
+                        this.loading = false;
+                    }))
+            })
+
+
+
+
+
+
+
+
         }
     }
 </script>

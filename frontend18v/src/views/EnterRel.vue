@@ -286,6 +286,10 @@
             }
         },
         created() {
+            axios.get('http://lab:409@10.60.38.182:5525/tool/api/v1.0/get_namespace')
+            .then((response)=>{
+                console.log(response.data)
+            })
             this.tableData4 = [];
             // this.form.property =
             axios.get('http://10.60.38.182:9999/bbs/api/metricInfo?filename=result.csv')

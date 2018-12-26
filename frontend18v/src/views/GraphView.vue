@@ -27,6 +27,7 @@
 </template>
 
 <style scoped>
+    @import "/public/0.4.2/alchemy.css"
 </style>
 
 <script>
