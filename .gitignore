@@ -24,3 +24,5 @@ hs_err_pid*
 
 # node_modules plugin files
 Frontend/node_modules/
+
+Back End/src/.DS_Store
