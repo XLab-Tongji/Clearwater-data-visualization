@@ -43,6 +43,20 @@
     }
   };
 
+  var getCoordInDocument = function (e) {
+    e = e || window.event;
+    var x = e.pageX || (e.clientX +
+      (document.documentElement.scrollLeft ||
+        document.body.scrollLeft));
+    var y = e.pageY || (e.clientY +
+      (document.documentElement.scrollTop ||
+        document.body.scrollTop));
+    return {
+      'x': x,
+      'y': y
+    };
+  }
+
   export default {
     components: {
       D3Network,
@@ -152,7 +166,11 @@
         nodeOperations: "<a href='#'>开机</a><br><a href='#'>关机</a>",
         notify: {},
         sourceNodeId: 0,
-        targetNodeId: 0
+        targetNodeId: 0,
+        offset_X: -80,
+        offset_Y: 0,
+        finCoor: 0,
+        staCoor: 0
       };
     },
     methods: {
@@ -254,8 +272,8 @@
             h: 700
           },
           offset: {
-            x: -80,
-            y: 0
+            x: this.offset_X,
+            y: this.offset_Y
           },
           nodeSize: this.nodeSize,
           nodeLabels: true,
@@ -264,7 +282,28 @@
         };
       }
     },
-    mounted() {}
+    mounted() {
+      var el = document.getElementsByClassName("net-svg")[0];
+      el.onmousedown = (e) => {
+        this.staCoor = getCoordInDocument(e)
+      }
+      el.onmouseup = (e) => {
+        this.finCoor = getCoordInDocument(e)
+        this.offset_X += this.finCoor.x - this.staCoor.x
+        this.offset_Y += this.finCoor.y - this.staCoor.y
+        this.staCoor = 0;
+        this.finCoor = 0;
+      }
+      el.onmousemove = (e) => {
+        if (this.staCoor) {
+          this.finCoor = getCoordInDocument(e)
+          this.offset_X += this.finCoor.x - this.staCoor.x
+          this.offset_Y += this.finCoor.y - this.staCoor.y
+          this.staCoor = this.finCoor
+        }
+      }
+    },
+    created() {}
   };
 </script>
 
