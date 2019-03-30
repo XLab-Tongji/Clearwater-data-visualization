@@ -1,0 +1,79 @@
+{
+    "results": [{
+        "columns": ["relatedPlayer", "relatedEntity", "collect(r2)[0]"],
+        "data": [{
+            "row": [{
+                "profileId": 3644695,
+                "siteId": 4,
+                "playerId": "4_3644695"
+            }, {
+                "value": "555-555-5555"
+            }, {
+                "from": 1460380598339
+            }],
+            "graph": {
+                "nodes": [{
+                    "id": "2598847",
+                    "labels": ["Player"],
+                    "properties": {
+                        "profileId": 3644695,
+                        "siteId": 4,
+                        "playerId": "4_3644695"
+                    }
+                }, {
+                    "id": "2974",
+                    "labels": ["Phone"],
+                    "properties": {
+                        "value": "555-555-5555"
+                    }
+                }],
+                "relationships": [{
+                    "id": "5226339",
+                    "type": "CURRENT_PHONE_NUMBER",
+                    "startNode": "2598847",
+                    "endNode": "2974",
+                    "properties": {
+                        "from": 1460380598339
+                    }
+                }]
+            }
+        }, {
+            "row": [{
+                "profileId": 3644696,
+                "siteId": 4,
+                "playerId": "4_3644696"
+            }, {
+                "value": "555-555-5555"
+            }, {
+                "from": 1460380598339
+            }],
+            "graph": {
+                "nodes": [{
+                    "id": "2598848",
+                    "labels": ["Player"],
+                    "properties": {
+                        "profileId": 3644696,
+                        "siteId": 4,
+                        "playerId": "4_3644696"
+                    }
+                }, {
+                    "id": "2974",
+                    "labels": ["Phone"],
+                    "properties": {
+                        "value": "555-555-5555"
+                    }
+                }],
+                "relationships": [{
+                    "id": "5226340",
+                    "type": "CURRENT_PHONE_NUMBER",
+                    "startNode": "2598848",
+                    "endNode": "2974",
+                    "properties": {
+                        "from": 1460380598340
+                    }
+                }]
+            }
+        }]
+    }],
+    "errors": []
+}

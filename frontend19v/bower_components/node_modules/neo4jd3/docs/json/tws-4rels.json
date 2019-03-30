@@ -1,0 +1,522 @@
+{
+  "results": [
+    {
+      "columns": [
+        "p",
+        "r",
+        "e"
+      ],
+      "data": [
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058512708
+            },
+            {
+              "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384791,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 23494,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "23494",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384791",
+                "type": "CURRENT_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "23494",
+                "properties": {
+                  "from": 1473058512708
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058512708
+            },
+            {
+              "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384792,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 23494,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "23494",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384792",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "23494",
+                "properties": {
+                  "from": 1473058512708
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058462387,
+              "to": 1473058512708
+            },
+            {
+              "value": "QlrxKgdDUCsyLpOgFbz4aOMk1Wo="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384771,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 1685655,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "1685655",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "QlrxKgdDUCsyLpOgFbz4aOMk1Wo="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384771",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "1685655",
+                "properties": {
+                  "from": 1473058462387,
+                  "to": 1473058512708
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058430791,
+              "to": 1473058462387
+            },
+            {
+              "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384769,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 23494,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "23494",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384769",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "23494",
+                "properties": {
+                  "from": 1473058430791,
+                  "to": 1473058462387
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058420045,
+              "to": 1473058430791
+            },
+            {
+              "value": "1B/yPg5hR6j9JyL2jlP5k6knhLA="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384767,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 12402937,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "12402937",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "1B/yPg5hR6j9JyL2jlP5k6knhLA="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384767",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "12402937",
+                "properties": {
+                  "from": 1473058420045,
+                  "to": 1473058430791
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473058366002,
+              "to": 1473058420045
+            },
+            {
+              "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30384707,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 23494,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "23494",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "Uau5Y2B43vv4iNhFenx2+FyPEUw="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30384707",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "23494",
+                "properties": {
+                  "from": 1473058366002,
+                  "to": 1473058420045
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1460379497456,
+              "to": 1473058366002
+            },
+            {
+              "value": "OCGk0FauMqAbh4qyxYs4roecRas="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 3081933,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 1607342,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "1607342",
+                "labels": [
+                  "EncryptedPassword"
+                ],
+                "properties": {
+                  "value": "OCGk0FauMqAbh4qyxYs4roecRas="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "3081933",
+                "type": "HAS_ENC_PASSWORD",
+                "startNode": "1607338",
+                "endNode": "1607342",
+                "properties": {
+                  "from": 1460379497456,
+                  "to": 1473058366002
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "stats": {
+        "contains_updates": false,
+        "nodes_created": 0,
+        "nodes_deleted": 0,
+        "properties_set": 0,
+        "relationships_created": 0,
+        "relationship_deleted": 0,
+        "labels_added": 0,
+        "labels_removed": 0,
+        "indexes_added": 0,
+        "indexes_removed": 0,
+        "constraints_added": 0,
+        "constraints_removed": 0
+      }
+    }
+  ],
+  "errors": [],
+  "responseTime": 23
+}

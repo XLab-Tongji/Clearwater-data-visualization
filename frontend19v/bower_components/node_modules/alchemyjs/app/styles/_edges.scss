@@ -1,0 +1,39 @@
+defs {
+    #arrow {
+        path {
+            stroke: #CCC;
+            stroke-opacity: 0.2;
+            fill: #CCC;
+            opacity: 1;
+        }
+    }
+}
+
+.edge{
+    text { stroke-width: 0; }
+    .edge-handler {
+        fill: none;
+        stroke: none;
+    }
+    .edge-line {
+        fill: none;
+    }
+
+    &.active{
+        text {
+            display: none;
+            fill: white;
+            font-weight: 200;
+            text-anchor: middle;
+            text-shadow: 1px 1px #333, -1px 1px #333, 1px -1px #333, -1px -1px #333;
+            z-index: 1000;
+        }
+    	&:hover, &.selected {
+    	    cursor: pointer;
+            text { display: block;}
+	    }
+    	&.highlight {
+            text { display: block;}
+    	}
+    }
+}

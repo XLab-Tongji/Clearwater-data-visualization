@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+  stroke: #aaa;
+}
+
+.node {
+  pointer-events: all;
+  stroke: none;
+  stroke-width: 40px;
+}
+
+</style>
+<svg width="960" height="600"></svg>
+<script src="js/d3.min.js"></script>
+<script>
+
+var nodes = [
+  {"id": 1, "name": "server 1"},
+  {"id": 2, "name": "server 2"},
+  {"id": 3, "name": "server 3"},
+  {"id": 4, "name": "server 4"},
+  {"id": 5, "name": "server 5"},
+  {"id": 6, "name": "server 6"},
+  {"id": 7, "name": "server 7"},
+  {"id": 8, "name": "server 8"},
+  {"id": 9, "name": "server 9"}
+]
+
+var links = [
+  {source: 1, target: 2},
+  {source: 1, target: 3},
+  {source: 1, target: 4},
+  {source: 2, target: 5},
+  {source: 2, target: 6},
+  {source: 3, target: 7},
+  {source: 5, target: 8},
+  {source: 6, target: 9},
+]
+
+var index = 10;
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height"),
+    node,
+    link;
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .on("tick", ticked);
+
+var drag = d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
+
+update();
+
+function update() {
+  link = svg.selectAll(".link")
+    .data(links, function(d) { return d.target.id; })
+console.error('link1 = ' + JSON.stringify(link));
+  var linkEnter = link.enter().append("line")
+    .attr("class", "link");
+console.error('link2 = ' + JSON.stringify(linkEnter));
+
+  link = linkEnter.merge(link);
+console.error('link3 = ' + JSON.stringify(link));
+
+  node = svg.selectAll(".node")
+    .data(nodes, function(d) { return d.id; })
+
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .on("click", click)
+      .call(drag);
+
+  nodeEnter.append("circle")
+      .attr("r", 2.5)
+
+  nodeEnter.append("title")
+      .text(function(d) { return d.id; });
+
+  nodeEnter.append("text")
+      .attr("dy", 3)
+      .text(function(d) { return d.name; });
+
+  node = nodeEnter.merge(node);
+
+  simulation
+      .nodes(nodes);
+
+  simulation.force("link")
+      .links(links);
+}
+
+function click(d) {
+  var target = {id: index, name: "server " + index};
+  nodes.push(target);
+  links.push({source: d, target: target});
+  index++;
+  update();
+}
+
+function ticked() {
+  link
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  node
+      .attr("transform", function(d) { return "translate(" + d.x + ", " + d.y + ")"; });
+}
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = undefined;
+  d.fy = undefined;
+}
+
+</script>

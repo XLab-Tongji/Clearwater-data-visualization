@@ -1,0 +1,167 @@
+{
+  "results": [
+    {
+      "columns": [
+        "p",
+        "r",
+        "e"
+      ],
+      "data": [
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473057999202
+            },
+            {
+              "value": "T1nkryrJ6Z1LsZcOsry1tOQqoEt7miwBmhz+t+oS7BE="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30382908,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 12402050,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "12402050",
+                "labels": [
+                  "SecurityChallenge2Answer"
+                ],
+                "properties": {
+                  "value": "T1nkryrJ6Z1LsZcOsry1tOQqoEt7miwBmhz+t+oS7BE="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30382908",
+                "type": "CURRENT_SECURITY_ANSWER2",
+                "startNode": "1607338",
+                "endNode": "12402050",
+                "properties": {
+                  "from": 1473057999202
+                }
+              }
+            ]
+          }
+        },
+        {
+          "row": [
+            {
+              "profileId": 100006,
+              "siteId": 10,
+              "siteGroupName": "brand_brand",
+              "playerId": "10_100006"
+            },
+            {
+              "from": 1473057999202
+            },
+            {
+              "value": "T1nkryrJ6Z1LsZcOsry1tOQqoEt7miwBmhz+t+oS7BE="
+            }
+          ],
+          "meta": [
+            {
+              "id": 1607338,
+              "type": "node",
+              "deleted": false
+            },
+            {
+              "id": 30382909,
+              "type": "relationship",
+              "deleted": false
+            },
+            {
+              "id": 12402050,
+              "type": "node",
+              "deleted": false
+            }
+          ],
+          "graph": {
+            "nodes": [
+              {
+                "id": "1607338",
+                "labels": [
+                  "Player"
+                ],
+                "properties": {
+                  "profileId": 100006,
+                  "siteId": 10,
+                  "siteGroupName": "brand_brand",
+                  "playerId": "10_100006"
+                }
+              },
+              {
+                "id": "12402050",
+                "labels": [
+                  "SecurityChallenge2Answer"
+                ],
+                "properties": {
+                  "value": "T1nkryrJ6Z1LsZcOsry1tOQqoEt7miwBmhz+t+oS7BE="
+                }
+              }
+            ],
+            "relationships": [
+              {
+                "id": "30382909",
+                "type": "HAS_SECURITY_ANSWER2",
+                "startNode": "1607338",
+                "endNode": "12402050",
+                "properties": {
+                  "from": 1473057999202
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "stats": {
+        "contains_updates": false,
+        "nodes_created": 0,
+        "nodes_deleted": 0,
+        "properties_set": 0,
+        "relationships_created": 0,
+        "relationship_deleted": 0,
+        "labels_added": 0,
+        "labels_removed": 0,
+        "indexes_added": 0,
+        "indexes_removed": 0,
+        "constraints_added": 0,
+        "constraints_removed": 0
+      }
+    }
+  ],
+  "errors": [],
+  "responseTime": 14
+}
