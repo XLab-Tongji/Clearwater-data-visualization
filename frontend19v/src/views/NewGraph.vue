@@ -4,7 +4,7 @@
     <search-tree></search-tree>
     <!-- 节点和关系图 -->
     <d3-network ref="net" :net-nodes="nodes" :net-links="links" :options="options" @node-click="clickNode"
-      @link-click="clickLink" />
+      @link-click="clickLink" class="noselect" />
     <!-- 右下角的对节点进行操作的 button -->
     <div id="button-group">
       <el-radio-group v-model="radio">
@@ -55,6 +55,14 @@
       'x': x,
       'y': y
     };
+  }
+
+  function addEvent(obj, xEvent, fn) {
+    if (obj.attachEvent) {
+      obj.attachEvent('on' + xEvent, fn);
+    } else {
+      obj.addEventListener(xEvent, fn, false);
+    }
   }
 
   export default {
@@ -170,11 +178,18 @@
         offset_X: -80,
         offset_Y: 0,
         finCoor: 0,
-        staCoor: 0
+        staCoor: 0,
+        force: 3000,
+        moveable: false,
       };
     },
     methods: {
       clickNode(e, node) {
+        this.moveable = false;
+        if (e.preventDefault) {
+          /*FF 和 Chrome*/
+          e.preventDefault(); // 阻止默认事件
+        }
         // 普通点击
         if (this.radio === "1") {
           // 如果已经有弹出框则关掉
@@ -267,7 +282,7 @@
     computed: {
       options() {
         return {
-          force: 3000,
+          force: this.force,
           size: {
             h: 700
           },
@@ -289,19 +304,47 @@
       }
       el.onmouseup = (e) => {
         this.finCoor = getCoordInDocument(e)
-        this.offset_X += this.finCoor.x - this.staCoor.x
-        this.offset_Y += this.finCoor.y - this.staCoor.y
+        if (this.moveable) {
+          this.offset_X += this.finCoor.x - this.staCoor.x
+          this.offset_Y += this.finCoor.y - this.staCoor.y
+        }
+        else {
+          this.moveable = true
+        }
         this.staCoor = 0;
         this.finCoor = 0;
       }
       el.onmousemove = (e) => {
-        if (this.staCoor) {
-          this.finCoor = getCoordInDocument(e)
-          this.offset_X += this.finCoor.x - this.staCoor.x
-          this.offset_Y += this.finCoor.y - this.staCoor.y
-          this.staCoor = this.finCoor
+        if (this.moveable) {
+          if (this.staCoor) {
+            this.finCoor = getCoordInDocument(e)
+            this.offset_X += this.finCoor.x - this.staCoor.x
+            this.offset_Y += this.finCoor.y - this.staCoor.y
+            this.staCoor = this.finCoor
+          }
         }
       }
+
+      let onMouseWheel = (ev) => {
+        var ev = ev || window.event;
+        var down = true; // 定义一个标志，当滚轮向下滚时，执行一些操作
+        down = ev.wheelDelta ? ev.wheelDelta < 0 : ev.detail > 0;
+        if (!down) {
+          this.force = Math.max(0, this.force - 200);
+          this.nodeSize = Math.max(0, this.nodeSize - 1);
+        } else {
+          this.force = this.force + 200;
+          this.nodeSize = this.nodeSize + 1;
+        }
+        if (ev.preventDefault) {
+          /*FF 和 Chrome*/
+          ev.preventDefault(); // 阻止默认事件
+        }
+        return false;
+      }
+
+      addEvent(el, 'mousewheel', onMouseWheel);
+      addEvent(el, 'DOMMouseScroll', onMouseWheel);
     },
     created() {}
   };
@@ -312,5 +355,14 @@
     position: fixed;
     right: 60px;
     bottom: 40px;
+  }
+
+  .noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 </style>
