@@ -1,7 +1,7 @@
 <template>
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
-    <search-tree></search-tree>
+    <search-tree v-on:focusNode="focusNode"></search-tree>
     <!-- 节点和关系图 -->
     <d3-network ref="net" :net-nodes="nodes" :net-links="links" :options="options" @node-click="clickNode"
       @link-click="clickLink" class="noselect" />
@@ -181,6 +181,7 @@
         staCoor: 0,
         force: 3000,
         moveable: false,
+        focusedNode: {}
       };
     },
     methods: {
@@ -277,6 +278,10 @@
           "marker-start": "url(#m-start)"
         };
         return link;
+      },
+      focusNode (node) {
+        this.focusedNode = node
+        console.log(this.focusedNode)
       }
     },
     computed: {

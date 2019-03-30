@@ -1,14 +1,17 @@
 
+import { constants } from 'fs';
+import { constants } from 'fs';
 <template>
   <div id="search-tree">
     <el-input prefix-icon="el-icon-search" placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
     <el-tree
       class="filter-tree"
-      :data="data2"
-      :props="defaultProps"
+      :data="data"
+      :props="dataProps"
       default-expand-all
       :filter-node-method="filterNode"
-      ref="tree2"
+      ref="tree"
+      @node-click="nodeClickHandler"
     ></el-tree>
   </div>
 </template>
@@ -16,76 +19,59 @@
 <script>
 export default {
   watch: {
-    filterText(val) {
-      this.$refs.tree2.filter(val);
+    filterText (val) {
+      this.$refs.tree.filter(val)
     }
   },
-
-  methods: {
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    }
-  },
-
   data() {
     return {
-      filterText: "",
-      data2: [
-        {
-          id: 1,
-          label: "一级 1",
-          children: [
-            {
-              id: 4,
-              label: "二级 1-1",
-              children: [
-                {
-                  id: 9,
-                  label: "三级 1-1-1"
-                },
-                {
-                  id: 10,
-                  label: "三级 1-1-2"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: "一级 2",
-          children: [
-            {
-              id: 5,
-              label: "二级 2-1"
-            },
-            {
-              id: 6,
-              label: "二级 2-2"
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: "一级 3",
-          children: [
-            {
-              id: 7,
-              label: "二级 3-1"
-            },
-            {
-              id: 8,
-              label: "二级 3-2"
-            }
-          ]
-        }
+      filterText: '',
+      nodes: [
+        { id: 1, name: 'my awesome node 1', type: 'node'},
+        { id: 2, name: 'my node 2', type: 'master node'},
+        { id: 3, name: '我是有操作的节点 点我', _color: "orange" ,type: 'pod'},
+        { id: 4, name: 'pod4', _color: '#4466ff' ,type: 'pod'},
+        { id: 5, name: 'c5', type: 'container'},
+        { id: 6, name: 'c6', type: 'container'},
+        { id: 7, name: 's7', type: 'service'},
+        { id: 8, name: 'n8', type: 'namespace'},
+        { id: 9, name: 'n9', type: 'namespace'},
+        { id: 10, name: 's10', type: 'service'},
+        { id: 11, name: 's11', type: 'service'},
+        { id: 12, name: 'n12', type: 'node'},
+        { id: 13, name: 'n13', type: 'node'},
+        { id: 14, name: 'n14', type: 'node'}
       ],
-      defaultProps: {
-        children: "children",
-        label: "label"
-      }
+      dataProps: {
+        label: 'name',
+        children: 'data'
+      },
+      data: [{name: 'node', data: []}, {name: 'master node', data: []}, {name: 'pod', data: []},
+      {name: 'container', data: []}, {name: 'service', data: []}, {name: 'namespace', data: []}],
+
     };
+  },
+  methods: {
+    handleData () {
+      let nodes = this.nodes
+      nodes.forEach(node => {
+        this.data.forEach(ele => {
+          if (node.type === ele.name) {
+            ele.data.push(node)
+          }
+        })
+      })
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    nodeClickHandler (data, node) {
+      this.$emit('focusNode', data)
+    }
+  },
+  created () {
+    this.handleData()
   }
 };
 </script>
@@ -97,3 +83,4 @@ export default {
   float: right;
 }
 </style>
+
