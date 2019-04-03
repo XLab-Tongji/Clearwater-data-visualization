@@ -2,6 +2,35 @@
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes"></search-tree>
+    <!-- 箭头 -->
+    <svg height=0>
+      <defs>
+        <!-- 普通箭头 -->
+        <marker
+          id="m-end"
+          markerWidth="10"
+          markerHeight="10"
+          :refX="nodeSize / 8 + 4"
+          refY="2"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <path d="M0,0 L0,4 L4,2 z"></path>
+        </marker>
+        <!-- 高亮箭头 -->
+        <marker
+          id="m-end-selected"
+          markerWidth="10"
+          markerHeight="10"
+          :refX="nodeSize / 8 + 4"
+          refY="2"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <path d="M0,0 L0,4 L4,2 z"></path>
+        </marker>
+      </defs>
+    </svg>
     <!-- 节点和关系图 -->
     <d3-network
       ref="net"
@@ -94,20 +123,20 @@ export default {
       id: 14,
       radio: "1",
       nodes: [
-        { id: 1, name: 'node 1', type: 'node'},
-        { id: 2, name: 'node 2', type: 'master node'},
-        { id: 3, name: 'operation' ,type: 'pod'},
-        { id: 4, name: 'pod4',type: 'pod'},
-        { id: 5, name: 'c5', type: 'container'},
-        { id: 6, name: 'c6', type: 'container'},
-        { id: 7, name: 's7', type: 'service'},
-        { id: 8, name: 'n8', type: 'namespace'},
-        { id: 9, name: 'n9', type: 'namespace'},
-        { id: 10, name: 's10', type: 'service'},
-        { id: 11, name: 's11', type: 'service'},
-        { id: 12, name: 'n12', type: 'node'},
-        { id: 13, name: 'n13', type: 'node'},
-        { id: 14, name: 'n14', type: 'node'}
+        { id: 1, name: "node 1", type: "node" },
+        { id: 2, name: "node 2", type: "master node" },
+        { id: 3, name: "operation", type: "pod" },
+        { id: 4, name: "pod4", type: "pod" },
+        { id: 5, name: "c5", type: "container" },
+        { id: 6, name: "c6", type: "container" },
+        { id: 7, name: "s7", type: "service" },
+        { id: 8, name: "n8", type: "namespace" },
+        { id: 9, name: "n9", type: "namespace" },
+        { id: 10, name: "s10", type: "service" },
+        { id: 11, name: "s11", type: "service" },
+        { id: 12, name: "n12", type: "node" },
+        { id: 13, name: "n13", type: "node" },
+        { id: 14, name: "n14", type: "node" }
       ],
       links: [
         { id: 1, sid: 1, tid: 2 },
@@ -129,9 +158,11 @@ export default {
         links: {},
         nodes: {}
       },
-      nodeSize: 35,
+      nodeSize: 30,
+      linkWidth: 4,
       canvas: false,
-      nodeOperations: '<input type="button" value="开机">\t<input type="button" value="关机">',
+      nodeOperations:
+        '<input type="button" value="开机">\t<input type="button" value="关机">',
       notify: {},
       sourceNodeId: 0,
       targetNodeId: 0,
@@ -178,7 +209,7 @@ export default {
         let newNode = {
           id: ++this.id,
           name: "new",
-          type: 'node'
+          type: "node"
         };
         this.links.push({
           sid: node.id,
@@ -284,7 +315,11 @@ export default {
     },
     lcb(link) {
       link._color = "lightgray";
-      link._svgAttrs = { "stroke-width": 4, opacity: 1 };
+      link._svgAttrs = {
+        "stroke-width": this.linkWidth,
+        opacity: 1,
+        "marker-end": "url(#m-end)",
+      };
       return link;
     },
     ncb(node) {
@@ -334,7 +369,7 @@ export default {
         links: {}
       };
       this.selection.links[link.id] = link;
-    },
+    }
   },
   computed: {
     options() {
@@ -425,8 +460,18 @@ export default {
 #new-graph .selected {
   stroke: coral !important;
   stroke-width: 4px !important;
+  marker-end: url(#m-end-selected);
 }
 #new-graph .nodesInit {
   fill: lightblue;
+}
+
+#m-end path {
+  fill: lightgray;
+  z-index: -1;
+}
+
+#m-end-selected {
+  fill: coral
 }
 </style>
