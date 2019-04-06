@@ -45,6 +45,20 @@
         </el-radio-button>
       </el-radio-group>
     </div>
+    <el-card class="display-property">
+      <div slot="header" class="clearfix">
+        <span>属性</span>
+        <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayProps">关闭</el-button>
+      </div>
+      <el-form ref="propsForm" :model="propsForm" label-width="80px" label-position="left">
+        <el-form-item  v-for="(value, key, index) in currentNode.property" :key="key" :label="key">
+          <el-input :placeholder="key" v-model="propertyValues[index]"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain>确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -89,6 +103,8 @@
     }
   }
 
+  var timer = null
+
   export default {
     components: {
       D3Network,
@@ -101,72 +117,86 @@
         nodes: [{
             id: 1,
             name: "node 1",
-            type: "node"
+            type: "node",
+            property: {status: '', roles: '', age: 1, version: ''}
           },
           {
             id: 2,
             name: "node 2",
-            type: "master node"
+            type: "master node",
+            property: {status: '', roles: '', age: 5, version: ''}
           },
           {
             id: 3,
             name: "operation",
-            type: "pod"
+            type: "pod",
+            property: {namespace: '', node: '', startTime: '2019-4-1', labels: '', annotations: '', status: ''}
           },
           {
             id: 4,
             name: "pod4",
-            type: "pod"
+            type: "pod",
+            property: {namespace: '', node: '', startTime: '', labels: '', annotations: '', status: ''}
           },
           {
             id: 5,
             name: "c5",
-            type: "container"
+            type: "container",
+            property: {port: '', hostPort: '', command: '', state: '', startedTime: '', ready: '', restartCount: '', environment: '', mounts: '',args: '', lastState: '', liveness: '', readiness: ''}
           },
           {
             id: 6,
             name: "c6",
-            type: "container"
+            type: "container",
+            property: {port: '', hostPort: '', command: '', state: '', startedTime: '', ready: '', restartCount: '', environment: '', mounts: '',args: '', lastState: '', liveness: '', readiness: ''}
           },
           {
             id: 7,
             name: "s7",
-            type: "service"
+            type: "service",
+            property: {type: '', clusterIP: '', externalIP: '', ports: '', age: 0}
           },
           {
             id: 8,
             name: "n8",
-            type: "namespace"
+            type: "namespace",
+            property: {status: '', age: 2}
           },
           {
             id: 9,
             name: "n9",
-            type: "namespace"
+            type: "namespace",
+            property: {status: '', age: 10}
           },
           {
             id: 10,
             name: "s10",
-            type: "service"
+            type: "service",
+            property: {type: '', clusterIP: '', externalIP: '', ports: '', age: 0}
           },
           {
             id: 11,
             name: "s11",
-            type: "service"
+            type: "service",
+            property: {type: '', clusterIP: '', externalIP: '', ports: '', age: 0}
           },
           {
             id: 12,
             name: "n12",
-            type: "node"
+            type: "node",
+            property: {status: 'ready', roles: '', age: 1, version: ''}
           },
           {
             id: 13,
             name: "n13",
-            type: "node"
+            type: "node",
+            property: {status: 'ok', roles: '', age: 2, version: ''}
           },
           {
             id: 14,
             name: "n14",
-            type: "node"
+            type: "node",
+            property: {status: '', roles: '', age: 0, version: ''}
           }
         ],
         links: [{
@@ -251,114 +281,125 @@
         allNodeType: ["master node", "node", "pod", "container", "service", "namespace"],
         allLinkType: ["manage", "deployed-in", "provides", "contains"],
         styleList: ["nodesMasterNode", "nodesNode", "nodesPod", "nodesContainer", "nodesService", "nodesNamespace"],
-        linkStyleList: ["linkManage", "linkDeployed", "linkProvides", "linkContains"]
+        linkStyleList: ["linkManage", "linkDeployed", "linkProvides", "linkContains"],
+        currentNode: {},
+        propertyValues: [],
+        propertyKeys: [],
+        propsForm: {}
       };
     },
     methods: {
       clickNode(e, node) {
-        this.moveable = false;
-        if (e.preventDefault) {
-          /*FF 和 Chrome*/
-          e.preventDefault(); // 阻止默认事件
-        }
-        // 普通点击
-        if (this.radio === "1") {
-          console.log(document.getElementsByClassName("nodesNamespace"))
-          // 显示连接的节点
-          this.displayNodeRelation(node);
-          // 如果已经有弹出框则关掉
-          if (this.notify.hasOwnProperty("message")) {
-            this.notify.close();
+        clearTimeout(timer)
+        let _this = this
+        this.currentNode = node
+        timer = setTimeout(function(){
+          //在此写单击事件要执行的代码
+          _this.moveable = false;
+          if (e.preventDefault) {
+            /*FF 和 Chrome*/
+            e.preventDefault(); // 阻止默认事件
           }
-          // 有「操作」的结点弹出框
-          if (node.id === 3) {
-            // 弹出操作框 只能插入 html 片段 不能操作 dom
-            // 暂时这么写吧 。。感觉之后都不能实现。。。
-            this.notify = this.$notify({
-              title: "请选择对结点的操作：",
-              dangerouslyUseHTMLString: true,
-              message: this.nodeOperations,
-              offset: 50,
-              duration: 0
-            });
-          }
-        }
-        // 增加节点
-        if (this.radio === "2") {
-          this.displayOneNode(node);
-          let newNode = {
-            id: ++this.id,
-            name: "new",
-            type: "node"
-          };
-          this.links.push({
-            sid: node.id,
-            tid: newNode.id
-          });
-          this.nodes.push(newNode);
-        }
-        // 增加边
-        if (this.radio === "3") {
-          this.displayOneNode(node);
-          // 节点的 id 必须唯一且从1开始
-          if (this.sourceNodeId) {
-            if (node.id !== this.sourceNodeId) {
-              this.targetNodeId = node.id;
-              this.links.push({
-                sid: this.sourceNodeId,
-                tid: this.targetNodeId
+          // 普通点击
+          if (_this.radio === "1") {
+            
+            // console.log(document.getElementsByClassName("nodesNamespace"))
+            // 显示连接的节点
+            _this.displayNodeRelation(node);
+            // 如果已经有弹出框则关掉
+            if (_this.notify.hasOwnProperty("message")) {
+              _this.notify.close();
+            }
+            // 有「操作」的结点弹出框
+            if (node.id === 3) {
+              // 弹出操作框 只能插入 html 片段 不能操作 dom
+              // 暂时这么写吧 。。感觉之后都不能实现。。。
+              _this.notify = _this.$notify({
+                title: "请选择对结点的操作：",
+                dangerouslyUseHTMLString: true,
+                message: _this.nodeOperations,
+                offset: 50,
+                duration: 0
               });
-              this.sourceNodeId = 0;
-              this.targetNodeId = 0;
             }
-          } else {
-            this.sourceNodeId = node.id;
           }
-        }
-        if (this.radio === "4") {
-          // 删除
-          var removeList = [];
-          this.links.forEach(element => {
-            if (node.id == element.sid || node.id == element.tid) {
-              removeList.push(element);
-            }
-          });
-
-          removeList.forEach(element => {
-            this.links.remove(element);
-          });
-
-          this.nodes.forEach(element => {
-            if (node.id == element.id) {
-              this.nodes.remove(element);
-            }
-          });
-        }
-        // 修改节点
-        if (this.radio === "5") {
-          this.displayOneNode(node);
-          this.$prompt("请输入新的节点名", "修改", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消"
-            })
-            .then(({
-              value
-            }) => {
-              if (value) {
-                this.$message({
-                  type: "success",
-                  message: "修改成功"
+          // 增加节点
+          if (_this.radio === "2") {
+            _this.displayOneNode(node);
+            let newNode = {
+              id: ++_this.id,
+              name: "new",
+              type: "node"
+            };
+            _this.links.push({
+              sid: node.id,
+              tid: newNode.id
+            });
+            _this.nodes.push(newNode);
+          }
+          // 增加边
+          if (_this.radio === "3") {
+            _this.displayOneNode(node);
+            // 节点的 id 必须唯一且从1开始
+            if (_this.sourceNodeId) {
+              if (node.id !== this.sourceNodeId) {
+                _this.targetNodeId = node.id;
+                _this.links.push({
+                  sid: _this.sourceNodeId,
+                  tid: _this.targetNodeId
                 });
-                node.name = value;
+                _this.sourceNodeId = 0;
+                _this.targetNodeId = 0;
               }
-            })
-            .catch(() => {
-              this.$message({
-                type: "info",
-                message: "取消输入"
-              });
+            } else {
+              _this.sourceNodeId = node.id;
+            }
+          }
+          if (_this.radio === "4") {
+            // 删除
+            var removeList = [];
+            _this.links.forEach(element => {
+              if (node.id == element.sid || node.id == element.tid) {
+                removeList.push(element);
+              }
             });
-        }
+
+            removeList.forEach(element => {
+              _this.links.remove(element);
+            });
+
+            _this.nodes.forEach(element => {
+              if (node.id == element.id) {
+                _this.nodes.remove(element);
+              }
+            });
+          }
+          // 修改节点
+          if (_this.radio === "5") {
+            _this.displayOneNode(node);
+            _this.$prompt("请输入新的节点名", "修改", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消"
+              })
+              .then(({
+                value
+              }) => {
+                if (value) {
+                  _this.$message({
+                    type: "success",
+                    message: "修改成功"
+                  });
+                  node.name = value;
+                }
+              })
+              .catch(() => {
+                _this.$message({
+                  type: "info",
+                  message: "取消输入"
+                });
+              });
+          }
+        },300)
       },
       clickLink(e, link) {
         this.displayOneLink(link);
@@ -407,7 +448,7 @@
         this.allLinkType.forEach((element, index, array) => {
           if (link.type == element) {
             link._linkLabelClass = this.linkStyleList[index];
-            console.log(link)
+            // console.log(link)
           }
         });
         return link;
@@ -417,7 +458,7 @@
           if (node.type == element) {
             node._cssClass = this.styleList[index];
             node._linkLabelClass = this.linkStyleList[index];
-            console.log(node)
+            // console.log(node)
           }
         });
 
@@ -426,7 +467,6 @@
       },
       focusNode(node) {
         this.focusedNode = node;
-        // console.log(this.focusedNode);
         this.displayOneNode(node);
       },
       displayNodeRelation(node) {
@@ -467,6 +507,36 @@
           links: {}
         };
         this.selection.links[link.id] = link;
+      },
+      closeDisplayProps () {
+        let displayProps = document.getElementsByClassName('display-property')[0]
+        displayProps.style.right = '-420px'
+        this.propertyValues = []
+        this.propertyKeys = []
+      },
+      updatePropsHandler () {
+        this.$confirm('确认要修改属性吗', '修改属性', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            let index = this.nodes.indexOf(this.currentNode)
+            var i = 0
+            for (var key in this.currentNode.property) {
+              this.nodes[index].property[key] = this.propertyValues[i++]
+            }
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          })
+          .catch(() => {
+            this.$message({
+              message: '已取消修改属性',
+              type: 'info'
+            })
+          })
       }
     },
     computed: {
@@ -541,9 +611,6 @@
             let element = list[i]
             this.$set(element.attributes[0], 'value', parseFloat(element.attributes[0].value) + 0.5);
           }
-
-
-
         }
         if (ev.preventDefault) {
           /*FF 和 Chrome*/
@@ -554,6 +621,25 @@
 
       addEvent(el, "mousewheel", onMouseWheel);
       addEvent(el, "DOMMouseScroll", onMouseWheel);
+
+      let onDblClick = e => {
+        clearTimeout(timer)
+        var e = e || window.event
+        let property = this.currentNode.property
+        this.propertyKeys = Object.keys(property)
+        for (var key in property) {
+          this.propertyValues.push(property[key])
+        }
+        let displayProps = document.getElementsByClassName('display-property')[0]
+        // console.log(displayProps)
+        displayProps.style.right = '-20px'
+      }
+      
+      //给节点添加双击事件，显示属性
+      let list = document.getElementsByTagName('circle')
+      for(var i = 0; i < list.length; i++){
+        addEvent(list[i], 'dblclick', onDblClick)
+      }
     },
     created() {}
   };
@@ -649,5 +735,16 @@
 
   #m-end-selected {
     fill: coral
+  }
+
+  .display-property {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100%;
+    transition: right linear 0.2s;
+    overflow: auto;
   }
 </style>
