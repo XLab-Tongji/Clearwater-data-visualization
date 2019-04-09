@@ -939,7 +939,7 @@ export default {
 
 #new-graph .nodesMasterNode {
   fill: rgb(8, 113, 241);
-  r: 22;
+  /* r: 22; */
 }
 
 #new-graph .nodesNode {
@@ -960,7 +960,7 @@ export default {
 
 #new-graph .nodesNamespace {
   fill: rgb(1, 189, 252);
-  r: 30;
+  /* r: 30; */
 }
 
 #new-graph .linkManage {
