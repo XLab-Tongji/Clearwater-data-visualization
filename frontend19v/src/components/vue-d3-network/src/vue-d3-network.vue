@@ -428,7 +428,7 @@ export default {
     stroke-linecap round
 
     &:hover
-      stroke $warn
+      // stroke $warn
       stroke-width 5px
 
   .link.selected
