@@ -27,8 +27,8 @@ export default {
   props:['nodes'],
   computed: {
     data () {
-      let data = [{name: 'node', data: []}, {name: 'master node', data: []}, {name: 'pod', data: []},
-                  {name: 'container', data: []}, {name: 'service', data: []}, {name: 'namespace', data: []}]
+      let data = [{name: 'node', data: []}, {name: 'masterNode', data: []}, {name: 'pod', data: []},
+                  {name: 'container', data: []}, {name: 'service', data: []}, {name: 'namespace', data: []}, {name: 'environment', data: []}]
       let nodes = this.nodes
       nodes.forEach(node => {
         data.forEach(ele => {
