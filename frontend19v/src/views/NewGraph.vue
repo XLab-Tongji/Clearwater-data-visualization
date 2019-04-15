@@ -72,7 +72,7 @@
     <!-- 属性卡片 -->
     <el-card class="display-property">
       <div slot="header" class="clearfix">
-        <span>属性</span>
+        <span>{{currentNode.name}}</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayProps">关闭</el-button>
       </div>
       <el-form ref="propsForm" :model="propsForm" label-width="80px" label-position="left">
@@ -161,26 +161,26 @@ export default {
   },
   data() {
     return {
-      id: 16,
+      id: 15,
       radio: "1",
       nodes: [
         {
           id: 1,
-          name: "node-1",
+          name: "node 1",
           type: "node",
           property: { status: "", roles: "", age: 1, version: "" },
           svgSym: nodeIcons.node
         },
         {
           id: 2,
-          name: "master-node",
+          name: "node 2",
           type: "masterNode",
           property: { status: "", roles: "", age: 5, version: "" },
           svgSym: nodeIcons.masterNode
         },
         {
           id: 3,
-          name: "pod-3",
+          name: "operation",
           type: "pod",
           property: {
             namespace: "",
@@ -194,7 +194,7 @@ export default {
         },
         {
           id: 4,
-          name: "pod-4",
+          name: "pod4",
           type: "pod",
           property: {
             namespace: "",
@@ -208,7 +208,7 @@ export default {
        },
         {
           id: 5,
-          name: "container-5",
+          name: "c5",
           type: "container",
           property: {
             port: "",
@@ -229,7 +229,7 @@ export default {
         },
         {
           id: 6,
-          name: "container-6",
+          name: "c6",
           type: "container",
           property: {
             port: "",
@@ -250,7 +250,7 @@ export default {
         },
         {
           id: 7,
-          name: "service-7",
+          name: "s7",
           type: "service",
           property: {
             type: "",
@@ -277,7 +277,7 @@ export default {
         },
         {
           id: 10,
-          name: "service-10",
+          name: "s10",
           type: "service",
           property: {
             type: "",
@@ -290,7 +290,7 @@ export default {
         },
         {
           id: 11,
-          name: "service-11",
+          name: "s11",
           type: "service",
           property: {
             type: "",
@@ -303,151 +303,93 @@ export default {
         },
         {
           id: 12,
-          name: "node-12",
+          name: "n12",
           type: "node",
           property: { status: "ready", roles: "", age: 1, version: "" },
           svgSym: nodeIcons.node
         },
         {
           id: 13,
-          name: "node-13",
+          name: "n13",
           type: "node",
           property: { status: "ok", roles: "", age: 2, version: "" },
           svgSym: nodeIcons.node
         },
         {
           id: 14,
-          name: "node-14-op",
+          name: "n14",
           type: "node",
           property: { status: "", roles: "", age: 0, version: "" },
           svgSym: nodeIcons.node
         },
         {
           id: 15,
-          name: "environment",
+          name: "environment 1",
           type: "environment",
           property: { name: "", dataPort: "", type: "" },
           svgSym: nodeIcons.environment
         },
-        {
-          id: 16,
-          name: "container-16",
-          type: "container",
-          property: {
-            port: "",
-            hostPort: "",
-            command: "",
-            state: "",
-            startedTime: "",
-            ready: "",
-            restartCount: "",
-            environment: "",
-            mounts: "",
-            args: "",
-            lastState: "",
-            liveness: "",
-            readiness: ""
-          },
-          svgSym: nodeIcons.container
-        },
       ],
       links: [
         {
-          sid: 2,
-          tid: 1,
-          name: "manage",
-          type: "manage"
+          id: 1,
+          sid: 1,
+          tid: 2,
+          name: "contains",
+          type: "contains"
         },
         {
           sid: 2,
-          tid: 12,
-          name: "manage",
-          type: "manage"
-        },
-        {
-          sid: 2,
-          tid: 13,
-          name: "manage",
-          type: "manage"
-        },
-        {
-          sid: 2,
-          tid: 14,
+          tid: 8,
           name: "manage",
           type: "manage"
         },
         {
           sid: 3,
-          tid: 1,
+          tid: 4,
+          _svgAttrs: {
+            "stroke-width": 8,
+            opacity: 1
+          },
           name: "deployed-in",
           type: "deployed-in"
         },
         {
           sid: 4,
-          tid: 1,
-          name: "deployed-in",
-          type: "deployed-in"
-        },
-        {
-          sid: 3,
           tid: 5,
-          name: "contains",
-          type: "contains"
+          name: "provides",
+          type: "provides"
         },
         {
-          sid: 3,
-          tid: 16,
-          name: "contains",
-          type: "contains"
-        },
-        {
-          sid: 4,
+          sid: 5,
           tid: 6,
           name: "contains",
           type: "contains"
         },
         {
-          sid: 4,
-          tid: 16,
-          name: "contains",
-          type: "contains"
-        },
-        {
-          sid: 4,
-          tid: 7,
+          sid: 7,
+          tid: 8,
           name: "provides",
           type: "provides"
         },
         {
-          sid: 4,
-          tid: 10,
-          name: "provides",
-          type: "provides"
+          sid: 5,
+          tid: 8,
+          name: "manage",
+          type: "manage"
         },
         {
           sid: 3,
-          tid: 11,
-          name: "provides",
-          type: "provides"
+          tid: 8,
+          name: "manage",
+          type: "manage"
         },
         {
-          sid: 8,
+          sid: 7,
           tid: 9,
-          name: "supervises",
-          type: "supervises"
-        },
-        {
-          sid: 15,
-          tid: 1,
-          name: "has",
-          type: "has"
-        },
-        {
-          sid: 15,
-          tid: 1,
-          name: "has",
-          type: "has"
-        },
+          name: "manage",
+          type: "manage"
+        }
       ],
       selection: {
         links: {},
@@ -570,7 +512,7 @@ export default {
             _this.notify.close();
           }
           // 有「操作」的结点弹出框
-          if (node.id === 14) {
+          if (node.id === 3) {
             // 弹出操作框 只能插入 html 片段 不能操作 dom
             // 暂时这么写吧 。。感觉之后都不能实现。。。
             _this.notify = _this.$notify({
@@ -589,6 +531,8 @@ export default {
           let typeCard = document.querySelector(".display-type-selection");
           typeCard.style.right = "-20px";
           _this.oldNode = node;
+
+          _this.addDblClickEvent()
         }
         // 增加边
         if (_this.radio === "3") {
@@ -651,7 +595,7 @@ export default {
               });
             });
         }
-      }, 200);
+      }, 300);
     },
     clickLink(e, link) {
       this.displayOneLink(link);
@@ -896,7 +840,7 @@ export default {
       // 新节点的 id 已经自增过了 这里不必增加
       this.nodes.push({
         id: this.id,
-        name: this.newNodeName?this.newNodeName:newNodeType + '-' + this.id,
+        name: this.newNodeName,
         type: newNodeType,
         property: property,
         svgSym: svgSym
@@ -912,6 +856,24 @@ export default {
         type: 'success'
       })
       this.closeDisplayTypeCard()
+    },
+    addDblClickEvent () {
+      let onDblClick = e => {
+        clearTimeout(timer);
+        var e = e || window.event;
+        let property = this.currentNode.property;
+        this.propertyKeys = Object.keys(property);
+        for (var key in property) {
+          this.propertyValues.push(property[key]);
+        }
+        let displayProps = document.getElementsByClassName("display-property")[0];
+        // console.log(displayProps)
+        displayProps.style.right = "-20px";
+      };
+      let list = document.getElementsByTagName("circle");
+      for (var i = 0; i < list.length; i++) {
+        addEvent(list[i], "dblclick", onDblClick)
+      }
     }
   },
   computed: {
@@ -1005,24 +967,8 @@ export default {
     addEvent(el, "mousewheel", onMouseWheel);
     addEvent(el, "DOMMouseScroll", onMouseWheel);
 
-    let onDblClick = e => {
-      clearTimeout(timer);
-      var e = e || window.event;
-      let property = this.currentNode.property;
-      this.propertyKeys = Object.keys(property);
-      for (var key in property) {
-        this.propertyValues.push(property[key]);
-      }
-      let displayProps = document.getElementsByClassName("display-property")[0];
-      // console.log(displayProps)
-      displayProps.style.right = "-20px";
-    };
-
     //给节点添加双击事件，显示属性
-    let list = document.getElementsByTagName("circle");
-    for (var i = 0; i < list.length; i++) {
-      addEvent(list[i], "dblclick", onDblClick);
-    }
+    this.addDblClickEvent()
   },
   created() {}
 };
@@ -1093,8 +1039,7 @@ export default {
 
 #new-graph .linkManage {
   /* color: rgb(8, 113, 241); */
-  /* fill: rgb(1, 1, 77); */
-  fill:gray;
+  fill: rgb(1, 1, 77);
   text-anchor: middle;
 }
 
