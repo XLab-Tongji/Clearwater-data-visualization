@@ -205,7 +205,7 @@ export default {
             status: ""
           },
           svgSym: nodeIcons.pod
-       },
+        },
         {
           id: 5,
           name: "container-5",
@@ -476,9 +476,13 @@ export default {
         "container",
         "service",
         "namespace",
-        "environment"
+        "environment",
+        "serviceAttribute",
+        "databaseAttribute",
+        "networkAttribute",
+        "storeAttrribute"
       ],
-      allLinkType: ["manage", "deployed-in", "provides", "contains", "supervises", "has"],
+      allLinkType: ["manage", "deployed-in", "provides", "contains", "supervises", "has", "profile"],
       styleList: [
         "nodesMasterNode",
         "nodesNode",
