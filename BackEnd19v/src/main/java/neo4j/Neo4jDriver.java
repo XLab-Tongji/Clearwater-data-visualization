@@ -1386,6 +1386,7 @@ public class Neo4jDriver {
 
 
 
+
     /**
      * this semester below
      */
@@ -1783,7 +1784,8 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static void getAllNodesAndLinks(){
+    public static Map<String, Object> getAllNodesAndLinks(){
+        Map<String, Object> final_list = new HashMap<>();
         List<Map<String, Object>> result = new ArrayList<>();
         List<Map<String, Object>> linkList = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
@@ -1826,6 +1828,11 @@ public class Neo4jDriver {
         }catch (Exception e){
             e.printStackTrace();
         }
+//        System.out.println(result);
+//        System.out.println(linkList);
+        final_list.put("nodeList", result);
+        final_list.put("linkList", linkList);
+        return final_list;
     }
 
     public static Map<String, Object> getNode(String urlNode){
@@ -2078,27 +2085,6 @@ public class Neo4jDriver {
     }
 
 
-    public static boolean temp() {
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-
-        Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
-                "  ?s ?p ?o \n" +
-                "}");
-        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-            QueryExecution qExec = conn.query(query);
-            ResultSet rs = qExec.execSelect();
-            while (rs.hasNext()) {
-                QuerySolution qs = rs.next();
-                String subject = qs.get("s").toString();
-                if (subject.contains("http"))
-                    System.out.println("Subject: " + subject);
-            }
-        }
-        return true;
-    }
-
-
     public static void main(String[] args) {
 //        storeNamespace();
 //        storeNodeName();
@@ -2106,7 +2092,6 @@ public class Neo4jDriver {
 //        storePodName("sock-shop");
 //        podToService("10.60.38.181","sock-shop");
 //        podToNode("10.60.38.181","sock-shop");
-        getAllNodesAndLinks();
-//        temp();
+        Map<String, Object> result = getAllNodesAndLinks();
     }
 }

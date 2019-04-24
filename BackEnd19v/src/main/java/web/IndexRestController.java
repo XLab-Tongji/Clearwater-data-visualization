@@ -439,6 +439,10 @@ public class IndexRestController {
         return storeServiceName(serviceName);
     }
 
+    @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> getNodesAndLinks(){
+        return getAllNodesAndLinks();
+    }
 
 
 }
