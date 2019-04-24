@@ -601,6 +601,9 @@ export default {
             x.svgSym = nodeIcons[x.type]
           })
           this.links = response.data.linkList;
+          this.$nextTick(() => {
+            this.addDblClickEvent()
+          })
         })
         .catch(function(error) {
           // handle error
@@ -1071,7 +1074,6 @@ export default {
         let displayProps = document.getElementsByClassName(
           "display-property"
         )[0];
-        // console.log(displayProps)
         displayProps.style.right = "-20px";
       };
       let list = document.getElementsByTagName("circle");
@@ -1170,9 +1172,6 @@ export default {
 
     addEvent(el, "mousewheel", onMouseWheel);
     addEvent(el, "DOMMouseScroll", onMouseWheel);
-
-    //给节点添加双击事件，显示属性
-    this.addDblClickEvent();
   }
 };
 </script>
