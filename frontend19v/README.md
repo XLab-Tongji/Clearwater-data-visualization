@@ -1,5 +1,30 @@
 # frontend18v
 
+4.26 - 4.30
+
+- [ ] 选中聚焦放大
+
+- [ ] 点击空白处取消高亮
+
+- [ ] 某些展示信息错误更正
+
+- [x] 关系线上的文字 hover 时才显示
+
+- [ ] 界面上刚开始的时候只有一个 environment 节点，填写信息展示 KG
+
+- [ ] 前端增删改的实现，注意和后端连通
+
+- [ ] 界面右下角操作图表，鼠标在 hover 上去的时候给出相应的操作的名字
+
+---
+
+- [ ] 展示属性的时候，在信息框最开始节点名旁边加上其节点类别信息
+
+- [ ] 左边树状结构的“node”一词改一下，不要和传统的节点相混合
+
+- [ ] 前端查询的实现
+
+
 ## Project setup
 ```
 npm install
@@ -55,3 +80,4 @@ sudo docker pull {dockerhub-username}/frontend
 ```
 sudo docker run -p 9998:8080 -d {dockerhub-username}/frontend
 ```
+
