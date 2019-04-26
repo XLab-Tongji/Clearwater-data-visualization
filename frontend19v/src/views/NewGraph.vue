@@ -32,18 +32,20 @@
       </defs>
     </svg>
     <!-- 节点和关系图 -->
-    <d3-network
-      ref="net"
-      :net-nodes="nodes"
-      :net-links="links"
-      :options="options"
-      :selection="selection"
-      @node-click="clickNode"
-      @link-click="clickLink"
-      class="noselect"
-      :link-cb="lcb"
-      :node-cb="ncb"
-    />
+    <div @mouseover="showLinkLabel">
+      <d3-network
+        ref="net"
+        :net-nodes="nodes"
+        :net-links="links"
+        :options="options"
+        :selection="selection"
+        @node-click="clickNode"
+        @link-click="clickLink"
+        class="noselect"
+        :link-cb="lcb"
+        :node-cb="ncb"
+      />
+    </div>
     <!-- 右下角的对节点进行操作的 button -->
     <div id="button-group">
       <el-radio-group v-model="radio">
@@ -117,6 +119,7 @@
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
 import axios from "axios";
+import { setTimeout } from 'timers';
 
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -180,7 +183,6 @@ export default {
   },
   data() {
     return {
-      id: 16,
       radio: "1",
       nodes: [],
       links: [],
@@ -595,15 +597,15 @@ export default {
     getData() {
       axios
         .get("/response.json")
-        .then( (response) => {
+        .then(response => {
           this.nodes = response.data.nodeList;
-          response.data.nodeList.map((x) => {
-            x.svgSym = nodeIcons[x.type]
-          })
+          response.data.nodeList.map(x => {
+            x.svgSym = nodeIcons[x.type];
+          });
           this.links = response.data.linkList;
           this.$nextTick(() => {
-            this.addDblClickEvent()
-          })
+            this.addDblClickEvent();
+          });
         })
         .catch(function(error) {
           // handle error
@@ -1028,6 +1030,18 @@ export default {
           }
           break;
         }
+        default: {
+          this.addNewNode(
+            ++this.id,
+            this.oldNode.id,
+            "",
+            "",
+            this.oldNode.type,
+            this.properties[this.oldNode.type],
+            nodeIcons[this.oldNode.type]
+          );
+          break;
+        }
       }
     },
     illegalRelation(newNodeType, oldNodeType) {
@@ -1080,9 +1094,38 @@ export default {
       for (var i = 0; i < list.length; i++) {
         addEvent(list[i], "dblclick", onDblClick);
       }
+    },
+    // 功能：hover 上 link 后显示 label
+    // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，
+    //      通过 id 搜索到 label，改变 label 的字体大小
+    showLinkLabel(e) {
+      if (e.target.id.indexOf("link") != -1) {
+        let linkid = e.target.id
+        // console.log(document.querySelectorAll('[*|href]:not([href])'))
+        let labels = document.querySelectorAll('[*|href]:not([href])')
+        for (let label of labels) {
+          // console.log(label)
+          if (label.href.animVal.indexOf(linkid) != -1) {
+            // console.log(label)
+            // console.log(label.href.animVal)
+            // console.log(linkid)
+            // console.log(label.innerHTML)
+            // label.attr('font-size', '20px');
+            label.setAttribute('style', 'font-size:15px;')
+            setTimeout(() => {
+              label.setAttribute('style', 'font-size:0px;')
+            }, 1000);
+            break;
+          }
+        }
+      }
     }
   },
   computed: {
+    // 节点数量
+    id() {
+      return this.nodes.length;
+    },
     options() {
       return {
         force: this.force,

@@ -429,7 +429,7 @@ export default {
 
     &:hover
       // stroke $warn
-      stroke-width 5px
+      // stroke-width 8px
 
   .link.selected
     stroke alpha($color2, 0.6)
@@ -441,7 +441,9 @@ export default {
     fill $dark
 
   .link-label
-    fill $dark
-    transform translate(0, -0.5em)
+    // fill $warn
+    // opacity 0
+    font-size 0
+    // transform translate(10px, 10px)
     text-anchor middle
 </style>
