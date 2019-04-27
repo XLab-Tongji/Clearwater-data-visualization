@@ -1674,7 +1674,7 @@ public class Neo4jDriver {
                     resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
 
                     Model modelContainerStorage = ModelFactory.createDefaultModel();
-                    String nameStorage = names+"/storage";
+                    String nameStorage = names+"/containerStorage";
                     Resource resourceStorage = modelContainerStorage.createResource(nameStorage);
                     resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_io_current"),"");
                     resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_usage_bytes"),"");
@@ -1683,7 +1683,7 @@ public class Neo4jDriver {
                     resourceContainer.addProperty(modelContainer.createProperty(names,"storge"),resourceStorage);
 
                     Model modelContainerNetwork = ModelFactory.createDefaultModel();
-                    String nameNetwork = names+"/network";
+                    String nameNetwork = names+"/containerNetwork";
                     Resource resourceNetwork = modelContainerNetwork.createResource(nameNetwork);
                     resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_receive_bytes"),"");
                     resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_transmit_bytes"),"");
@@ -1755,15 +1755,15 @@ public class Neo4jDriver {
 
                     if (!((String) jMetaData.get("name")).contains("db")){
                         Model modelService = ModelFactory.createDefaultModel();
-                        String nameService = names+"/service";
+                        String nameService = names+"/serviceProfile";
                         Resource resourceService = modelService.createResource(nameService);
                         resourceService.addProperty(modelService.createProperty(nameService,"response_time"),"");
                         resourceService.addProperty(modelService.createProperty(nameService,"success_rate"),"");
-                        resource.addProperty(model.createProperty(names,"service"),resourceService);
+                        resource.addProperty(model.createProperty(names,"attr"),resourceService);
                         DataAccessor.getInstance().add(modelService);
                     }else{
                         Model modelDatabase = ModelFactory.createDefaultModel();
-                        String nameDatabase = names+"/database";
+                        String nameDatabase = names+"/serviceDatabase";
                         Resource resourceDatabase = modelDatabase.createResource(nameDatabase);
                         resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"throughput"),"");
                         resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"response_time"),"");
@@ -1923,7 +1923,13 @@ public class Neo4jDriver {
                         linkList.addAll(getNamespaceLink(subject));
                     }
                     else if(subject.contains("service")){
-                        result.add(getService(subject));
+                        if (subject.contains("serviceProfile")){
+
+                        }else if (subject.contains("serviceNetwork")){
+
+                        }else{
+                            result.add(getService(subject));
+                        }
                     }
                     else if(subject.contains("pods")){
                         result.add(getPod(subject));
@@ -1932,7 +1938,14 @@ public class Neo4jDriver {
                         linkList.addAll(getProvideLink(subject));
                     }
                     else if(subject.contains("containers")){
-                        result.add(getContainer(subject));
+                        if (subject.contains("containerStorage")){
+
+                        }else if (subject.contains("containerNetwork")){
+
+                        }else{
+                            result.add(getContainer(subject));
+                        }
+
                     }
                 }
             }
