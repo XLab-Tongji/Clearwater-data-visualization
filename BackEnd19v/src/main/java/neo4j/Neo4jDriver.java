@@ -1578,7 +1578,7 @@ public class Neo4jDriver {
         // save master url
         String urlMasterNode = "http://nodes/"+address+"/"+masterName;
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         // execute query, get all nodes
         Query query = QueryFactory.create("SELECT ?p ?o " +
                 "WHERE { <http://backup/"+address+"> ?p ?o }");
@@ -1598,7 +1598,7 @@ public class Neo4jDriver {
                             "<"+urlMasterNode+"> j0:master "+"<"+urlNode+">\n" +
                             "}";
                     RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                            .destination("http://localhost:3030/experiment/update");
+                            .destination("http://10.60.38.181:30300/DevKGData/update");
 
                     try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                         connAddRelation.update(addRelation);
@@ -1676,18 +1676,18 @@ public class Neo4jDriver {
                     Model modelContainerStorage = ModelFactory.createDefaultModel();
                     String nameStorage = names+"/containerStorage";
                     Resource resourceStorage = modelContainerStorage.createResource(nameStorage);
-                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_io_current"),"");
-                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_usage_bytes"),"");
-                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_reads_bytes_total"),"");
-                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_writes_bytes_total"),"");
-                    resourceContainer.addProperty(modelContainer.createProperty(names,"profile"),resourceStorage);
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"/container_fs_io_current"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"/container_fs_usage_bytes"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"/container_fs_reads_bytes_total"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"/container_fs_writes_bytes_total"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceStorage);
 
                     Model modelContainerNetwork = ModelFactory.createDefaultModel();
                     String nameNetwork = names+"/containerNetwork";
                     Resource resourceNetwork = modelContainerNetwork.createResource(nameNetwork);
-                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_receive_bytes"),"");
-                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_transmit_bytes"),"");
-                    resourceContainer.addProperty(modelContainer.createProperty(names,"profile"),resourceNetwork);
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"/network_receive_bytes"),"");
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"/network_transmit_bytes"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceNetwork);
 
                     //以上CONTAINER信息完整
                     //以下添加关系
@@ -1757,17 +1757,17 @@ public class Neo4jDriver {
                         Model modelService = ModelFactory.createDefaultModel();
                         String nameService = names+"/serviceProfile";
                         Resource resourceService = modelService.createResource(nameService);
-                        resourceService.addProperty(modelService.createProperty(nameService,"response_time"),"");
-                        resourceService.addProperty(modelService.createProperty(nameService,"success_rate"),"");
-                        resource.addProperty(model.createProperty(names,"profile"),resourceService);
+                        resourceService.addProperty(modelService.createProperty(nameService,"/response_time"),"");
+                        resourceService.addProperty(modelService.createProperty(nameService,"/success_rate"),"");
+                        resource.addProperty(model.createProperty(names,"/profile"),resourceService);
                         DataAccessor.getInstance().add(modelService);
                     }else{
                         Model modelDatabase = ModelFactory.createDefaultModel();
                         String nameDatabase = names+"/serviceDatabase";
                         Resource resourceDatabase = modelDatabase.createResource(nameDatabase);
-                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"throughput"),"");
-                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"response_time"),"");
-                        resource.addProperty(model.createProperty(names,"profile"),resourceDatabase);
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"/throughput"),"");
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"/response_time"),"");
+                        resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase);
                         DataAccessor.getInstance().add(modelDatabase);
                     }
                 } catch (NullPointerException e) {
@@ -1783,7 +1783,7 @@ public class Neo4jDriver {
     public static boolean podToService(String address, String namespace) {
         String urlPod = "http://pods/" + address + "/" + namespace + "/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<" + urlPod + ">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -1819,7 +1819,7 @@ public class Neo4jDriver {
                                 "<" + urlPod + temp + ">  j0:provides " + "<" + urlService + ">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://localhost:3030/experiment/update");
+                                .destination("http://10.60.38.181:30300/DevKGData/update");
 
                         try (RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki) builderAddRelation.build()) {
                             connAddRelation.update(addRelation);
@@ -1841,7 +1841,7 @@ public class Neo4jDriver {
     public static boolean podToNode(String address,String namespace){
         String urlPod = "http://pods/"+address+"/"+namespace+"/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<"+urlPod+">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -1877,7 +1877,7 @@ public class Neo4jDriver {
                                 "<"+urlPod+subject+">  j0:deployed_in "+"<"+urlNode+">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://localhost:3030/experiment/update");
+                                .destination("http://10.60.38.181:30300/DevKGData/update");
 
                         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                             connAddRelation.update(addRelation);
@@ -1901,7 +1901,7 @@ public class Neo4jDriver {
         List<Map<String, Object>> result = new ArrayList<>();
         List<Map<String, Object>> linkList = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
 
         Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
                 "\t?s ?p ?o\n" +
@@ -1966,7 +1966,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "namespace");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -1997,7 +1997,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "node");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2033,7 +2033,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "service");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2076,7 +2076,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "serviceProfile");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2110,7 +2110,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "serviceNetwork");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2141,7 +2141,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "pod");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2190,7 +2190,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "container");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2233,7 +2233,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "containerStorage");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2273,7 +2273,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "containerNetwork");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2303,7 +2303,7 @@ public class Neo4jDriver {
     public static List<Map<String, Object>> getLink(String url, String linkType){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
+                .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
                 "\t?s <"+url+"/"+linkType+"> ?o\n" +
                 "}");
@@ -2340,13 +2340,13 @@ public class Neo4jDriver {
 
 
     public static void main(String[] args) {
-//        storeNamespaceName();
-//        storeNodeName();
-//        storeMasterNode("192.168.199.191");
-//        storeServiceName("sock-shop");
-//        storePodName("sock-shop");
-//        podToService("10.60.38.181","sock-shop");
-//        podToNode("10.60.38.181","sock-shop");
+        storeNamespaceName();
+        storeNodeName();
+        storeMasterNode("192.168.199.191");
+        storeServiceName("sock-shop");
+        storePodName("sock-shop");
+        podToService("10.60.38.181","sock-shop");
+        podToNode("10.60.38.181","sock-shop");
 //        Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
     }
