@@ -1879,7 +1879,6 @@ public class Neo4jDriver {
                     System.out.println("Subject: " + subject);
                     if(subject.contains("nodes")){
                         result.add(getNode(subject));
-//                        System.out.println(result);
                         linkList.addAll(getMasterLink(subject));
                     }
                     else if(subject.contains("namespace")){
