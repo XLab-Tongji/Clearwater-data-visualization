@@ -2326,19 +2326,6 @@ public class Neo4jDriver {
         return list;
     }
 
-    public static boolean delete() {
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/update");
-
-        String addRelation = "DELETE WHERE { ?s ?p ?o .}";
-
-        try (RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki) builder.build()) {
-            connAddRelation.update(addRelation);
-        }
-        return true;
-    }
-
-
     public static void main(String[] args) {
         storeNamespaceName();
         storeNodeName();
