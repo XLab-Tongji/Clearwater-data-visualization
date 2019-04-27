@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <groupId>com.shine.spring4x</groupId>
     <artifactId>project</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -304,11 +304,23 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>neo4j.Neo4jDriver</mainClass>
                                 </transformer>
                             </transformers>
+
                         </configuration>
                     </execution>
                 </executions>
@@ -345,10 +357,10 @@
             <artifactId>tomcat7-maven-plugin</artifactId>
             <version>2.2</version>
             <configuration>
-                <url>http://47.101.148.55:8080/manager/text</url>
+                <url>http://10.60.38.173:9990/manager/text</url>
                 <username>admin</username>
                 <password>admin</password>
-                <path>/jun</path>
+                <path>/bbs</path>
             </configuration>
         </plugin>
             <!--dockerfile-->
