@@ -1916,11 +1916,11 @@ public class Neo4jDriver {
                     System.out.println("Subject: " + subject);
                     if(subject.contains("nodes")){
                         result.add(getNode(subject));
-                        linkList.addAll(getMasterLink(subject));
+                        linkList.addAll(getLink(subject, "master"));
                     }
                     else if(subject.contains("namespace")){
                         result.add(getNamespace(subject));
-                        linkList.addAll(getNamespaceLink(subject));
+                        linkList.addAll(getLink(subject, "supervises"));
                     }
                     else if(subject.contains("service")){
                         if (subject.contains("serviceProfile")){
@@ -1929,13 +1929,14 @@ public class Neo4jDriver {
                             result.add(getServiceNetwork(subject));
                         }else{
                             result.add(getService(subject));
+                            linkList.addAll(getLink(subject, "profile"));
                         }
                     }
                     else if(subject.contains("pods")){
                         result.add(getPod(subject));
-                        linkList.addAll(getDeployLink(subject));
-                        linkList.addAll(getContainLink(subject));
-                        linkList.addAll(getProvideLink(subject));
+                        linkList.addAll(getLink(subject, "deployed_in"));
+                        linkList.addAll(getLink(subject, "contains"));
+                        linkList.addAll(getLink(subject, "provides"));
                     }
                     else if(subject.contains("containers")){
                         if (subject.contains("containerStorage")){
@@ -1944,8 +1945,8 @@ public class Neo4jDriver {
                             result.add(getContainerNetwork(subject));
                         }else{
                             result.add(getContainer(subject));
+                            linkList.addAll(getLink(subject, "profile"));
                         }
-
                     }
                 }
             }
@@ -2299,62 +2300,12 @@ public class Neo4jDriver {
         return node;
     }
 
-    public static List<Map<String, Object>> getNamespaceLink(String url){
+    public static List<Map<String, Object>> getLink(String url, String linkType){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                 .destination("http://localhost:3030/experiment/query");
         Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/supervises> ?o." +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                Map<String, Object> link = new HashMap<>();
-                QuerySolution q = rs.next() ;
-                link.put("sid", q.get("s").toString());
-                link.put("tid", q.get("o").toString());
-                link.put("name", "supervises");
-                link.put("type", "supervises");
-                list.add(link);
-            }
-            qE.close();
-        }
-        System.out.println(list);
-        return list;
-    }
-
-    public static List<Map<String, Object>> getMasterLink(String url){
-        List<Map<String, Object>> list = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/master> ?o\n" +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                Map<String, Object> link = new HashMap<>();
-                QuerySolution q = rs.next() ;
-                link.put("sid", q.get("s").toString());
-                link.put("tid", q.get("o").toString());
-                link.put("name", "master");
-                link.put("type", "master");
-                list.add(link);
-            }
-            qE.close();
-        }
-        System.out.println(list);
-        return list;
-    }
-
-    public static List<Map<String, Object>> getDeployLink(String url){
-        List<Map<String, Object>> list = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/deployed_in> ?o\n" +
+                "\t?s <"+url+"/"+linkType+"> ?o\n" +
                 "}");
         try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
 
@@ -2365,60 +2316,8 @@ public class Neo4jDriver {
                 QuerySolution q = rs.next() ;
                 link.put("sid", q.get("s").toString());
                 link.put("tid", q.get("o").toString());
-                link.put("name", "deployed_in");
-                link.put("type", "deployed_in");
-                list.add(link);
-            }
-            qE.close();
-        }
-        System.out.println(list);
-        return list;
-    }
-
-    public static List<Map<String, Object>> getContainLink(String url){
-        List<Map<String, Object>> list = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/contains> ?o\n" +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                Map<String, Object> link = new HashMap<>();
-                QuerySolution q = rs.next() ;
-                link.put("sid", q.get("s").toString());
-                link.put("tid", q.get("o").toString());
-                link.put("name", "contains");
-                link.put("type", "contains");
-                list.add(link);
-            }
-            qE.close();
-        }
-        System.out.println(list);
-        return list;
-    }
-
-    public static List<Map<String, Object>> getProvideLink(String url){
-        List<Map<String, Object>> list = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/provides> ?o\n" +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                Map<String, Object> link = new HashMap<>();
-                QuerySolution q = rs.next() ;
-                link.put("sid", q.get("s").toString());
-                link.put("tid", q.get("o").toString());
-                link.put("name", "provides");
-                link.put("type", "provides");
+                link.put("name", linkType);
+                link.put("type", linkType);
                 list.add(link);
             }
             qE.close();
@@ -2441,7 +2340,6 @@ public class Neo4jDriver {
 
 
     public static void main(String[] args) {
-//        storeNamespace();
 //        storeNamespaceName();
 //        storeNodeName();
 //        storeMasterNode("192.168.199.191");
@@ -2449,7 +2347,7 @@ public class Neo4jDriver {
 //        storePodName("sock-shop");
 //        podToService("10.60.38.181","sock-shop");
 //        podToNode("10.60.38.181","sock-shop");
-        Map<String, Object> result = getAllNodesAndLinks();
-        System.out.println(result);
+//        Map<String, Object> result = getAllNodesAndLinks();
+//        System.out.println(result);
     }
 }
