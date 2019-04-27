@@ -783,6 +783,9 @@ export default {
     },
     focusNode(node) {
       this.focusedNode = node;
+      // 定位
+      this.focusNodePosition(node)
+      // 高亮
       this.displayOneNode(node);
     },
     displayNodeRelation(node) {
@@ -811,6 +814,13 @@ export default {
           }
         }
       }
+    },
+    focusNodePosition(node) {
+      let netSvg = document.getElementsByClassName('net-svg')[0]
+      console.log(document.getElementsByClassName('net-svg'))
+      // offset 是与中心的偏差 是一个相对值
+      this.offset_X += netSvg.scrollWidth / 2 - node.x
+      this.offset_Y += netSvg.scrollHeight / 2 - node.y - 150
     },
     displayOneNode(node) {
       this.selection = {
@@ -1130,7 +1140,8 @@ export default {
       return {
         force: this.force,
         size: {
-          h: 700
+          h: 800,
+          // w: 1200
         },
         offset: {
           x: this.offset_X,
