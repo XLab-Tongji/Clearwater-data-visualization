@@ -1671,10 +1671,27 @@ public class Neo4jDriver {
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/ports"),
                             modelContainer.createResource().addProperty(modelContainer.createProperty(names,"/ports/curstate"),(String)jContainerStatus.getJSONObject("state").keySet().toArray()[0])
                                     .addProperty(modelContainer.createProperty(names,"/ports/startedAt"),(String)jContainerStatus.getJSONObject("state").getJSONObject((String)jContainerStatus.getJSONObject("state").keySet().toArray()[0]).get("startedAt")));
+                    resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
+
+                    Model modelContainerStorage = ModelFactory.createDefaultModel();
+                    String nameStorage = names+"/storage";
+                    Resource resourceStorage = modelContainerStorage.createResource(nameStorage);
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_io_current"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_usage_bytes"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_reads_bytes_total"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_writes_bytes_total"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"storge"),resourceStorage);
+
+                    Model modelContainerNetwork = ModelFactory.createDefaultModel();
+                    String nameNetwork = names+"/network";
+                    Resource resourceNetwork = modelContainerNetwork.createResource(nameNetwork);
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_receive_bytes"),"");
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_transmit_bytes"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"network"),resourceNetwork);
 
                     //以上CONTAINER信息完整
                     //以下添加关系
-                    resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
+
                     model.write(System.out, "RDF/XML-ABBREV");
                     modelContainer.write(System.out, "RDF/XML-ABBREV");
                     model.write(System.out, "N-TRIPLE");
@@ -1682,6 +1699,8 @@ public class Neo4jDriver {
                     //存储fuseki
                     DataAccessor.getInstance().add(model);
                     DataAccessor.getInstance().add(modelContainer);
+                    DataAccessor.getInstance().add(modelContainerStorage);
+                    DataAccessor.getInstance().add(modelContainerNetwork);
                 }catch (NullPointerException e){
                     e.printStackTrace();
                 }
@@ -1729,10 +1748,28 @@ public class Neo4jDriver {
                             .addProperty(model.createProperty(names,"/ports/protocol"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("protocol"))
                             .addProperty(model.createProperty(names,"/ports/targetPort"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("targetPort").toString()));
                     //存储fuseki
+
                     model.write(System.out, "RDF/XML-ABBREV");
                     DataAccessor.getInstance().add(model);
                     model.write(System.out, "N-TRIPLE");
 
+                    if (!((String) jMetaData.get("name")).contains("db")){
+                        Model modelService = ModelFactory.createDefaultModel();
+                        String nameService = names+"/service";
+                        Resource resourceService = modelService.createResource(nameService);
+                        resourceService.addProperty(modelService.createProperty(nameService,"response_time"),"");
+                        resourceService.addProperty(modelService.createProperty(nameService,"success_rate"),"");
+                        resource.addProperty(model.createProperty(names,"service"),resourceService);
+                        DataAccessor.getInstance().add(modelService);
+                    }else{
+                        Model modelDatabase = ModelFactory.createDefaultModel();
+                        String nameDatabase = names+"/database";
+                        Resource resourceDatabase = modelDatabase.createResource(nameDatabase);
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"throughput"),"");
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"response_time"),"");
+                        resource.addProperty(model.createProperty(names,"database"),resourceDatabase);
+                        DataAccessor.getInstance().add(modelDatabase);
+                    }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -1883,24 +1920,19 @@ public class Neo4jDriver {
                     }
                     else if(subject.contains("namespace")){
                         result.add(getNamespace(subject));
-//                        System.out.println(result);
                         linkList.addAll(getNamespaceLink(subject));
                     }
                     else if(subject.contains("service")){
                         result.add(getService(subject));
-//                        System.out.println(result);
                     }
                     else if(subject.contains("pods")){
                         result.add(getPod(subject));
-//                        System.out.println(result);
                         linkList.addAll(getDeployLink(subject));
                         linkList.addAll(getContainLink(subject));
                         linkList.addAll(getProvideLink(subject));
-//                        System.out.println(linkList);
                     }
                     else if(subject.contains("containers")){
                         result.add(getContainer(subject));
-//                        System.out.println(result);
                     }
                 }
             }
@@ -1908,8 +1940,6 @@ public class Neo4jDriver {
         }catch (Exception e){
             e.printStackTrace();
         }
-//        System.out.println(result);
-//        System.out.println(linkList);
         final_list.put("nodeList", result);
         final_list.put("linkList", linkList);
         return final_list;
