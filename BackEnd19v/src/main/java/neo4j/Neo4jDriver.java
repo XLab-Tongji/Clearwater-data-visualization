@@ -1451,38 +1451,6 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static boolean storeNamespaceName(){
-        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
-        try {
-            // get address string
-            String jsonString = getData(httpUrl);
-            JSONObject jsonObject = JSONObject.parseObject(jsonString);
-            String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
-            try {
-                // create model
-                Model model = ModelFactory.createDefaultModel();
-                // namespace string
-                String np1 = "http://namespace/"+address+"/monitoring";
-                String np2 = "http://namespace/"+address+"/sock-shop";
-                Resource res = model.createResource(np1);
-                Resource resource = model.createResource(np2);
-                res.addProperty(model.createProperty(np1+"/name"), "monitoring");
-                resource.addProperty(model.createProperty(np2+"/name"), "sock-shop");
-                res.addProperty(model.createProperty(np1, "/supervises"), resource);
-                //存储fuseki
-                model.write(System.out, "RDF/XML-ABBREV");
-                DataAccessor.getInstance().add(model);
-                model.write(System.out, "N-TRIPLE");
-
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return true;
-    }
-
     public static boolean storeNodeName(){
         String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
         try {
@@ -1671,10 +1639,27 @@ public class Neo4jDriver {
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/ports"),
                             modelContainer.createResource().addProperty(modelContainer.createProperty(names,"/ports/curstate"),(String)jContainerStatus.getJSONObject("state").keySet().toArray()[0])
                                     .addProperty(modelContainer.createProperty(names,"/ports/startedAt"),(String)jContainerStatus.getJSONObject("state").getJSONObject((String)jContainerStatus.getJSONObject("state").keySet().toArray()[0]).get("startedAt")));
+                    resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
+
+                    Model modelContainerStorage = ModelFactory.createDefaultModel();
+                    String nameStorage = names+"/storage";
+                    Resource resourceStorage = modelContainerStorage.createResource(nameStorage);
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_io_current"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_usage_bytes"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_reads_bytes_total"),"");
+                    resourceStorage.addProperty(modelContainerStorage.createProperty(nameStorage,"container_fs_writes_bytes_total"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"storge"),resourceStorage);
+
+                    Model modelContainerNetwork = ModelFactory.createDefaultModel();
+                    String nameNetwork = names+"/network";
+                    Resource resourceNetwork = modelContainerNetwork.createResource(nameNetwork);
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_receive_bytes"),"");
+                    resourceNetwork.addProperty(modelContainerNetwork.createProperty(nameNetwork,"network_transmit_bytes"),"");
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"network"),resourceNetwork);
 
                     //以上CONTAINER信息完整
                     //以下添加关系
-                    resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
+
                     model.write(System.out, "RDF/XML-ABBREV");
                     modelContainer.write(System.out, "RDF/XML-ABBREV");
                     model.write(System.out, "N-TRIPLE");
@@ -1682,6 +1667,8 @@ public class Neo4jDriver {
                     //存储fuseki
                     DataAccessor.getInstance().add(model);
                     DataAccessor.getInstance().add(modelContainer);
+                    DataAccessor.getInstance().add(modelContainerStorage);
+                    DataAccessor.getInstance().add(modelContainerNetwork);
                 }catch (NullPointerException e){
                     e.printStackTrace();
                 }
@@ -1729,10 +1716,28 @@ public class Neo4jDriver {
                             .addProperty(model.createProperty(names,"/ports/protocol"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("protocol"))
                             .addProperty(model.createProperty(names,"/ports/targetPort"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("targetPort").toString()));
                     //存储fuseki
+
                     model.write(System.out, "RDF/XML-ABBREV");
                     DataAccessor.getInstance().add(model);
                     model.write(System.out, "N-TRIPLE");
 
+                    if (!((String) jMetaData.get("name")).contains("db")){
+                        Model modelService = ModelFactory.createDefaultModel();
+                        String nameService = names+"/service";
+                        Resource resourceService = modelService.createResource(nameService);
+                        resourceService.addProperty(modelService.createProperty(nameService,"response_time"),"");
+                        resourceService.addProperty(modelService.createProperty(nameService,"success_rate"),"");
+                        resource.addProperty(model.createProperty(names,"service"),resourceService);
+                        DataAccessor.getInstance().add(modelService);
+                    }else{
+                        Model modelDatabase = ModelFactory.createDefaultModel();
+                        String nameDatabase = names+"/database";
+                        Resource resourceDatabase = modelDatabase.createResource(nameDatabase);
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"throughput"),"");
+                        resourceDatabase.addProperty(modelDatabase.createProperty(nameDatabase,"response_time"),"");
+                        resource.addProperty(model.createProperty(names,"database"),resourceDatabase);
+                        DataAccessor.getInstance().add(modelDatabase);
+                    }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -1882,11 +1887,6 @@ public class Neo4jDriver {
 //                        System.out.println(result);
                         linkList.addAll(getMasterLink(subject));
                     }
-                    else if(subject.contains("namespace")){
-                        result.add(getNamespace(subject));
-//                        System.out.println(result);
-                        linkList.addAll(getNamespaceLink(subject));
-                    }
                     else if(subject.contains("service")){
                         result.add(getService(subject));
 //                        System.out.println(result);
@@ -1914,37 +1914,6 @@ public class Neo4jDriver {
         final_list.put("nodeList", result);
         final_list.put("linkList", linkList);
         return final_list;
-    }
-
-    public static Map<String, Object> getNamespace(String urlNode){
-        String[] l = urlNode.split("/");
-        Map<String, Object> node = new HashMap<>();
-        node.put("id", urlNode);
-        node.put("name", l[l.length-1]);
-        node.put("type", "namespace");
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
-                "\t<"+urlNode+"> ?p ?o\n" +
-                "}");
-        Map<String, Object> pro = new HashMap<>();
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                QuerySolution q = rs.next() ;
-                String[] plist = q.get("p").toString().split("/");
-                String p = plist[plist.length-1];
-                String o = q.get("o").toString();
-                if(p.equals("name")){
-                    pro.put("name", o);
-                }
-            }
-            qE.close();
-        }
-        node.put("property", pro);
-        System.out.println(node);
-        return node;
     }
 
     public static Map<String, Object> getNode(String urlNode){
@@ -2118,31 +2087,6 @@ public class Neo4jDriver {
         return node;
     }
 
-    public static List<Map<String, Object>> getNamespaceLink(String url){
-        List<Map<String, Object>> list = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://localhost:3030/experiment/query");
-        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
-                "\t?s <"+url+"/supervises> ?o." +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-            QueryExecution qE = conn.query(qNode);
-            ResultSet rs = qE.execSelect();
-            while (rs.hasNext()) {
-                Map<String, Object> link = new HashMap<>();
-                QuerySolution q = rs.next() ;
-                link.put("sid", q.get("s").toString());
-                link.put("tid", q.get("o").toString());
-                link.put("name", "supervises");
-                link.put("type", "supervises");
-                list.add(link);
-            }
-            qE.close();
-        }
-        System.out.println(list);
-        return list;
-    }
-
     public static List<Map<String, Object>> getMasterLink(String url){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
@@ -2261,7 +2205,6 @@ public class Neo4jDriver {
 
     public static void main(String[] args) {
 //        storeNamespace();
-//        storeNamespaceName();
 //        storeNodeName();
 //        storeMasterNode("192.168.199.191");
 //        storeServiceName("sock-shop");
