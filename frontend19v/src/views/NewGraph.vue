@@ -49,26 +49,36 @@
     <!-- 右下角的对节点进行操作的 button -->
     <div id="button-group">
       <el-radio-group v-model="radio">
-        <el-radio-button label="1">
-          <!-- 普通点击 -->
-          <i class="el-icon-view"></i>
-        </el-radio-button>
-        <el-radio-button label="2">
-          <!-- 添加节点 -->
-          <i class="el-icon-plus"></i>
-        </el-radio-button>
-        <el-radio-button label="3">
-          <!-- 添加关系 -->
-          <i class="el-icon-share"></i>
-        </el-radio-button>
-        <el-radio-button label="4">
-          <!-- 删除 -->
-          <i class="el-icon-delete"></i>
-        </el-radio-button>
-        <el-radio-button label="5">
-          <!-- 修改 -->
-          <i class="el-icon-edit"></i>
-        </el-radio-button>
+        <!-- 普通点击 -->
+        <el-tooltip class="item" effect="dark" content="查看" placement="top-start">
+          <el-radio-button label="1">
+            <i class="el-icon-view"></i>
+          </el-radio-button>
+        </el-tooltip>
+        <!-- 添加节点 -->
+        <el-tooltip class="item" effect="dark" content="添加节点" placement="top-start">
+          <el-radio-button label="2">
+            <i class="el-icon-plus"></i>
+          </el-radio-button>
+        </el-tooltip>
+        <!-- 添加关系 -->
+        <el-tooltip class="item" effect="dark" content="添加关系" placement="top-start">
+          <el-radio-button label="3">
+            <i class="el-icon-share"></i>
+          </el-radio-button>
+        </el-tooltip>
+        <!-- 删除 -->
+        <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+          <el-radio-button label="4">
+            <i class="el-icon-delete"></i>
+          </el-radio-button>
+        </el-tooltip>
+        <!-- 修改 -->
+        <el-tooltip class="item" effect="dark" content="修改" placement="top-start">
+          <el-radio-button label="5">
+            <i class="el-icon-edit"></i>
+          </el-radio-button>
+        </el-tooltip>
       </el-radio-group>
     </div>
     <!-- 属性卡片 -->
