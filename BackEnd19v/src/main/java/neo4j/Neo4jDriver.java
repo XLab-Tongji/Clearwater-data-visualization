@@ -1419,7 +1419,7 @@ public class Neo4jDriver {
     }
 
     public static boolean storeNamespace() {
-        String httpUrl = "http://10.60.38.173:5525/tool/api/v1.0/get_namespace";
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_namespace";
 
         try {
             String jsonString = getData(httpUrl);
@@ -1538,7 +1538,7 @@ public class Neo4jDriver {
     }
 
     public static boolean storePodName(String podName){
-        String httpUrl = "http://10.60.38.173:5525/tool/api/v1.0/get_pods/"+podName;
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_pods/"+podName;
         try {
             String jsonString = getData(httpUrl);
             JSONObject jsonObject = JSONObject.parseObject(jsonString);
@@ -1619,7 +1619,7 @@ public class Neo4jDriver {
     }
 
     public static boolean storeServiceName(String serviceName){
-        String httpUrl = "http://10.60.38.173:5525/tool/api/v1.0/get_svc/"+serviceName;
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_svc/"+serviceName;
         try {
             String jsonString = getData(httpUrl);
             JSONObject jsonObject = JSONObject.parseObject(jsonString);
