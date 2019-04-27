@@ -1537,6 +1537,49 @@ public class Neo4jDriver {
         return true;
     }
 
+    public static boolean storeMasterNode(String masterName){
+        // get address
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+        String jsonString = getData(httpUrl);
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
+        // save master url
+        String urlMasterNode = "http://nodes/"+address+"/"+masterName;
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://localhost:3030/experiment/query");
+        // execute query, get all nodes
+        Query query = QueryFactory.create("SELECT ?p ?o " +
+                "WHERE { <http://backup/"+address+"> ?p ?o }");
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qExec = conn.query(query) ;
+            ResultSet rs = qExec.execSelect() ;
+            while(rs.hasNext()) {
+                QuerySolution qs = rs.next() ;
+                String subject = qs.get("o").toString();
+                System.out.println("node name: " + subject);
+                // add relations between master and other nodes
+                if(!subject.equals(masterName)){
+                    String urlNode = "http://nodes/"+address+"/"+subject;
+
+                    String addRelation = "PREFIX j0:<"+urlMasterNode+"/>\n" +
+                            "INSERT DATA{\n" +
+                            "<"+urlMasterNode+"> j0:master "+"<"+urlNode+">\n" +
+                            "}";
+                    RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+                            .destination("http://localhost:3030/experiment/update");
+
+                    try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+                        connAddRelation.update(addRelation);
+                    }
+                }
+            }
+            qExec.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public static boolean storePodName(String podName){
         String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_pods/"+podName;
         try {
@@ -1805,6 +1848,7 @@ public class Neo4jDriver {
                     if(subject.contains("nodes")){
                         result.add(getNode(subject));
 //                        System.out.println(result);
+                        linkList.addAll(getMasterLink(subject));
                     }
                     else if(subject.contains("service")){
                         result.add(getService(subject));
@@ -2006,6 +2050,31 @@ public class Neo4jDriver {
         return node;
     }
 
+    public static List<Map<String, Object>> getMasterLink(String url){
+        List<Map<String, Object>> list = new ArrayList<>();
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://localhost:3030/experiment/query");
+        Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
+                "\t?s <"+url+"/master> ?o\n" +
+                "}");
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qE = conn.query(qNode);
+            ResultSet rs = qE.execSelect();
+            while (rs.hasNext()) {
+                Map<String, Object> link = new HashMap<>();
+                QuerySolution q = rs.next() ;
+                link.put("sid", q.get("s").toString());
+                link.put("tid", q.get("o").toString());
+                link.put("name", "master");
+                link.put("type", "master");
+                list.add(link);
+            }
+            qE.close();
+        }
+        System.out.println(list);
+        return list;
+    }
+
     public static List<Map<String, Object>> getDeployLink(String url){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
@@ -2100,10 +2169,12 @@ public class Neo4jDriver {
     public static void main(String[] args) {
 //        storeNamespace();
 //        storeNodeName();
+//        storeMasterNode("192.168.199.191");
 //        storeServiceName("sock-shop");
 //        storePodName("sock-shop");
 //        podToService("10.60.38.181","sock-shop");
 //        podToNode("10.60.38.181","sock-shop");
         Map<String, Object> result = getAllNodesAndLinks();
+        System.out.println(result);
     }
 }
