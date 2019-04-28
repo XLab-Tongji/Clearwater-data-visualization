@@ -782,11 +782,10 @@ export default {
     //     addEvent(list[i], "dblclick", onDblClick);
     //   }
     // },
-    
+    showLinkLabel(e) {
     // 功能：hover 上 link 后显示 label
     // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，
     //      通过 id 搜索到 label，改变 label 的字体大小
-    showLinkLabel(e) {
       if (e.target.id.indexOf("link") != -1) {
         let linkid = e.target.id
         // console.log(document.querySelectorAll('[*|href]:not([href])'))
