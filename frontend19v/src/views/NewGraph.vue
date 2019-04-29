@@ -1,7 +1,7 @@
 <template>
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
-    <search-tree v-on:focusNode="focusNode" :nodes="nodes"></search-tree>
+    <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
     <!-- 箭头 -->
     <svg height="0">
       <defs>
@@ -84,15 +84,17 @@
     <!-- 属性卡片 -->
     <el-card class="display-property">
       <div slot="header" class="clearfix">
-        <span>{{currentNode.name}}</span>
+        <span style="font-weight: bold;font-size:16px;">{{currentNode.name}}</span>
+        <span style="color:#555;">（{{currentNode.type}}）</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayProps">关闭</el-button>
       </div>
-      <el-form ref="propsForm" :model="propsForm" label-width="80px" label-position="left">
+      <el-form ref="propsForm" :model="propsForm" label-position="left">
         <el-form-item v-for="(value, key, index) in currentNode.property" :key="key" :label="key">
           <el-input :placeholder="key" v-model="propertyValues[index]"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain>确定</el-button>
+          <el-button @click="getData" style="width:100%" type="primary" plain v-if="currentNode.type === 'environment'">导入</el-button>
+          <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain v-else>确定</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -206,6 +208,15 @@ export default {
   data() {
     return {
       radio: "1",
+      initialNode: {
+        name: "Environment",
+        id: "http://environment/10.60.38.181/environment",
+        type: "environment",
+        property: {
+          startTime: ""
+        },
+        svgSym: nodeIcons["environment"]
+      },
       nodes: [],
       links: [],
       selection: {
@@ -394,17 +405,20 @@ export default {
     };
   },
   created() {
-    this.getData();
+    this.nodes.push(this.initialNode)
   },
   methods: {
     getData() {
+      this.nodes = []
+      this.nodes.push(this.initialNode)
+      this.links = []
       axios
         .get("http://10.60.38.173:9990/bbs/api/getNodesAndLinks")
         .then(response => {
-          this.nodes = response.data.nodeList;
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
+          this.nodes = this.nodes.concat(response.data.nodeList);
           this.links = response.data.linkList;
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
@@ -417,6 +431,9 @@ export default {
         .then(function() {
           // always executed
         });
+        let displayProps = document.getElementsByClassName("display-property")[0];
+        displayProps.style.right = "-420px";
+        displayProps.style.display = 'none'
     },
     clickNode(e, node) {
       clearTimeout(timer);
@@ -1036,7 +1053,7 @@ export default {
   top: 0;
   right: -420px;
   width: 400px;
-  height: 100%;
+  height: 83%;
   transition: right linear 0.2s;
   overflow: auto;
 }
