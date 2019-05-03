@@ -213,7 +213,7 @@ export default {
         id: "http://environment/10.60.38.181/environment",
         type: "environment",
         property: {
-          startTime: ""
+          name: "", dataPort: "", type: ""
         },
         svgSym: nodeIcons["environment"]
       },
@@ -861,7 +861,7 @@ export default {
         links: {}
       };
       // 如果是双击显示属性面板
-      console.log(e)
+      // console.log(e)
       if (e.detail === 2 && (e.target.localName === 'path' || e.target.localName === 'circle')) {
         let property = this.currentNode.property;
         this.propertyKeys = Object.keys(property);
@@ -900,9 +900,13 @@ export default {
       var down = true; // 定义一个标志，当滚轮向下滚时，执行一些操作
       down = ev.wheelDelta ? ev.wheelDelta < 0 : ev.detail > 0;
       if (down) {
-        this.force = Math.max(0, this.force - 200);
-        this.nodeSize = Math.max(0, this.nodeSize - 1);
-        this.fontSize = Math.max(0, this.fontSize - 0.3);
+         if (this.nodeSize > 33.5) {
+           this.force = Math.max(0, this.force - 80);
+        this.nodeSize = Math.max(0, this.nodeSize - 0.2);
+        // this.linkWidth = Math.max(0, this.linkWidth - 0.5);
+        this.fontSize = Math.max(0, this.fontSize - 0.1);
+        }
+        
 
         // 这两段代码会影响 namespace 节点的缩放 所以被我注释掉惹（cyl）
 
@@ -916,9 +920,9 @@ export default {
         //   );
         // }
       } else {
-        this.force = this.force + 200;
-        this.nodeSize = this.nodeSize + 1;
-        this.fontSize = this.fontSize + 0.3;
+        this.force = this.force + 80;
+        this.nodeSize = this.nodeSize + 0.2;
+        this.fontSize = this.fontSize + 0.1;
 
         // var list = document.getElementsByClassName("nodesNamespace");
         // for (var i = 0; i < list.length; i++) {
