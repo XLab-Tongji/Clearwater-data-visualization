@@ -1,7 +1,4 @@
 
-import { constants } from 'fs';
-import { constants } from 'fs';
-import { constants } from 'fs';
 <template>
   <div id="search-tree">
     <el-input prefix-icon="el-icon-search" placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
@@ -9,7 +6,6 @@ import { constants } from 'fs';
       class="filter-tree"
       :data="data"
       :props="dataProps"
-      default-expand-all
       :filter-node-method="filterNode"
       ref="tree"
       @node-click="nodeClickHandler"
@@ -20,116 +16,131 @@ import { constants } from 'fs';
 <script>
 export default {
   watch: {
-    filterText (val) {
-      this.$refs.tree.filter(val)
+    filterText(val) {
+      this.$refs.tree.filter(val);
     }
   },
-  props:['nodes', 'links'],
+  props: ["nodes", "links"],
   computed: {
-    data () {
-      let data = [{name: 'server', data: []}, {name: 'master server', data: []}, {name: 'pod', data: []},
-                  {name: 'container', data: []}, {name: 'service', data: []}, {name: 'namespace', data: []}, {name: 'environment', data: []}]
-      let nodes = this.nodes
+    data() {
+      let data = [
+        { name: "server", data: [] },
+        { name: "master server", data: [] },
+        { name: "pod", data: [] },
+        { name: "container", data: [] },
+        { name: "service", data: [] },
+        { name: "namespace", data: [] },
+        { name: "environment", data: [] }
+      ];
+      let nodes = this.nodes;
       nodes.forEach(node => {
-        if (node.type === 'node') {
-          data[0].data.push(node)
-        } else if (node.type === 'masterNode') {
-          data[1].data.push(node)
+        if (node.type === "node") {
+          data[0].data.push(node);
+        } else if (node.type === "masterNode") {
+          data[1].data.push(node);
         } else {
           data.forEach(ele => {
             if (node.type === ele.name) {
-              ele.data.push(node)
+              ele.data.push(node);
             }
-          })
+          });
         }
-      })
-      return data
+      });
+      return data;
     }
   },
   data() {
     return {
-      filterText: '',
+      filterText: "",
       dataProps: {
-        label: 'name',
-        children: 'data'
+        label: "name",
+        children: "data"
       }
-
     };
   },
   methods: {
-    filterNode (value, data) {
-      if (!value) 
-        return true
-      const regExp1 = /^部署于[a-zA-Z0-9\.\-]{1,}的pod$/
-      const regExp1_another = /^部署在[a-zA-Z0-9\.\-]{1,}的pod$/
-      const regExp2 = /namespace为[a-zA-Z0-9\.\-]{1,}的pod/
-      const regExp3 = /namespace为[a-zA-Z0-9\.\-]{1,}的service/
-      const regExp4 = /名为[a-zA-Z0-9\.\-]{1,}的pod含有的container/
-      var startIndex = 0
-      var endIndex = 0
+    filterNode(value, data) {
+      if (!value) return true;
+      const regExp1 = /^部署于[a-zA-Z0-9\.\-]{1,}的pod$/;
+      const regExp1_another = /^部署在[a-zA-Z0-9\.\-]{1,}的pod$/;
+      const regExp2 = /namespace为[a-zA-Z0-9\.\-]{1,}的pod/;
+      const regExp3 = /namespace为[a-zA-Z0-9\.\-]{1,}的service/;
+      const regExp4 = /名为[a-zA-Z0-9\.\-]{1,}的pod含有的container/;
+      var startIndex = 0;
+      var endIndex = 0;
       if (regExp1.test(value) || regExp1_another.test(value)) {
-        startIndex = 3
-        endIndex = value.indexOf('的')
-        let name = value.substring(startIndex, endIndex)
-        let result = this.getLinkRelatedSearchResult(name, 'master')
-        return result.indexOf(data) !== -1
+        startIndex = 3;
+        endIndex = value.indexOf("的");
+        let name = value.substring(startIndex, endIndex);
+        let result = this.getLinkRelatedSearchResult(name, "master");
+        return result.indexOf(data) !== -1;
       } else if (regExp2.test(value)) {
-        startIndex = 10
-        endIndex = value.indexOf('的')
-        let name = value.substring(startIndex, endIndex)
-        let result = []
+        startIndex = 10;
+        endIndex = value.indexOf("的");
+        let name = value.substring(startIndex, endIndex);
+        let result = [];
         for (let i = 0; i < this.nodes.length; i++) {
-          if (this.nodes[i].type === 'pod' && this.nodes[i].property.namespace === name) {
-            result.push(this.nodes[i])
+          if (
+            this.nodes[i].type === "pod" &&
+            this.nodes[i].property.namespace === name
+          ) {
+            result.push(this.nodes[i]);
           }
         }
-        return result.indexOf(data) !== -1
+        return result.indexOf(data) !== -1;
       } else if (regExp3.test(value)) {
-        startIndex = 10
-        endIndex = value.indexOf('的')
-        let name = value.substring(startIndex, endIndex)
-        let result = []
+        startIndex = 10;
+        endIndex = value.indexOf("的");
+        let name = value.substring(startIndex, endIndex);
+        let result = [];
         for (let i = 0; i < this.nodes.length; i++) {
-          if (this.nodes[i].type === 'service' && this.nodes[i].namespace === name) {
-            result.push(this.nodes[i])
+          if (
+            this.nodes[i].type === "service" &&
+            this.nodes[i].namespace === name
+          ) {
+            result.push(this.nodes[i]);
           }
         }
-        return result.indexOf(data) !== -1
+        return result.indexOf(data) !== -1;
       } else if (regExp4.test(value)) {
-        startIndex = 2
-        endIndex = value.indexOf('的')
-        let name = value.substring(startIndex, endIndex)
-        let result = this.getLinkRelatedSearchResult(name, 'contains')
-        return result.indexOf(data) !== -1
+        startIndex = 2;
+        endIndex = value.indexOf("的");
+        let name = value.substring(startIndex, endIndex);
+        let result = this.getLinkRelatedSearchResult(name, "contains");
+        return result.indexOf(data) !== -1;
       } else {
-        return data.name.indexOf(value) !== -1
+        return data.name.indexOf(value) !== -1;
       }
     },
-    getLinkRelatedSearchResult (name, linkType) {
-      let tid = ''
+    getLinkRelatedSearchResult(name, linkType) {
+      let tid = "";
+      for (let i = 0; i < this.nodes.length; i++) {
+        if (this.nodes[i].name === name) {
+          tid = this.nodes[i].id;
+        }
+      }
+      let resultLinks = [];
+      for (let i = 0; i < this.links.length; i++) {
+        if (this.links[i].type !== linkType && this.links[i].tid === tid) {
+          resultLinks.push(this.links[i]);
+        }
+      }
+      let result = [];
+      resultLinks.forEach(ele => {
         for (let i = 0; i < this.nodes.length; i++) {
-          if (this.nodes[i].name === name) {
-            tid = this.nodes[i].id
+          if (this.nodes[i].id === ele.sid) {
+            result.push(this.nodes[i]);
           }
         }
-        let resultLinks = []
-        for (let i = 0; i < this.links.length; i++) {
-          if (this.links[i].type !== linkType && this.links[i].tid === tid) {
-            resultLinks.push(this.links[i])
-          }
-        }
-        let result = []
-        resultLinks.forEach(ele => {
-          for (let i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].id === ele.sid) {
-              result.push(this.nodes[i])
-            }
-          }
-        })
-        return result
+      });
+      return result;
     },
-    nodeClickHandler (data, node) {
-      this.$emit('focusNode', data)
+    nodeClickHandler(data, node) {
+      if (data.hasOwnProperty("data")) {
+        // 不传给父亲
+      } else {
+        this.$emit("focusNode", data);
+      }
     }
   }
 };
@@ -137,9 +148,17 @@ export default {
 
 <style scope>
 #search-tree {
+  /* margin: 5px; */
   position: absolute;
   width: 250px;
   float: right;
+}
+
+.el-tree {
+  background-color: rgba(255, 255, 255, 0.582);
+  border: 1px solid lightgray;
+  margin-top: 5px;
+  border-radius: 5px;
 }
 </style>
 

@@ -37,7 +37,7 @@ export default new Router({
         {
           path: 'graph',
           name: 'ERChara',
-          component: () => import('./views/GraphView.vue'),
+          component: () => import('./views/NewGraph.vue'),
         },
         {
           path: 'causation',

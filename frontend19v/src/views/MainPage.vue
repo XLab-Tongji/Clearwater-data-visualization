@@ -1,16 +1,17 @@
 <template>
     <el-container>
-        <el-header>
-            <el-row type="flex" align="middle" style="width:100%;height:100%;">
+        <!-- <el-header height="0px">
+           
+        </el-header> -->
+
+        <el-main>
+             <el-row type="flex" align="middle">
                 <el-col>
                     <i class="el-icon-menu" @click="handleCollapse"></i>
                 </el-col>
             </el-row>
-        </el-header>
-
-        <el-main>
             <el-row type="flex">
-                <el-col :style="{width:this.sideBarWidth()}">
+                <el-col :style="{width:this.sideBarWidth()}" class="nav">
                     <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
                         @select="handleSelect" :collapse="isCollapse">
                         <el-menu-item index="ERChara">
@@ -71,13 +72,28 @@
     }
 
     .el-main {
-        padding-left: 0px;
+        padding: 5px;
     }
 
     .el-header {
-        box-shadow: 0px 3px 4px rgba(0, 0, 0, .5);
-        /* 向右和向下 */
-
+        box-shadow: 0px 1px 10px lightgray;
+        /* opacity: 60; */
+    }
+    .nav {
+        margin-top:40px;
+    }
+    .el-icon-menu {
+        color: white;
+        position:fixed;
+        z-index:10;
+        width:16px;
+        height:16px;
+        border-radius: 20px;
+        padding: 10px;
+        background-color: rgba(95, 95, 95, 0.705);
+        cursor: pointer;
+        top: 10px;
+        left: 18px;
     }
 </style>
 
@@ -95,7 +111,7 @@
                 if (!this.isCollapse) {
                     return '350px';
                 } else {
-                    return '100px';
+                    return '75px';
                 }
             },
             handleSelect(key, keyPath) {

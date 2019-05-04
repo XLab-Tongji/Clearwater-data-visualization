@@ -2,35 +2,6 @@
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
-    <!-- 箭头 -->
-    <svg height="0">
-      <defs>
-        <!-- 普通箭头 -->
-        <marker
-          id="m-end"
-          markerWidth="10"
-          markerHeight="10"
-          :refX="nodeSize / 8 + 4"
-          refY="2"
-          orient="auto"
-          markerUnits="strokeWidth"
-        >
-          <path d="M0,0 L0,4 L4,2 z"></path>
-        </marker>
-        <!-- 高亮箭头 -->
-        <marker
-          id="m-end-selected"
-          markerWidth="10"
-          markerHeight="10"
-          :refX="nodeSize / 8 + 4"
-          refY="2"
-          orient="auto"
-          markerUnits="strokeWidth"
-        >
-          <path d="M0,0 L0,4 L4,2 z"></path>
-        </marker>
-      </defs>
-    </svg>
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
       <d3-network
@@ -46,6 +17,35 @@
         :node-cb="ncb"
       />
     </div>
+        <!-- 箭头 -->
+    <svg height="0">
+      <defs>
+        <!-- 普通箭头 -->
+        <marker
+          id="m-end"
+          :markerWidth="10"
+          :markerHeight="10"
+          :refX="nodeSize / 8 + 4.8"
+          refY="1.8"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <path d="M0,0 L0,3.6 L3.6,1.8 z"></path>
+        </marker>
+        <!-- 高亮箭头 -->
+        <marker
+          id="m-end-selected"
+          markerWidth="10"
+          markerHeight="10"
+          :refX="nodeSize / 8 + 3.3"
+          refY="1.8"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <path d="M0,0 L0,3.6 L3.6,1.8 z"></path>
+        </marker>
+      </defs>
+    </svg>
     <!-- 右下角的对节点进行操作的 button -->
     <div id="button-group">
       <el-radio-group v-model="radio">
@@ -83,7 +83,7 @@
     </div>
     <!-- 属性卡片 -->
     <el-card class="display-property">
-      <div slot="header" class="clearfix">
+      <div slot=" " class="clearfix">
         <span style="font-weight: bold;font-size:16px;">{{currentNode.name}}</span>
         <span style="color:#555;">（{{currentNode.type}}）</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayProps">关闭</el-button>
@@ -225,7 +225,7 @@ export default {
       },
       nodeSize: 40,
       fontSize: 14,
-      linkWidth: 4,
+      linkWidth: 3,
       canvas: false,
       nodeOperations:
         '<input type="button" value="开机">\t<input type="button" value="关机">',
