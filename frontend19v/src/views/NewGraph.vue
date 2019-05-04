@@ -83,7 +83,7 @@
     </div>
     <!-- 属性卡片 -->
     <el-card class="display-property">
-      <div slot=" " class="clearfix">
+      <div slot="header" class="clearfix">
         <span style="font-weight: bold;font-size:16px;">{{currentNode.name}}</span>
         <span style="color:#555;">（{{currentNode.type}}）</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayProps">关闭</el-button>
@@ -433,7 +433,7 @@ export default {
         });
         let displayProps = document.getElementsByClassName("display-property")[0];
         displayProps.style.right = "-420px";
-        displayProps.style.display = 'none'
+        // displayProps.style.display = 'none'
     },
     clickNode(e, node) {
       clearTimeout(timer);
@@ -473,8 +473,8 @@ export default {
           _this.displayOneNode(node);
           // 选择类型
           let typeCard = document.querySelector(".display-type-selection");
-          typeCard.style.display = 'block'
-          typeCard.style.right = "-20px";
+          // typeCard.style.display = 'block'
+          typeCard.style.right = "0px";
           _this.oldNode = node;
           _this.updateSelectType()
         }
@@ -661,14 +661,14 @@ export default {
     closeDisplayProps() {
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
-      displayProps.style.display = 'none'
+      // displayProps.style.display = 'none'
       this.propertyValues = [];
       this.propertyKeys = [];
     },
     closeDisplayTypeCard() {
       let typeCard = document.querySelector(".display-type-selection");
       typeCard.style.right = "-360px";
-      typeCard.style.display = 'none'
+      // typeCard.style.display = 'none'
       this.newNodeType = "";
       this.oldNode = {};
       this.newNodeName = "";
@@ -871,8 +871,8 @@ export default {
         let displayProps = document.getElementsByClassName(
           "display-property"
         )[0];
-        displayProps.style.display = 'block'
-        displayProps.style.right = "-20px";
+        // displayProps.style.display = 'block'
+        displayProps.style.right = "0px";
       }
       this.finCoor = getCoordInDocument(e);
       if (this.moveable) {
@@ -1051,7 +1051,7 @@ export default {
 }
 
 .display-property {
-  display: none;
+  /* display: none; */
   position: absolute;
   z-index: 10;
   top: 0;
@@ -1063,7 +1063,7 @@ export default {
 }
 
 .display-type-selection {
-  display: none;
+  /* display: none; */
   position: absolute;
   z-index: 10;
   top: 0;
