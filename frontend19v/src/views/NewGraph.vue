@@ -181,7 +181,7 @@ function addEvent(obj, xEvent, fn) {
 var timer = null;
 
 const nodeIcons = {
-  masterNode: "",
+  masterServer: "",
   server:
     '<svg t="1554884263168" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15590" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M784 48v928H240V48h544m0-48H240a48 48 0 0 0-48 48v928a48 48 0 0 0 48 48h544a48 48 0 0 0 48-48V48a48 48 0 0 0-48-48zM680 152v83H343v-83h337m24-24H319v131h385V128z m-23 216v83H344v-83h337m24-24H320v131h385V320zM432 528v32h-96v-32h96m16-16H320v64h128v-64z m64 192a16 16 0 1 0 16 16 16 16 0 0 0-16-16z" fill="" p-id="15591"></path><path d="M512 848m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" fill="#1890FF" p-id="15592"></path></svg>',
   pod:
@@ -240,7 +240,7 @@ export default {
       moveable: false,
       focusedNode: {},
       allNodeType: [
-        "masterNode",
+        "masterServer",
         "server",
         "pod",
         "container",
@@ -264,12 +264,17 @@ export default {
         "profile"
       ],
       styleList: [
-        "nodesMasterNode",
+        "nodesmasterServer",
         "nodesServer",
         "nodesPod",
         "nodesContainer",
         "nodesService",
-        "nodesNamespace"
+        "nodesNamespace",
+        "nodesEnvironment",
+        "nodesServiceServer",
+        "nodesServiceDatabase",
+        "nodesContainerNetwork",
+        "nodesContainerStorage"
       ],
       linkStyleList: [
         "linkManage",
@@ -287,7 +292,7 @@ export default {
       oldNode: {},
       // 用于新增节点时
       properties: {
-        masterNode: {
+        masterServer: {
           status: "",
           roles: "",
           age: 5,
@@ -342,7 +347,7 @@ export default {
       // 用于新增节点时判断节点间是否有关系
       allNodeRelation: [
         {
-          sNodeType: 'masterNode',
+          sNodeType: 'masterServer',
           tNodeType: 'server',
           relName: 'manage',
           relType: 'manage',
@@ -595,7 +600,7 @@ export default {
       this.allNodeType.forEach((element, index, array) => {
         if (node.type == element) {
           node._cssClass = this.styleList[index];
-          node._linkLabelClass = this.linkStyleList[index];
+          // node._linkLabelClass = this.linkStyleList[index];
           // console.log(node)
         }
       });
@@ -985,8 +990,8 @@ export default {
   fill: lightblue;
 }
 
-#new-graph .nodesMasterNode {
-  fill: rgb(241, 237, 8);
+#new-graph .nodesmasterServer {
+  fill: lightgreen
 }
 
 #new-graph .nodesServer {
@@ -1001,8 +1006,18 @@ export default {
   fill: dimgray;
 }
 
+#new-graph .nodesContainerNetwork,
+#new-graph .nodesContainerStorage {
+  fill: lightcyan;
+}
+
 #new-graph .nodesService {
   fill: cornflowerblue;
+}
+
+#new-graph .nodesServiceDatabase,
+#new-graph .nodesServiceServer{ 
+  fill: lightgoldenrodyellow
 }
 
 #new-graph .nodesNamespace {
