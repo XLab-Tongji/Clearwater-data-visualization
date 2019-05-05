@@ -455,7 +455,8 @@ public class IndexRestController {
         return addNode(data);
     }
 
-
-
-
+    @RequestMapping(value = "/api/addNewLink",method = RequestMethod.POST,produces = "application/json")
+    public Boolean addNewLink(@RequestBody HashMap data){
+        return addLink(data);
+    }
 }

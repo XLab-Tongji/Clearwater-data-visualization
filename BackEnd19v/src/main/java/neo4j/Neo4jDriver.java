@@ -2301,17 +2301,42 @@ public class Neo4jDriver {
         System.out.println(list);
         return list;
     }
+
     public static boolean addNode(HashMap data){
-        String url = data.get("id").toString();
-        HashMap property = (HashMap)data.get("property");
+        try {
+            String url = data.get("id").toString();
+            HashMap property = (HashMap) data.get("property");
 
-        Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource(url);
+            Model model = ModelFactory.createDefaultModel();
+            Resource resource = model.createResource(url);
+            for (Object key : property.keySet()) {
+                resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
+            }
+            DataAccessor.getInstance().add(model);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
+    public static boolean addLink(HashMap data){
+        String fromUrl = (String)data.get("tid");
+        String toUrl = (String)data.get("sid");
+        String type = (String)data.get("type");
+        String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
+                "INSERT DATA{\n" +
+                "<"+fromUrl+"> j0:"+type +"<"+toUrl+">\n" +
+                "}";
+        RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.181:30300/DevKGData/update");
 
-
-        resource.addProperty(model.createProperty(url ,"/annotations"),model.createResource());
-
+        try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+            connAddRelation.update(addRelation);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
