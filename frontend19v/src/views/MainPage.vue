@@ -52,7 +52,10 @@
 
                 <el-col style="width:100%;height:100%">
                     <!-- <el-button>test</el-button> -->
-                    <router-view></router-view>
+                    <keep-alive>
+                     <router-view></router-view>
+                    </keep-alive>
+    
                 </el-col>
             </el-row>
 
