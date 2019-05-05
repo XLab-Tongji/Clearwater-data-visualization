@@ -2301,6 +2301,19 @@ public class Neo4jDriver {
         System.out.println(list);
         return list;
     }
+    public static boolean addNode(HashMap data){
+        String url = data.get("id").toString();
+        HashMap property = (HashMap)data.get("property");
+
+        Model model = ModelFactory.createDefaultModel();
+        Resource resource = model.createResource(url);
+
+
+
+        resource.addProperty(model.createProperty(url ,"/annotations"),model.createResource());
+
+        return true;
+    }
 
     public static void main(String[] args) {
         storeNamespaceName();

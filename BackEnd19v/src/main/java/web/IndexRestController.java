@@ -450,5 +450,12 @@ public class IndexRestController {
         return getAllNodesAndLinks();
     }
 
+    @RequestMapping(value = "/api/addNewNode",method = RequestMethod.POST,produces = "application/json")
+    public Boolean addNewNode(@RequestBody HashMap data){
+        return addNode(data);
+    }
+
+
+
 
 }
