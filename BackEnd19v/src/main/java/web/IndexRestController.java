@@ -421,29 +421,43 @@ public class IndexRestController {
 
 
 
-    @RequestMapping(value = "/api/storeNameSpace",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeNameSpace(){
-        return storeNamespace();
+    @RequestMapping(value = "/api/storeEnvironment",method = RequestMethod.POST,produces = "application/json")
+    public Boolean storeAll(@RequestParam("masterName") String masterName, @RequestParam("podName") String podName, @RequestParam("serviceName") String serviceName, @RequestParam("address") String address, @RequestParam("namespace") String namespace){
+        boolean result = true;
+        result &= storeNamespaceName();
+        result &= storeServerName();
+        result &= storeMasterNode(masterName);
+        result &= storeEnvironment();
+        result &= storePodName(podName);
+        result &= storeServiceName(serviceName);
+        result &= podToService(address, namespace);
+        result &= podToServer(address, namespace);
+        return result;
     }
 
-    @RequestMapping(value = "/api/storeNamespaceName",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeNamespaceName(){ return storeNamespaceName(); }
-
-    @RequestMapping(value = "/api/storeServer",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeServer(){ return storeServerName(); }
-
-    @RequestMapping(value = "/api/storeMasterNode",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeMasterNode(@RequestParam("masterName") String masterName){ return storeMasterNode(masterName); }
-
-    @RequestMapping(value = "/api/storePod",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storePod(@RequestParam("podName") String podName){
-        return storePodName(podName);
-    }
-
-    @RequestMapping(value = "/api/storeService",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeService(@RequestParam("serviceName") String serviceName){
-        return storeServiceName(serviceName);
-    }
+//    @RequestMapping(value = "/api/storeNameSpace",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storeNameSpace(){
+//        return storeNamespace();
+//    }
+//
+//    @RequestMapping(value = "/api/storeNamespaceName",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storeNamespaceName(){ return storeNamespaceName(); }
+//
+//    @RequestMapping(value = "/api/storeServer",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storeServer(){ return storeServerName(); }
+//
+//    @RequestMapping(value = "/api/storeMasterNode",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storeMasterNode(@RequestParam("masterName") String masterName){ return storeMasterNode(masterName); }
+//
+//    @RequestMapping(value = "/api/storePod",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storePod(@RequestParam("podName") String podName){
+//        return storePodName(podName);
+//    }
+//
+//    @RequestMapping(value = "/api/storeService",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean storeService(@RequestParam("serviceName") String serviceName){
+//        return storeServiceName(serviceName);
+//    }
 
     @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
     public Map<String, Object> getNodesAndLinks(){
@@ -461,7 +475,7 @@ public class IndexRestController {
     }
 
     @RequestMapping(value = "/api/deleteAll",method = RequestMethod.POST,produces = "application/json")
-    public Boolean addNewLink(){
+    public Boolean deleteAllNodes(){
         return deleteAll();
     }
 }
