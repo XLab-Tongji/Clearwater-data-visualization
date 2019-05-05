@@ -182,7 +182,7 @@ var timer = null;
 
 const nodeIcons = {
   masterNode: "",
-  node:
+  server:
     '<svg t="1554884263168" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15590" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M784 48v928H240V48h544m0-48H240a48 48 0 0 0-48 48v928a48 48 0 0 0 48 48h544a48 48 0 0 0 48-48V48a48 48 0 0 0-48-48zM680 152v83H343v-83h337m24-24H319v131h385V128z m-23 216v83H344v-83h337m24-24H320v131h385V320zM432 528v32h-96v-32h96m16-16H320v64h128v-64z m64 192a16 16 0 1 0 16 16 16 16 0 0 0-16-16z" fill="" p-id="15591"></path><path d="M512 848m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" fill="#1890FF" p-id="15592"></path></svg>',
   pod:
     '<svg t="1554883368654" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2427" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M512 580.266667c-2.133333 0-4.266667 0-4.266667-2.133334L277.333333 465.066667c-4.266667-2.133333-6.4-8.533333-4.266666-14.933334 2.133333-4.266667 8.533333-6.4 14.933333-4.266666L512 556.8l224-113.066667c4.266667-2.133333 10.666667 0 14.933333 4.266667 2.133333 4.266667 0 10.666667-4.266666 14.933333l-230.4 115.2c0 2.133333-2.133333 2.133333-4.266667 2.133334z" fill="#ED1E79" p-id="2428"></path><path d="M512 866.133333c-6.4 0-10.666667-4.266667-10.666667-10.666666V569.6c0-6.4 4.266667-10.666667 10.666667-10.666667s10.666667 4.266667 10.666667 10.666667v285.866667c0 6.4-4.266667 10.666667-10.666667 10.666666z" fill="#ED1E79" p-id="2429"></path><path d="M742.4 981.333333c-2.133333 0-4.266667 0-4.266667-2.133333L512 868.266667 288 981.333333H277.333333L49.066667 870.4c-4.266667 0-6.4-4.266667-6.4-8.533333V569.6c0-4.266667 2.133333-8.533333 6.4-8.533333L273.066667 448V168.533333c0-4.266667 2.133333-8.533333 6.4-8.533333l230.4-115.2c2.133333-2.133333 6.4-2.133333 8.533333 0L746.666667 157.866667c4.266667 2.133333 6.4 6.4 6.4 8.533333V448l224 110.933333c4.266667 2.133333 6.4 6.4 6.4 8.533334v292.266666c0 4.266667-2.133333 8.533333-6.4 10.666667L746.666667 981.333333h-4.266667zM512 844.8c2.133333 0 4.266667 0 4.266667 2.133333L740.266667 960 960 855.466667V576l-224-110.933333c-4.266667-2.133333-6.4-6.4-6.4-8.533334V174.933333L512 66.133333 294.4 174.933333v279.466667c0 4.266667-2.133333 8.533333-6.4 8.533333L64 576v279.466667L281.6 960l224-113.066667c2.133333-2.133333 4.266667-2.133333 6.4-2.133333zM281.6 454.4z" fill="#108EE9" p-id="2430"></path></svg>',
@@ -194,8 +194,8 @@ const nodeIcons = {
     '<svg t="1554884521660" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16549" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M988.576 411.328c-10.848-74.88-133.44-104.224-244-115.424V231.168h-27.36v-0.032l27.008-0.192c-0.928-127.136-318.496-130.784-354.72-130.784-31.264 0-306.496 2.912-348.8 103.904l-5.792 38.432h-0.224c0-2.112 0.256-3.872 0.512-4.96l-0.8 3.488 0.288 7.936-0.352 411.264c-0.224 86.624 138.272 121.44 245.856 135.392 6.368 123.488 318.08 128.128 357.056 128.224 35.968 0 351.52-3.616 352-130.208l0.384-372.448-1.056-9.856z m-53.664 382.176c-0.16 35.84-127.424 75.968-300.576 75.968-171.872-0.544-300.16-41.472-300.064-77.76l0.096-97.44h114.272v-54.368h-114.368v-207.808h24.64v-54.368H279.904v263.52h0.096l-0.064 99.424c-130.912-17.76-191.264-52.672-191.232-80.384l0.352-412.48 3.168-25.536c21.312-37.632 152.448-67.776 297.28-67.776 171.552 0 300.064 40.576 300.352 76.768l0.16 24.672 0.16 0.064-0.032 121.728h-127.04v54.368h127.072v208.064h-24.64v54.368h79.008v-297.888h-0.032v-45.728c119.936 13.088 186.56 43.104 190.176 67.968l0.576 4.16-0.352 370.464z" fill="" p-id="16550"></path><path d="M490.464 640.16h43.072v54.368h-43.072v-54.368zM578.464 640.16h43.104v54.368h-43.104v-54.368zM484 377.728h43.104v54.368h-43.104v-54.368zM401.728 377.728H444.8v54.368h-43.072v-54.368z" fill="" p-id="16551"></path></svg>',
   environment:
     '<svg t="1554883839636" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5763" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M896 166.4h-128v25.6h128v-25.6z m-486.4-76.8v204.8h512v102.4h-230.4v51.2h230.4v76.8h51.2v-435.2H409.6z m512 153.6H460.8v-102.4h460.8v102.4z m-153.6 76.8v25.6h128v-25.6h-128z" fill="#999999" p-id="5764"></path><path d="M768 524.8h-102.4c0-112.64-92.16-204.8-204.8-204.8s-204.8 92.16-204.8 204.8c-112.64 0-204.8 92.16-204.8 204.8s92.16 204.8 204.8 204.8h512c112.64 0 204.8-92.16 204.8-204.8s-92.16-204.8-204.8-204.8z m0 358.4H256c-92.16 0-153.6-61.44-153.6-153.6s61.44-153.6 153.6-153.6h51.2v-51.2c0-92.16 61.44-153.6 153.6-153.6s153.6 61.44 153.6 153.6v51.2h153.6c92.16 0 153.6 61.44 153.6 153.6s-61.44 153.6-153.6 153.6z" fill="#333333" p-id="5765"></path></svg>',
-  serviceProfile: '',
-  serviceDatabase: '',
+  serviceServer: '',
+  // serviceDatabase: '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32"><path d="M12 30c-6.626 0-12-1.793-12-4 0-1.207 0-2.527 0-4 0-0.348 0.174-0.678 0.424-1 1.338 1.723 5.99 3 11.576 3s10.238-1.277 11.576-3c0.25 0.322 0.424 0.652 0.424 1 0 1.158 0 2.387 0 4 0 2.207-5.375 4-12 4zM12 22c-6.626 0-12-1.793-12-4 0-1.208 0-2.526 0-4 0-0.212 0.080-0.418 0.188-0.622v0c0.061-0.128 0.141-0.254 0.236-0.378 1.338 1.722 5.99 3 11.576 3s10.238-1.278 11.576-3c0.096 0.124 0.176 0.25 0.236 0.378v0c0.107 0.204 0.188 0.41 0.188 0.622 0 1.158 0 2.386 0 4 0 2.207-5.375 4-12 4zM12 14c-6.626 0-12-1.792-12-4 0-0.632 0-1.3 0-2 0-0.636 0-1.296 0-2 0-2.208 5.374-4 12-4s12 1.792 12 4c0 0.624 0 1.286 0 2 0 0.612 0 1.258 0 2 0 2.208-5.375 4-12 4zM12 4c-4.418 0-8 0.894-8 2s3.582 2 8 2 8-0.894 8-2-3.582-2-8-2z"></path></svg>',
   containerNetwork: '',
   containerStorage: ''
 };
@@ -241,13 +241,13 @@ export default {
       focusedNode: {},
       allNodeType: [
         "masterNode",
-        "node",
+        "server",
         "pod",
         "container",
         "service",
         "namespace",
         "environment",
-        "serviceProfile",
+        "serviceServer",
         "serviceDatabase",
         "containerNetwork",
         "containerStorage"
@@ -265,7 +265,7 @@ export default {
       ],
       styleList: [
         "nodesMasterNode",
-        "nodesNode",
+        "nodesServer",
         "nodesPod",
         "nodesContainer",
         "nodesService",
@@ -293,7 +293,7 @@ export default {
           age: 5,
           version: ""
         },
-        node: {
+        server: {
           status: "",
           roles: "",
           age: 1,
@@ -343,19 +343,19 @@ export default {
       allNodeRelation: [
         {
           sNodeType: 'masterNode',
-          tNodeType: 'node',
+          tNodeType: 'server',
           relName: 'manage',
           relType: 'manage',
         },
         {
           sNodeType: 'pod',
-          tNodeType: 'node',
+          tNodeType: 'server',
           relName: 'deployed-in',
           relType: 'deployed-in'
         },
         {
           sNodeType: 'environment',
-          tNodeType: 'node',
+          tNodeType: 'server',
           relName: 'has',
           relType: 'has'
         },
@@ -391,13 +391,13 @@ export default {
         },
         {
           sNodeType: 'service',
-          tNodeType: 'serviceProfile',
+          tNodeType: 'serviceServer',
           relName: 'profile',
           relType: 'profile'
         },
         {
           sNodeType: 'service',
-          tNodeType: 'serviceProfile',
+          tNodeType: 'serviceServer',
           relName: 'profile',
           relType: 'profile'
         },
@@ -986,10 +986,10 @@ export default {
 }
 
 #new-graph .nodesMasterNode {
-  /* fill: rgb(8, 113, 241); */
+  fill: rgb(241, 237, 8);
 }
 
-#new-graph .nodesNode {
+#new-graph .nodesServer {
   fill: darkcyan;
 }
 
