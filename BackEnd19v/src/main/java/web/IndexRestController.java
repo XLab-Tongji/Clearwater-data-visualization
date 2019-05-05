@@ -429,6 +429,7 @@ public class IndexRestController {
         result &= storeMasterNode(masterName);
         result &= storeEnvironment();
         result &= storePodName(podName);
+        result &= storeEnvRelation();
         result &= storeServiceName(serviceName);
         result &= podToService(address, namespace);
         result &= podToServer(address, namespace);

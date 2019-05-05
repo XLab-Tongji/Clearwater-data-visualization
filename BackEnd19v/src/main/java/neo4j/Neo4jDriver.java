@@ -1572,14 +1572,15 @@ public class Neo4jDriver {
     public static boolean storeEnvironment(){
         String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
         try {
+            System.out.println("storing env");
             // get address string
             String jsonString = getData(httpUrl);
             JSONObject jsonObject = JSONObject.parseObject(jsonString);
             String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
             String envName = "http://environment/"+address;
+            System.out.println("env name: "+envName);
+            Model model = ModelFactory.createDefaultModel();
             try {
-                // create model
-                Model model = ModelFactory.createDefaultModel();
                 Resource res = model.createResource(envName);
                 res.addProperty(model.createProperty(envName+"/name"), "env");
                 //存储fuseki
@@ -1590,6 +1591,20 @@ public class Neo4jDriver {
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean storeEnvRelation(){
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+        try {
+            // get address string
+            String jsonString = getData(httpUrl);
+            JSONObject jsonObject = JSONObject.parseObject(jsonString);
+            String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
+            String envName = "http://environment/"+address;
             RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                     .destination("http://10.60.38.181:30300/DevKGData/query");
             Query query = QueryFactory.create("SELECT ?p ?o " +
@@ -1600,7 +1615,7 @@ public class Neo4jDriver {
                 while(rs.hasNext()) {
                     QuerySolution qs = rs.next() ;
                     String subject = qs.get("o").toString();
-                    System.out.println("server name: " + subject);
+                    System.out.println("adding env, server name: " + subject);
                     String urlNode = "http://server/"+address+"/"+subject;
 
                     String addRelation = "PREFIX j0:<"+envName+"/>\n" +
@@ -1817,13 +1832,9 @@ public class Neo4jDriver {
                             .addProperty(model.createProperty(names,"/ports/protocol"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("protocol"))
                             .addProperty(model.createProperty(names,"/ports/targetPort"), (String)jSpec.getJSONArray("ports").getJSONObject(0).get("targetPort").toString()));
                     //存储fuseki
-
-                    model.write(System.out, "RDF/XML-ABBREV");
-                    DataAccessor.getInstance().add(model);
-                    model.write(System.out, "N-TRIPLE");
-
+                    Model modelService = ModelFactory.createDefaultModel();
+                    Model modelDatabase = ModelFactory.createDefaultModel();
                     if (!((String) jMetaData.get("name")).contains("db")){
-                        Model modelService = ModelFactory.createDefaultModel();
 //                        String nameService = names+"/serviceProfile";
                         String nameService1 = names+"/response_time";
                         String nameService2 = names+"/success_rate";
@@ -1833,9 +1844,7 @@ public class Neo4jDriver {
                         resourceService2.addProperty(modelService.createProperty(nameService2,"/value"),"");
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService1);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService2);
-                        DataAccessor.getInstance().add(modelService);
                     }else{
-                        Model modelDatabase = ModelFactory.createDefaultModel();
                         String nameDatabase1 = names+"/throughput";
                         String nameDatabase2 = names+"/response_time";
                         Resource resourceDatabase1 = modelDatabase.createResource(nameDatabase1);
@@ -1844,8 +1853,13 @@ public class Neo4jDriver {
                         resourceDatabase2.addProperty(modelDatabase.createProperty(nameDatabase2,"/value"),"");
                         resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase1);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase2);
-                        DataAccessor.getInstance().add(modelDatabase);
                     }
+
+                    model.write(System.out, "RDF/XML-ABBREV");
+                    DataAccessor.getInstance().add(model);
+                    DataAccessor.getInstance().add(modelService);
+                    DataAccessor.getInstance().add(modelDatabase);
+                    model.write(System.out, "N-TRIPLE");
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -2079,7 +2093,10 @@ public class Neo4jDriver {
         Map<String, Object> node = new HashMap<>();
         node.put("id", urlNode);
         node.put("name", l[l.length-1]);
-        node.put("type", "server");
+        if(urlNode.contains("192.168.199.191"))
+            node.put("type", "masterServer");
+        else
+            node.put("type", "server");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
