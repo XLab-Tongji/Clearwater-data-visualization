@@ -459,4 +459,9 @@ public class IndexRestController {
     public Boolean addNewLink(@RequestBody HashMap data){
         return addLink(data);
     }
+
+    @RequestMapping(value = "/api/deleteAll",method = RequestMethod.POST,produces = "application/json")
+    public Boolean addNewLink(){
+        return deleteAll();
+    }
 }
