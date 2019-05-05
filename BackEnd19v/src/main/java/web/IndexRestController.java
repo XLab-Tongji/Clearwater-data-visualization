@@ -429,8 +429,8 @@ public class IndexRestController {
     @RequestMapping(value = "/api/storeNamespaceName",method = RequestMethod.POST,produces = "application/json")
     public Boolean storeNamespaceName(){ return storeNamespaceName(); }
 
-    @RequestMapping(value = "/api/storeNodes",method = RequestMethod.POST,produces = "application/json")
-    public Boolean storeNode(){ return storeServerName(); }
+    @RequestMapping(value = "/api/storeServer",method = RequestMethod.POST,produces = "application/json")
+    public Boolean storeServer(){ return storeServerName(); }
 
     @RequestMapping(value = "/api/storeMasterNode",method = RequestMethod.POST,produces = "application/json")
     public Boolean storeMasterNode(@RequestParam("masterName") String masterName){ return storeMasterNode(masterName); }
