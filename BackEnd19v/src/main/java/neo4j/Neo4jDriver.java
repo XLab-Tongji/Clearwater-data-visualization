@@ -2014,7 +2014,7 @@ public class Neo4jDriver {
                     }
                     else if(subject.contains("service")){
                         if(subject.contains("db")){
-                            if (subject.contains("response_time")||subject.contains("success_rate"))
+                            if (subject.contains("response_time")||subject.contains("throughput"))
                                 result.add(getPropertyNodes(subject, "serviceDatabase"));
                             else{
                                 result.add(getService(subject));
@@ -2022,7 +2022,7 @@ public class Neo4jDriver {
                             }
                         }
                         else {
-                            if (subject.contains("throughput")||subject.contains("response_time"))
+                            if (subject.contains("success_rate")||subject.contains("response_time"))
                                 result.add(getPropertyNodes(subject, "serviceServer"));
                             else{
                                 result.add(getService(subject));
