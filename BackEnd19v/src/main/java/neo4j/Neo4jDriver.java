@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
@@ -2319,17 +2320,47 @@ public class Neo4jDriver {
         return list;
     }
 
+    public static boolean judgeExist(String name,String url){
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.181:30300/DevKGData/query");
+
+        Query query = QueryFactory.create("PREFIX j0:<" + url + ">\n" +
+                "SELECT ?o WHERE {\n" +
+                "\t?s j0:name ?o\n" +
+                "}");
+        try (RDFConnectionFuseki connServiceName = (RDFConnectionFuseki) builder.build()) {
+
+            QueryExecution qName = connServiceName.query(query);
+            ResultSet rsName = qName.execSelect();
+            while (rsName.hasNext()) {
+                QuerySolution qsName = rsName.next();
+                String subjectName = qsName.get("o").toString();
+                if (subjectName.equals(name)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static boolean addNode(HashMap data){
         try {
             String url = data.get("id").toString();
+            System.out.println(url);
             HashMap property = (HashMap) data.get("property");
 
             Model model = ModelFactory.createDefaultModel();
             Resource resource = model.createResource(url);
-            for (Object key : property.keySet()) {
-                resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
+            try{
+                if (judgeExist((String)property.get("name"),url)){
+                    for (Object key : property.keySet()) {
+                        resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
+                    }
+                    DataAccessor.getInstance().add(model);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            DataAccessor.getInstance().add(model);
         }catch (Exception e){
             e.printStackTrace();
             return false;
@@ -2341,10 +2372,14 @@ public class Neo4jDriver {
         String fromUrl = (String)data.get("tid");
         String toUrl = (String)data.get("sid");
         String type = (String)data.get("type");
+        System.out.println(fromUrl);
+        System.out.println(toUrl);
+        System.out.println(type);
         String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
                 "INSERT DATA{\n" +
-                "<"+fromUrl+"> j0:"+type +"<"+toUrl+">\n" +
+                "<"+fromUrl+"> j0:"+type +" <"+toUrl+">\n" +
                 "}";
+        System.out.println(addRelation);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.181:30300/DevKGData/update");
 
@@ -2355,6 +2390,7 @@ public class Neo4jDriver {
             return false;
         }
         return true;
+
     }
 
     public static boolean deleteAll(){
