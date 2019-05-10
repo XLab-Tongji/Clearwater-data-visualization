@@ -49,6 +49,8 @@ export default {
   },
   data () {
     return {
+      allNodesIds:[],
+      profileLinks: [],
       canvas: false,
       nodes: [],
       links: [],
@@ -103,6 +105,7 @@ export default {
       'links',
       'selected',
       'linksSelected',
+      'profileLinks',
       'strLinks',
       'linkWidth',
       'nodeLabels',
@@ -245,11 +248,26 @@ export default {
           node.svgIcon = svgExport.svgElFromString(node.svgSym)
           if (!this.canvas && node.svgIcon && !node.svgObj) node.svgObj = svgExport.toObject(node.svgIcon)
         }
+        vm.allNodesIds.push(node.id)
         return node
       })
     },
 
     buildLinks (links) {
+      // 1. sid 或 tid 不存在的边不应该渲染
+      // 2. 初始化 profileLinks
+      links = links.filter( link => {
+        if (link.type === 'profile') {
+          this.profileLinks.push(link.id)
+        }
+        if (this.allNodesIds.indexOf(link.sid) !== -1 && this.allNodesIds.indexOf(link.tid) !== -1) {
+          return true
+        }
+        else {
+          return false
+        }
+      })
+    
       let vm = this
       return links.concat().map((link, index) => {
         // link formatter option

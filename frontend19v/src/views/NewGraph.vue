@@ -2,6 +2,16 @@
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
+    <!-- 是否显示属性节点切换按钮 -->
+    <div id="switch-p-node">
+      <el-switch
+        v-model="propertyNodeSwitch"
+        active-color="#409EFF"
+        inactive-color="lightgray"
+        active-text="显示属性节点"
+        inactive-text="隐藏属性节点">
+      </el-switch>
+     </div>
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
       <d3-network
@@ -17,7 +27,7 @@
         :node-cb="ncb"
       />
     </div>
-        <!-- 箭头 -->
+    <!-- 箭头 -->
     <svg height="0">
       <defs>
         <!-- 普通箭头 -->
@@ -93,7 +103,13 @@
           <el-input :placeholder="key" v-model="propertyValues[index]"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button @click="getData" style="width:100%" type="primary" plain v-if="currentNode.type === 'environment'">导入</el-button>
+          <el-button
+            @click="getData"
+            style="width:100%"
+            type="primary"
+            plain
+            v-if="currentNode.type === 'environment'"
+          >导入</el-button>
           <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain v-else>确定</el-button>
         </el-form-item>
       </el-form>
@@ -106,10 +122,15 @@
       </div>
       <label>节点类型：</label>
       <el-select v-model="newNodeType" placeholder="请选择节点类型">
-        <el-option v-for="(item,index) in selectNodeInfo" :key="index" :label="item.type" :value="item.type"></el-option>
+        <el-option
+          v-for="(item,index) in selectNodeInfo"
+          :key="index"
+          :label="item.type"
+          :value="item.type"
+        ></el-option>
       </el-select>
       <br>
-      <label>节点&#32;ID： </label>
+      <label>节点&#32;ID：</label>
       <el-input
         v-model="newNodeId"
         placeholder="请输入节点id"
@@ -139,8 +160,11 @@
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
 import axios from "axios";
-import { setTimeout } from 'timers';
+import { setTimeout } from "timers";
 
+HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
+const reqUrl = "http://10.60.38.173:9990/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == val) return i;
@@ -194,10 +218,10 @@ const nodeIcons = {
     '<svg t="1554884521660" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16549" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M988.576 411.328c-10.848-74.88-133.44-104.224-244-115.424V231.168h-27.36v-0.032l27.008-0.192c-0.928-127.136-318.496-130.784-354.72-130.784-31.264 0-306.496 2.912-348.8 103.904l-5.792 38.432h-0.224c0-2.112 0.256-3.872 0.512-4.96l-0.8 3.488 0.288 7.936-0.352 411.264c-0.224 86.624 138.272 121.44 245.856 135.392 6.368 123.488 318.08 128.128 357.056 128.224 35.968 0 351.52-3.616 352-130.208l0.384-372.448-1.056-9.856z m-53.664 382.176c-0.16 35.84-127.424 75.968-300.576 75.968-171.872-0.544-300.16-41.472-300.064-77.76l0.096-97.44h114.272v-54.368h-114.368v-207.808h24.64v-54.368H279.904v263.52h0.096l-0.064 99.424c-130.912-17.76-191.264-52.672-191.232-80.384l0.352-412.48 3.168-25.536c21.312-37.632 152.448-67.776 297.28-67.776 171.552 0 300.064 40.576 300.352 76.768l0.16 24.672 0.16 0.064-0.032 121.728h-127.04v54.368h127.072v208.064h-24.64v54.368h79.008v-297.888h-0.032v-45.728c119.936 13.088 186.56 43.104 190.176 67.968l0.576 4.16-0.352 370.464z" fill="" p-id="16550"></path><path d="M490.464 640.16h43.072v54.368h-43.072v-54.368zM578.464 640.16h43.104v54.368h-43.104v-54.368zM484 377.728h43.104v54.368h-43.104v-54.368zM401.728 377.728H444.8v54.368h-43.072v-54.368z" fill="" p-id="16551"></path></svg>',
   environment:
     '<svg t="1554883839636" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5763" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M896 166.4h-128v25.6h128v-25.6z m-486.4-76.8v204.8h512v102.4h-230.4v51.2h230.4v76.8h51.2v-435.2H409.6z m512 153.6H460.8v-102.4h460.8v102.4z m-153.6 76.8v25.6h128v-25.6h-128z" fill="#999999" p-id="5764"></path><path d="M768 524.8h-102.4c0-112.64-92.16-204.8-204.8-204.8s-204.8 92.16-204.8 204.8c-112.64 0-204.8 92.16-204.8 204.8s92.16 204.8 204.8 204.8h512c112.64 0 204.8-92.16 204.8-204.8s-92.16-204.8-204.8-204.8z m0 358.4H256c-92.16 0-153.6-61.44-153.6-153.6s61.44-153.6 153.6-153.6h51.2v-51.2c0-92.16 61.44-153.6 153.6-153.6s153.6 61.44 153.6 153.6v51.2h153.6c92.16 0 153.6 61.44 153.6 153.6s-61.44 153.6-153.6 153.6z" fill="#333333" p-id="5765"></path></svg>',
-  serviceServer: '',
+  serviceServer: "",
   // serviceDatabase: '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32"><path d="M12 30c-6.626 0-12-1.793-12-4 0-1.207 0-2.527 0-4 0-0.348 0.174-0.678 0.424-1 1.338 1.723 5.99 3 11.576 3s10.238-1.277 11.576-3c0.25 0.322 0.424 0.652 0.424 1 0 1.158 0 2.387 0 4 0 2.207-5.375 4-12 4zM12 22c-6.626 0-12-1.793-12-4 0-1.208 0-2.526 0-4 0-0.212 0.080-0.418 0.188-0.622v0c0.061-0.128 0.141-0.254 0.236-0.378 1.338 1.722 5.99 3 11.576 3s10.238-1.278 11.576-3c0.096 0.124 0.176 0.25 0.236 0.378v0c0.107 0.204 0.188 0.41 0.188 0.622 0 1.158 0 2.386 0 4 0 2.207-5.375 4-12 4zM12 14c-6.626 0-12-1.792-12-4 0-0.632 0-1.3 0-2 0-0.636 0-1.296 0-2 0-2.208 5.374-4 12-4s12 1.792 12 4c0 0.624 0 1.286 0 2 0 0.612 0 1.258 0 2 0 2.208-5.375 4-12 4zM12 4c-4.418 0-8 0.894-8 2s3.582 2 8 2 8-0.894 8-2-3.582-2-8-2z"></path></svg>',
-  containerNetwork: '',
-  containerStorage: ''
+  containerNetwork: "",
+  containerStorage: ""
 };
 
 export default {
@@ -207,13 +231,19 @@ export default {
   },
   data() {
     return {
+      propertyNodes: [], // 属性节点数组
+      propertyNodeSwitch: true,
       radio: "1",
       initialNode: {
         name: "Environment",
         id: "http://environment/10.60.38.181/environment",
         type: "environment",
         property: {
-          name: "", dataPort: "", type: ""
+          masterName: "192.168.199.191", // 192.168.199.191
+          podName: "sock-shop", // sock-shop
+          serviceName: "sock-shop", // sock-shop
+          address: "10.60.38.181", // 10.60.38.181
+          namespace: "sock-shop" // sock-shop
         },
         svgSym: nodeIcons["environment"]
       },
@@ -288,7 +318,7 @@ export default {
       propsForm: {},
       newNodeType: "",
       newNodeName: "",
-      newNodeId: '',
+      newNodeId: "",
       oldNode: {},
       // 用于新增节点时
       properties: {
@@ -347,84 +377,176 @@ export default {
       // 用于新增节点时判断节点间是否有关系
       allNodeRelation: [
         {
-          sNodeType: 'masterServer',
-          tNodeType: 'server',
-          relName: 'manage',
-          relType: 'manage',
+          sNodeType: "masterServer",
+          tNodeType: "server",
+          relName: "manage",
+          relType: "manage"
         },
         {
-          sNodeType: 'pod',
-          tNodeType: 'server',
-          relName: 'deployed-in',
-          relType: 'deployed-in'
+          sNodeType: "pod",
+          tNodeType: "server",
+          relName: "deployed-in",
+          relType: "deployed-in"
         },
         {
-          sNodeType: 'environment',
-          tNodeType: 'server',
-          relName: 'has',
-          relType: 'has'
+          sNodeType: "environment",
+          tNodeType: "server",
+          relName: "has",
+          relType: "has"
         },
         {
-          sNodeType: 'pod',
-          tNodeType: 'container',
-          relName: 'contains',
-          relType: 'contains'
+          sNodeType: "pod",
+          tNodeType: "container",
+          relName: "contains",
+          relType: "contains"
         },
         {
-          sNodeType: 'pod',
-          tNodeType: 'service',
-          relName: 'provides',
-          relType: 'provides'
+          sNodeType: "pod",
+          tNodeType: "service",
+          relName: "provides",
+          relType: "provides"
         },
         {
-          sNodeType: 'namespace',
-          tNodeType: 'namespace',
-          relName: 'supervises',
-          relType: 'supervises'
+          sNodeType: "namespace",
+          tNodeType: "namespace",
+          relName: "supervises",
+          relType: "supervises"
         },
         {
-          sNodeType: 'container',
-          tNodeType: 'containerNetwork',
-          relName: 'profile',
-          relType: 'profile'
+          sNodeType: "container",
+          tNodeType: "containerNetwork",
+          relName: "profile",
+          relType: "profile"
         },
         {
-          sNodeType: 'container',
-          tNodeType: 'containerStorage',
-          relName: 'profile',
-          relType: 'profile'
+          sNodeType: "container",
+          tNodeType: "containerStorage",
+          relName: "profile",
+          relType: "profile"
         },
         {
-          sNodeType: 'service',
-          tNodeType: 'serviceServer',
-          relName: 'profile',
-          relType: 'profile'
+          sNodeType: "service",
+          tNodeType: "serviceServer",
+          relName: "profile",
+          relType: "profile"
         },
         {
-          sNodeType: 'service',
-          tNodeType: 'serviceServer',
-          relName: 'profile',
-          relType: 'profile'
-        },
+          sNodeType: "service",
+          tNodeType: "serviceServer",
+          relName: "profile",
+          relType: "profile"
+        }
       ]
     };
   },
+  computed: {
+    // 节点数量
+    id() {
+      return this.nodes.length;
+    },
+    options() {
+      return {
+        force: this.force,
+        size: {
+          h: 800
+          // w: 1200
+        },
+        offset: {
+          x: this.offset_X,
+          y: this.offset_Y
+        },
+        nodeSize: this.nodeSize,
+        fontSize: this.fontSize,
+        nodeLabels: true,
+        linkLabels: true,
+        canvas: this.canvas
+      };
+    }
+  },
+  watch: {
+    // 显示/隐藏属性节点
+    // 别写成 key-value 的形式
+    propertyNodeSwitch(newVal) {
+      // 当不显示属性时
+      if (newVal === false) {
+        // 不渲染 node 和 label
+        this.nodes = this.nodes.filter(node => {
+          if (
+            node.type === "containerNetwork" ||
+            node.type === "containerStorage" ||
+            node.type === "serviceDatabase" ||
+            node.type === "serviceServer"
+          ) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+        // 隐藏 link
+        document.getElementsByClassName("profile").forEach(x => {
+          x.style.visibility = "hidden";
+        });
+        // 当显示属性时
+      } else {
+        // 重新渲染节点和 label
+        this.nodes = this.nodes.concat(this.propertyNodes);
+        // 显示边
+        document.getElementsByClassName("profile").forEach(x => {
+          x.style.visibility = "visible";
+        });
+      }
+    }
+  },
   created() {
-    this.nodes.push(this.initialNode)
+    this.nodes.push(this.initialNode);
   },
   methods: {
     getData() {
-      this.nodes = []
-      this.nodes.push(this.initialNode)
-      this.links = []
+      this.nodes = [];
+      // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
+      this.links = [];
+
+      var envPropertyValues = new FormData();
+      envPropertyValues.append("masterName", this.propertyValues[0]); // 192.168.199.191
+      envPropertyValues.append("podName", this.propertyValues[1]); // sock-shop
+      envPropertyValues.append("serviceName", this.propertyValues[2]); // sock-shop
+      envPropertyValues.append("address", this.propertyValues[3]); // 10.60.38.181
+      envPropertyValues.append("namespace", this.propertyValues[4]); // sock-shop
+
+      // console.log(envPropertyValues);
+
+      // API POST
+      // axios({
+      //   method: 'post',
+      //   url: reqUrl + '/api/storeEnvironment',
+      //   data: envPropertyValues,
+      //   config: { headers: {'Content-Type': 'multipart/form-data' }}
+      // })
       axios
-        .get("http://10.60.38.173:9990/bbs/api/getNodesAndLinks")
+        // API GET
+        // .get(reqUrl + "/api/getNodesAndLinks")
+
+        // API GET LOCAL
+        .get("/response.json")
         .then(response => {
+          console.log(response);
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
           this.nodes = this.nodes.concat(response.data.nodeList);
           this.links = response.data.linkList;
+          this.propertyNodes = this.nodes.filter(node => {
+            if (
+              node.type === "containerNetwork" ||
+              node.type === "containerStorage" ||
+              node.type === "serviceDatabase" ||
+              node.type === "serviceServer"
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+          });
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
           // });
@@ -432,13 +554,13 @@ export default {
         .catch(function(error) {
           // handle error
           console.log(error);
-        })
-        .then(function() {
-          // always executed
         });
-        let displayProps = document.getElementsByClassName("display-property")[0];
-        displayProps.style.right = "-420px";
-        // displayProps.style.display = 'none'
+      // .then(function() {
+      //   // always executed
+      // });
+      let displayProps = document.getElementsByClassName("display-property")[0];
+      displayProps.style.right = "-420px";
+      // displayProps.style.display = 'none'
     },
     clickNode(e, node) {
       clearTimeout(timer);
@@ -481,7 +603,7 @@ export default {
           // typeCard.style.display = 'block'
           typeCard.style.right = "0px";
           _this.oldNode = node;
-          _this.updateSelectType()
+          _this.updateSelectType();
         }
         // 增加边
         if (_this.radio === "3") {
@@ -611,7 +733,7 @@ export default {
     focusNode(node) {
       this.focusedNode = node;
       // 定位
-      this.focusNodePosition(node)
+      this.focusNodePosition(node);
       // 高亮
       this.displayOneNode(node);
     },
@@ -643,11 +765,11 @@ export default {
       }
     },
     focusNodePosition(node) {
-      let netSvg = document.getElementsByClassName('net-svg')[0]
-      console.log(document.getElementsByClassName('net-svg'))
+      let netSvg = document.getElementsByClassName("net-svg")[0];
+      console.log(document.getElementsByClassName("net-svg"));
       // offset 是与中心的偏差 是一个相对值
-      this.offset_X += netSvg.scrollWidth / 2 - node.x
-      this.offset_Y += netSvg.scrollHeight / 2 - node.y - 150
+      this.offset_X += netSvg.scrollWidth / 2 - node.x;
+      this.offset_Y += netSvg.scrollHeight / 2 - node.y - 150;
     },
     displayOneNode(node) {
       this.selection = {
@@ -677,8 +799,8 @@ export default {
       this.newNodeType = "";
       this.oldNode = {};
       this.newNodeName = "";
-      this.newNodeId = ''
-      this.selectNodeInfo = []
+      this.newNodeId = "";
+      this.selectNodeInfo = [];
     },
     updatePropsHandler() {
       this.$confirm("确认要修改属性吗", "修改属性", {
@@ -706,7 +828,7 @@ export default {
     },
     // 更新增加节点时的选择列表
     updateSelectType() {
-      let temp = {}
+      let temp = {};
       for (let rel of this.allNodeRelation) {
         if (rel.sNodeType == this.oldNode.type) {
           temp = {
@@ -714,17 +836,16 @@ export default {
             direction: "target",
             relName: rel.relName,
             relType: rel.relType
-          }
-          this.selectNodeInfo.push(temp)
-        }
-        else if (rel.tNodeType == this.oldNode.type) {
+          };
+          this.selectNodeInfo.push(temp);
+        } else if (rel.tNodeType == this.oldNode.type) {
           temp = {
             type: rel.sNodeType,
             direction: "source",
             relName: rel.relName,
             relType: rel.relType
-          }
-          this.selectNodeInfo.push(temp)          
+          };
+          this.selectNodeInfo.push(temp);
         }
       }
     },
@@ -733,14 +854,27 @@ export default {
       for (let info of this.selectNodeInfo) {
         if (info.type == this.newNodeType) {
           // 如果新节点是 source
-          if (info.direction == 'source') {
-            this.addNewNode(this.newNodeId, this.oldNode.id, info.relName, 
-            info.relType, this.newNodeType, this.properties[this.newNodeType], nodeIcons[this.newNodeType])
+          if (info.direction == "source") {
+            this.addNewNode(
+              this.newNodeId,
+              this.oldNode.id,
+              info.relName,
+              info.relType,
+              this.newNodeType,
+              this.properties[this.newNodeType],
+              nodeIcons[this.newNodeType]
+            );
             break;
-          }
-          else {
-            this.addNewNode(this.oldNode.id, this.newNodeId, info.relName, 
-            info.relType, this.newNodeType, this.properties[this.newNodeType], nodeIcons[this.newNodeType])
+          } else {
+            this.addNewNode(
+              this.oldNode.id,
+              this.newNodeId,
+              info.relName,
+              info.relType,
+              this.newNodeType,
+              this.properties[this.newNodeType],
+              nodeIcons[this.newNodeType]
+            );
           }
         }
       }
@@ -753,29 +887,33 @@ export default {
         type: newNodeType,
         property: property,
         svgSym: svgSym
-      }
+      };
       this.nodes.push(newNode);
-      // axios.post('/user', newNode)
-      //   .then(response => {
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
+
       let newLink = {
         sid: sid,
         tid: tid,
         name: linkName,
         type: linkType
-      }
+      };
       this.links.push(newLink);
-      // axios.post('/user', newLink)
+
+      // axios
+      //   .post(reqUrl + "/api/addNewNode", newNode)
       //   .then(response => {
-      //     console.log(response);
+      //     axios
+      //       .post(reqUrl + "/api/addNewLink", newLink)
+      //       .then(response => {
+      //         console.log(response);
+      //       })
+      //       .catch(function(error) {
+      //         console.log(error);
+      //       });
       //   })
-      //   .catch(function (error) {
+      //   .catch(function(error) {
       //     console.log(error);
       //   });
+
       this.$message({
         message: "添加成功",
         type: "success"
@@ -805,13 +943,13 @@ export default {
     //   }
     // },
     showLinkLabel(e) {
-    // 功能：hover 上 link 后显示 label
-    // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，
-    //      通过 id 搜索到 label，改变 label 的字体大小
+      // 功能：hover 上 link 后显示 label
+      // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，
+      //      通过 id 搜索到 label，改变 label 的字体大小
       if (e.target.id.indexOf("link") != -1) {
-        let linkid = e.target.id
+        let linkid = e.target.id;
         // console.log(document.querySelectorAll('[*|href]:not([href])'))
-        let labels = document.querySelectorAll('[*|href]:not([href])')
+        let labels = document.querySelectorAll("[*|href]:not([href])");
         for (let label of labels) {
           // console.log(label)
           if (label.href.animVal.indexOf(linkid) != -1) {
@@ -820,9 +958,9 @@ export default {
             // console.log(linkid)
             // console.log(label.innerHTML)
             // label.attr('font-size', '20px');
-            label.setAttribute('style', 'font-size:15px;')
+            label.setAttribute("style", "font-size:15px;");
             setTimeout(() => {
-              label.setAttribute('style', 'font-size:0px;')
+              label.setAttribute("style", "font-size:0px;");
             }, 1000);
             break;
           }
@@ -830,34 +968,10 @@ export default {
       }
     }
   },
-  computed: {
-    // 节点数量
-    id() {
-      return this.nodes.length;
-    },
-    options() {
-      return {
-        force: this.force,
-        size: {
-          h: 800,
-          // w: 1200
-        },
-        offset: {
-          x: this.offset_X,
-          y: this.offset_Y
-        },
-        nodeSize: this.nodeSize,
-        fontSize: this.fontSize,
-        nodeLabels: true,
-        linkLabels: true,
-        canvas: this.canvas
-      };
-    }
-  },
   mounted() {
     var el = document.getElementsByClassName("net-svg")[0];
     el.onmousedown = e => {
-      this.staCoor = getCoordInDocument(e);     
+      this.staCoor = getCoordInDocument(e);
     };
     el.onmouseup = e => {
       // 点击空白处取消高亮
@@ -867,7 +981,10 @@ export default {
       };
       // 如果是双击显示属性面板
       // console.log(e)
-      if (e.detail === 2 && (e.target.localName === 'path' || e.target.localName === 'circle')) {
+      if (
+        e.detail === 2 &&
+        (e.target.localName === "path" || e.target.localName === "circle")
+      ) {
         let property = this.currentNode.property;
         this.propertyKeys = Object.keys(property);
         for (var key in property) {
@@ -905,13 +1022,12 @@ export default {
       var down = true; // 定义一个标志，当滚轮向下滚时，执行一些操作
       down = ev.wheelDelta ? ev.wheelDelta < 0 : ev.detail > 0;
       if (down) {
-         if (this.nodeSize > 33.5) {
-           this.force = Math.max(0, this.force - 80);
-        this.nodeSize = Math.max(0, this.nodeSize - 0.2);
-        // this.linkWidth = Math.max(0, this.linkWidth - 0.5);
-        this.fontSize = Math.max(0, this.fontSize - 0.1);
+        if (this.nodeSize > 33.5) {
+          this.force = Math.max(0, this.force - 80);
+          this.nodeSize = Math.max(0, this.nodeSize - 0.2);
+          // this.linkWidth = Math.max(0, this.linkWidth - 0.5);
+          this.fontSize = Math.max(0, this.fontSize - 0.1);
         }
-        
 
         // 这两段代码会影响 namespace 节点的缩放 所以被我注释掉惹（cyl）
 
@@ -990,10 +1106,6 @@ export default {
   fill: lightblue;
 }
 
-#new-graph .nodesmasterServer {
-  fill: lightgreen
-}
-
 #new-graph .nodesServer {
   fill: darkcyan;
 }
@@ -1008,7 +1120,8 @@ export default {
 
 #new-graph .nodesContainerNetwork,
 #new-graph .nodesContainerStorage {
-  fill: lightcyan;
+  fill: rgb(200, 255, 195);
+  r: 12;
 }
 
 #new-graph .nodesService {
@@ -1016,8 +1129,12 @@ export default {
 }
 
 #new-graph .nodesServiceDatabase,
-#new-graph .nodesServiceServer{ 
-  fill: lightgoldenrodyellow
+#new-graph .nodesServiceServer {
+  fill: lightgoldenrodyellow;
+  r: 12;
+}
+
+#new-graph .profile {
 }
 
 #new-graph .nodesNamespace {
@@ -1091,5 +1208,10 @@ export default {
 
 .node-svg:hover {
   stroke-width: 30px;
+}
+
+#new-graph #switch-p-node {
+  position: fixed;
+  bottom: 50px;
 }
 </style>

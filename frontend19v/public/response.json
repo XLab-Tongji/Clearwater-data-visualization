@@ -1,6 +1,30 @@
 {
   "linkList": [
     {
+      "name": "profile",
+      "type": "profile",
+      "tid": "containerNetwork",
+      "sid": "http://containers/10.60.38.181/sock-shop/carts"
+    },
+    {
+      "name": "profile",
+      "type": "profile",
+      "tid": "containerStorage",
+      "sid": "http://containers/10.60.38.181/sock-shop/carts"
+    },
+    {
+      "name": "profile",
+      "type": "profile",
+      "tid": "serviceServer",
+      "sid": "http://services/10.60.38.181/sock-shop/user"
+    },
+    {
+      "name": "profile",
+      "type": "profile",
+      "tid": "serviceDatabase",
+      "sid": "http://services/10.60.38.181/sock-shop/user"
+    },
+    {
       "name": "deployed_in",
       "type": "deployed_in",
       "tid": "http://nodes/10.60.38.181/192.168.199.21",
@@ -237,6 +261,30 @@
   ],
   "nodeList": [
     {
+      "name": "containerNetwork",
+      "property": {},
+      "id": "containerNetwork",
+      "type": "containerNetwork"
+    },
+    {
+      "name": "containerStorage",
+      "property": {},
+      "id": "containerStorage",
+      "type": "containerStorage"
+    },
+    {
+      "name": "serviceDatabase",
+      "property": {},
+      "id": "serviceDatabase",
+      "type": "serviceDatabase"
+    },
+    {
+      "name": "serviceServer",
+      "property": {},
+      "id": "serviceServer",
+      "type": "serviceServer"
+    },
+    {
       "name": "carts",
       "property": {
         "image": "weaveworksdemos/carts:0.4.8",
@@ -395,7 +443,7 @@
         "podCIDR": "172.20.0.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.191",
-      "type": "node"
+      "type": "masterServer"
     },
     {
       "name": "192.168.199.21",
@@ -404,7 +452,7 @@
         "podCIDR": "172.20.4.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.21",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "192.168.199.22",
@@ -413,7 +461,7 @@
         "podCIDR": "172.20.4.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.22",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "192.168.199.23",
@@ -422,7 +470,7 @@
         "podCIDR": "172.20.4.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.23",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "192.168.19",
@@ -431,7 +479,7 @@
         "podCIDR": "172.20.4.0/24"
       },
       "id": " http://nodes/10.60.38.181/192.168.19",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "payment-79769c5874-4f5r9",
@@ -564,7 +612,7 @@
         "podCIDR": "172.20.2.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.133",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "catalogue-db",
@@ -601,7 +649,7 @@
         "podCIDR": "172.20.4.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.188",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "payment",
@@ -646,7 +694,7 @@
         "podCIDR": "172.20.3.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.206",
-      "type": "node"
+      "type": "server"
     },
     {
       "name": "catalogue-db-66ff5bbbf5-tzblc",
@@ -835,7 +883,7 @@
         "podCIDR": "172.20.1.0/24"
       },
       "id": "http://nodes/10.60.38.181/192.168.199.205",
-      "type": "node"
+      "type": "server"
     }
   ]
 }

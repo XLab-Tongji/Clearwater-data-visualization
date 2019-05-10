@@ -92,6 +92,8 @@ export default {
     'noNodes',
     'selected',
     'linksSelected',
+    'profileLinks',
+    'propertyNodeSwitch',
     'links',
     'nodeSize',
     'padding',
@@ -141,6 +143,9 @@ export default {
       let cssClass = ['link']
       if (this.linksSelected.hasOwnProperty(linkId)) {
         cssClass.push('selected')
+      }
+      if (this.profileLinks.indexOf(linkId) !== -1) {
+        cssClass.push('profile')
       }
       if (!this.strLinks) {
         cssClass.push('curve')
