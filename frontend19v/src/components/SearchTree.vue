@@ -9,6 +9,7 @@
       :filter-node-method="filterNode"
       ref="tree"
       @node-click="nodeClickHandler"
+      accordion
     ></el-tree>
   </div>
 </template>
@@ -149,6 +150,8 @@ export default {
 <style scope>
 #search-tree {
   /* margin: 5px; */
+  max-height: 88%;
+  overflow: auto;
   position: absolute;
   width: 250px;
   float: right;
@@ -159,6 +162,7 @@ export default {
   border: 1px solid lightgray;
   margin-top: 5px;
   border-radius: 5px;
+
 }
 </style>
 

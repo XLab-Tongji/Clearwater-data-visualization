@@ -231,8 +231,6 @@ export default {
   },
   data() {
     return {
-      propertyNodes: [], // 属性节点数组
-      propertyNodeSwitch: true,
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -282,6 +280,14 @@ export default {
         "containerNetwork",
         "containerStorage"
       ],
+      propertyNodes: [], // 属性节点数组
+      allPropertyNodeTypes: [ // 属性节点的类型
+        "serviceServer",
+        "serviceDatabase",
+        "containerNetwork",
+        "containerStorage"
+      ],
+      propertyNodeSwitch: true, // 是否显示属性节点
       // 增加节点时可以选择的类型
       selectNodeInfo: [],
       allLinkType: [
@@ -470,17 +476,8 @@ export default {
       // 当不显示属性时
       if (newVal === false) {
         // 不渲染 node 和 label
-        this.nodes = this.nodes.filter(node => {
-          if (
-            node.type === "containerNetwork" ||
-            node.type === "containerStorage" ||
-            node.type === "serviceDatabase" ||
-            node.type === "serviceServer"
-          ) {
-            return false;
-          } else {
-            return true;
-          }
+        this.propertyNodes.forEach(propertNode => {
+          this.nodes.remove(propertNode)
         });
         // 隐藏 link
         document.getElementsByClassName("profile").forEach(x => {
@@ -536,12 +533,7 @@ export default {
           this.nodes = this.nodes.concat(response.data.nodeList);
           this.links = response.data.linkList;
           this.propertyNodes = this.nodes.filter(node => {
-            if (
-              node.type === "containerNetwork" ||
-              node.type === "containerStorage" ||
-              node.type === "serviceDatabase" ||
-              node.type === "serviceServer"
-            ) {
+            if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
               return true;
             } else {
               return false;
@@ -625,22 +617,36 @@ export default {
         }
         if (_this.radio === "4") {
           // 删除
-          var removeList = [];
+          let removeLinkList = []; // 要删除的边们
+          let removeNodeList = _this.relationalPropertyNodes(node) // 要删除的节点（点击的节点的第一层且是属性节点
+          removeNodeList.push(node) 
           _this.links.forEach(element => {
             if (node.id == element.sid || node.id == element.tid) {
-              removeList.push(element);
+              removeLinkList.push(element);
             }
           });
 
-          removeList.forEach(element => {
-            _this.links.remove(element);
+          removeLinkList.forEach(link => {
+            _this.links.remove(link);
           });
 
-          _this.nodes.forEach(element => {
-            if (node.id == element.id) {
-              _this.nodes.remove(element);
-            }
+          removeNodeList.forEach(node => {
+              _this.nodes.remove(node);
           });
+          // console.log(JSON.stringify(removeNodeList))
+          // console.log(JSON.stringify(removeLinkList))
+          // 删除请求（先删除关系->怕后端出问题
+          // axios.post(reqUrl + '', removeLinkList)
+          //   .then(response => {
+          //     console.log('删除边的请求成功')
+          //     axios.post(reqUrl + '', removeNodeList) 
+          //       .then(response => {
+          //         console.log('删除节点的请求成功')
+          //       })
+          //   }) 
+          //   .catch(error => {
+          //     console.error(error)
+          //   })
         }
         // 修改节点
         if (_this.radio === "5") {
@@ -763,6 +769,30 @@ export default {
           }
         }
       }
+    },
+    // 返回它第一层连着的节点且是属性节点
+    relationalPropertyNodes(node) {
+      let relproNodes = []
+      this.links.forEach(link => {
+        if (link.sid === node.id) {
+          let anotherNode = this.findNodebyId(link.tid)
+          if (this.allPropertyNodeTypes.indexOf(anotherNode.type) !== -1) {
+            relproNodes.push(anotherNode)
+          }
+        }
+        else if (link.tid === node.id) {
+          let anotherNode = this.findNodebyId(link.sid)
+          if (this.allPropertyNodeTypes.indexOf(anotherNode.type) !== -1) {
+            relproNodes.push(anotherNode)
+          }
+        }
+      })
+      return relproNodes
+    },
+    findNodebyId(id) {
+      return this.nodes.find(node => {
+        return node.id === id
+      })
     },
     focusNodePosition(node) {
       let netSvg = document.getElementsByClassName("net-svg")[0];
@@ -1101,6 +1131,7 @@ export default {
   stroke: tomato !important;
   stroke-width: 4px;
 }
+
 
 #new-graph .nodesInit {
   fill: lightblue;
