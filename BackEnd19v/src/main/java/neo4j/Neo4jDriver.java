@@ -1570,14 +1570,9 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static boolean storeEnvironment(){
-        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+    public static boolean storeEnvironment(String address){
         try {
             System.out.println("storing env");
-            // get address string
-            String jsonString = getData(httpUrl);
-            JSONObject jsonObject = JSONObject.parseObject(jsonString);
-            String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
             String envName = "http://environment/"+address;
             System.out.println("env name: "+envName);
             Model model = ModelFactory.createDefaultModel();
@@ -1585,26 +1580,20 @@ public class Neo4jDriver {
                 Resource res = model.createResource(envName);
                 res.addProperty(model.createProperty(envName+"/name"), "env");
                 //存储fuseki
-                model.write(System.out, "RDF/XML-ABBREV");
                 DataAccessor.getInstance().add(model);
-                model.write(System.out, "N-TRIPLE");
-
             } catch (NullPointerException e) {
                 e.printStackTrace();
+                return false;
             }
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
         return true;
     }
 
-    public static boolean storeEnvRelation(){
-        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+    public static boolean storeEnvRelation(String address){
         try {
-            // get address string
-            String jsonString = getData(httpUrl);
-            JSONObject jsonObject = JSONObject.parseObject(jsonString);
-            String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
             String envName = "http://environment/"+address;
             RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                     .destination("http://10.60.38.181:30300/DevKGData/query");
@@ -2009,6 +1998,10 @@ public class Neo4jDriver {
                         result.add(getServer(subject));
                         linkList.addAll(getLink(subject, "manage"));
                     }
+                    else if(subject.contains("environment")){
+                        result.add(getEnv(subject));
+                        linkList.addAll(getLink(subject, "has"));
+                    }
                     else if(subject.contains("namespace")){
                         result.add(getNamespace(subject));
                         linkList.addAll(getLink(subject, "supervises"));
@@ -2064,6 +2057,37 @@ public class Neo4jDriver {
         node.put("id", urlNode);
         node.put("name", l[l.length-1]);
         node.put("type", "namespace");
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.181:30300/DevKGData/query");
+        Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
+                "\t<"+urlNode+"> ?p ?o\n" +
+                "}");
+        Map<String, Object> pro = new HashMap<>();
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qE = conn.query(qNode);
+            ResultSet rs = qE.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution q = rs.next() ;
+                String[] plist = q.get("p").toString().split("/");
+                String p = plist[plist.length-1];
+                String o = q.get("o").toString();
+                if(p.equals("name")){
+                    pro.put("name", o);
+                }
+            }
+            qE.close();
+        }
+        node.put("property", pro);
+        System.out.println(node);
+        return node;
+    }
+
+    public static Map<String, Object> getEnv(String urlNode){
+        String[] l = urlNode.split("/");
+        Map<String, Object> node = new HashMap<>();
+        node.put("id", urlNode);
+        node.put("name", l[l.length-1]);
+        node.put("type", "environment");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.181:30300/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
@@ -2358,6 +2382,10 @@ public class Neo4jDriver {
                     }
                     DataAccessor.getInstance().add(model);
                 }
+                else {
+                    System.out.println("same name");
+                    return false;
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -2369,8 +2397,8 @@ public class Neo4jDriver {
     }
 
     public static boolean addLink(HashMap data){
-        String fromUrl = (String)data.get("tid");
-        String toUrl = (String)data.get("sid");
+        String fromUrl = (String)data.get("sid");
+        String toUrl = (String)data.get("tid");
         String type = (String)data.get("type");
         System.out.println(fromUrl);
         System.out.println(toUrl);
@@ -2393,6 +2421,75 @@ public class Neo4jDriver {
 
     }
 
+    public static boolean deleteOneLink(String sid, String tid){
+        try {
+            RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
+                    .destination("http://10.60.38.181:30300/DevKGData/update");
+            String delete = "DELETE WHERE\n" +
+                    "{\n" +
+                    "<"+sid+"> ?p <"+tid+"> .\n" +
+                    "}";
+            try ( RDFConnectionFuseki connUpdate = (RDFConnectionFuseki)builder2.build() ) {
+                connUpdate.update(delete);
+            } catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteOneNode(String url){
+        try {
+            RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
+                    .destination("http://10.60.38.181:30300/DevKGData/update");
+            String delete = "DELETE WHERE\n" +
+                    "{\n" +
+                    "<"+url+"> ?p ?o .\n" +
+                    "}";
+            try ( RDFConnectionFuseki connUpdate = (RDFConnectionFuseki)builder2.build() ) {
+                connUpdate.update(delete);
+            } catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteLinks(List<HashMap> data){
+        try {
+            for (HashMap link: data) {
+                String sid = (String)link.get("sid");
+                String tid = (String)link.get("tid");
+                if(!deleteOneLink(sid, tid)) return false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteNodes(List<HashMap> data){
+        try {
+            for (HashMap link: data) {
+                String id = (String)link.get("id");
+                if(!deleteOneNode(id)) return false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static boolean deleteAll(){
         try {
             RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
@@ -2412,15 +2509,23 @@ public class Neo4jDriver {
     }
 
     public static void main(String[] args) {
-        storeNamespaceName();
-        storeEnvironment();
-        storeServerName();
-        storeMasterNode("192.168.199.191");
-        storeServiceName("sock-shop");
-        storePodName("sock-shop");
-        podToService("10.60.38.181","sock-shop");
-        podToServer("10.60.38.181","sock-shop");
+//        HashMap data = new HashMap();
+//        data.put("id", "http://server/10.60.10.10/test");
+//        HashMap prop = new HashMap();
+//        prop.put("name", "test");
+//        data.put("property", prop);
+//        boolean result = addNode(data);
+//        System.out.println(result);
+//        storeNamespaceName();
+//        storeEnvironment("10.60.38.181");
+//        storeServerName();
+//        storeMasterNode("192.168.199.191");
+//        storeServiceName("sock-shop");
+//        storePodName("sock-shop");
+//        podToService("10.60.38.181","sock-shop");
+//        podToServer("10.60.38.181","sock-shop");
 //        Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
+        deleteOneNode("http://containers/10.60.38.181/sock-shop/carts");
     }
 }

@@ -427,9 +427,9 @@ public class IndexRestController {
         result &= storeNamespaceName();
         result &= storeServerName();
         result &= storeMasterNode(masterName);
-        result &= storeEnvironment();
+        result &= storeEnvironment(address);
         result &= storePodName(podName);
-        result &= storeEnvRelation();
+        result &= storeEnvRelation(address);
         result &= storeServiceName(serviceName);
         result &= podToService(address, namespace);
         result &= podToServer(address, namespace);
@@ -478,5 +478,15 @@ public class IndexRestController {
     @RequestMapping(value = "/api/deleteAll",method = RequestMethod.POST,produces = "application/json")
     public Boolean deleteAllNodes(){
         return deleteAll();
+    }
+
+    @RequestMapping(value = "/api/delNodes",method = RequestMethod.POST,produces = "application/json")
+    public Boolean delNodes(@RequestBody List<HashMap> data){
+        return deleteNodes(data);
+    }
+
+    @RequestMapping(value = "/api/delLinks",method = RequestMethod.POST,produces = "application/json")
+    public Boolean delLinks(@RequestBody List<HashMap> data){
+        return deleteLinks(data);
     }
 }
