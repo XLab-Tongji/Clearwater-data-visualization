@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
 import com.github.jsonldjava.utils.Obj;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import neo4jentities.DataAccessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -18,6 +21,7 @@ import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.bson.Document;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.Node;
 import org.neo4j.driver.v1.types.Path;
@@ -2502,6 +2506,22 @@ public class Neo4jDriver {
                 connAddRelation.update(deleteAll);
             }
         }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean save2Mongo(Map<String, Object> data){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient("101.132.69.33", 27017);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("webdb");
+            System.out.println("Successfully conenct to mongoDB");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("moviesite");
+            System.out.println("Successfully get collection");
+        } catch (Exception e){
             e.printStackTrace();
             return false;
         }
