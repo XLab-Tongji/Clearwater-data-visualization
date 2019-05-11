@@ -153,12 +153,15 @@
         plain
       >确定</el-button>
     </el-card>
+    <!-- 时间线 -->
+    <timeline :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
   </div>
 </template>
 
 <script>
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
+import Timeline from "../components/Timeline"
 import axios from "axios";
 import { setTimeout } from "timers";
 
@@ -227,7 +230,8 @@ const nodeIcons = {
 export default {
   components: {
     D3Network,
-    SearchTree
+    SearchTree,
+    Timeline
   },
   data() {
     return {
@@ -251,6 +255,7 @@ export default {
         links: {},
         nodes: {}
       },
+      allTimeStamps: ["2019-09-03 09:32:11", '2019-03-11 09:32:11'], // 不太确定是什么数据格式的 这涉及到排序
       nodeSize: 40,
       fontSize: 14,
       linkWidth: 3,
@@ -553,6 +558,45 @@ export default {
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
+    },
+    getDatabyTimeStamp(currentTimeStamp) {
+      console.log(currentTimeStamp)
+      // axios.post(reqUrl + '', {
+    //     timeStamp: frontTimeFottoEnd(currentTimeStamp)
+    // })
+      //   .then(response => {
+      //     this.nodes = response.content.nodeList ?
+      //     this.links = response.content.linkList ?
+      //   })
+      //   .catch(error => {
+      //     console.error(error)
+      //   })
+    },
+    getAllTimeStamps() {
+
+      // axios.get(reqUrl + '')
+      //   .then(response => {
+      //     this.allTimeStamps = response.data ? .map(time => { //foreach会改变原数组
+      //       return endTimeFottoFront(time)
+      //     })
+      //   })
+      //   .catch(error => {
+      //     console.error(error)
+      //   })
+    },
+    // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
+    frontTimeFottoEnd(time) { 
+      let timeArr = time.split('')
+      timeArr.splice(4, 1)
+      timeArr.splice(6, 1)
+      return timeArr.join('')
+    },
+    // yyyyMMdd hh:mm:ss -> yyyy-MM-dd hh:mm:ss
+    endTimeFottoFront(time) {
+      let timeArr = time.split('')
+      timeArr.splice(4, 0, '-')
+      timeArr.splice(7, 0, '-')
+      return timeArr.join('')
     },
     clickNode(e, node) {
       clearTimeout(timer);
@@ -1243,6 +1287,7 @@ export default {
 
 #new-graph #switch-p-node {
   position: fixed;
-  bottom: 50px;
+  bottom: 100px;
+  right: 70px;
 }
 </style>
