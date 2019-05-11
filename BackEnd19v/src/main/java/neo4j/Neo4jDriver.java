@@ -5,8 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
 import com.github.jsonldjava.utils.Obj;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import neo4jentities.DataAccessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -36,6 +39,7 @@ import util.CommonUtil;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -2521,11 +2525,51 @@ public class Neo4jDriver {
             System.out.println("Successfully conenct to mongoDB");
             MongoCollection<Document> collection = mongoDatabase.getCollection("moviesite");
             System.out.println("Successfully get collection");
+            //获取当前时间
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = df.format(day);
+            System.out.println(time);
+            //插入文档
+            Document document = new Document(data).
+                    append("time", time);
+            collection.insertOne(document);
+            System.out.println("文档插入成功");
         } catch (Exception e){
             e.printStackTrace();
             return false;
         }
         return true;
+    }
+
+    public static Map<String, Object> getFromMongo(String time){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient("101.132.69.33", 27017);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("webdb");
+            System.out.println("Successfully conenct to mongoDB");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("moviesite");
+            System.out.println("Successfully get collection");
+            //单一条件查询
+            FindIterable<Document> findIterable = collection.find(Filters.eq("time", time));//如果只有一个条件可以用这样的形式
+            MongoCursor<Document> mongoCursor = findIterable.iterator();
+            List<Map<String, Object>> result = new ArrayList<>();
+            while(mongoCursor.hasNext()){
+                Document d=mongoCursor.next();
+                System.out.println(d.get("linkList"));
+                System.out.println(d.get("nodeList"));
+                Map<String, Object> map = new HashMap<>();
+                map.putAll(d);
+                result.add(map);
+            }
+            System.out.println(result.size());
+            System.out.println(result.get(0));
+            return result.get(0);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void main(String[] args) {
@@ -2546,6 +2590,8 @@ public class Neo4jDriver {
 //        podToServer("10.60.38.181","sock-shop");
 //        Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
-        deleteOneNode("http://containers/10.60.38.181/sock-shop/carts");
+//        deleteOneNode("http://containers/10.60.38.181/sock-shop/carts");
+//        save2Mongo(result);
+        getFromMongo("2019-05-11 16:25:04");
     }
 }
