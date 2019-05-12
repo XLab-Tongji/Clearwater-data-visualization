@@ -459,8 +459,8 @@ export default {
       return {
         force: this.force,
         size: {
-          h: 800
-          // w: 1200
+          h: 800,
+          // w: 1240
         },
         offset: {
           x: this.offset_X,
@@ -561,6 +561,35 @@ export default {
     },
     getDatabyTimeStamp(currentTimeStamp) {
       console.log(currentTimeStamp)
+      if (currentTimeStamp === 'now') {
+        axios
+        // API GET
+        .get(reqUrl + "/api/getNodesAndLinks")
+        // API GET LOCAL
+        // .get("/response.json")
+        .then(response => {
+          console.log(response);
+          response.data.nodeList.map(x => {
+            x.svgSym = nodeIcons[x.type];
+          });
+          this.nodes = this.nodes.concat(response.data.nodeList);
+          this.links = response.data.linkList;
+          this.propertyNodes = this.nodes.filter(node => {
+            if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+          // this.$nextTick(() => {
+          //   this.addDblClickEvent();
+          // });
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+        });
+      }
       // axios.post(reqUrl + '', {
     //     timeStamp: frontTimeFottoEnd(currentTimeStamp)
     // })
@@ -1286,8 +1315,12 @@ export default {
 }
 
 #new-graph #switch-p-node {
+  background: white;
+  border: 1px lightgray solid;
+  border-radius: 10px;
+  padding: 10px 20px;
   position: fixed;
-  bottom: 100px;
-  right: 70px;
+  bottom: 90px;
+  right: 60px;
 }
 </style>
