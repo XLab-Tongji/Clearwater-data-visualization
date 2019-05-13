@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.Yaml;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static neo4j.FusekiDriver.*;
 import static neo4j.Neo4jDriver.*;
 
 
@@ -463,6 +464,11 @@ public class IndexRestController {
     @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
     public Map<String, Object> getNodesAndLinks(){
         return getAllNodesAndLinks();
+    }
+
+    @RequestMapping(value = "/api/getAllByTime",method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> getAllNLByTime(@RequestParam String time){
+        return getAllByTime(time);
     }
 
     @RequestMapping(value = "/api/addNewNode",method = RequestMethod.POST,produces = "application/json")

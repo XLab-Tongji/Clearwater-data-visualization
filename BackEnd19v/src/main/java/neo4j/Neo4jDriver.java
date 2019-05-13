@@ -53,6 +53,7 @@ import org.apache.jena.rdf.model.Resource;
 import java.io.File;
 import java.io.IOException;
 
+import static neo4j.FusekiDriver.getAllNodesAndLinks;
 import static org.neo4j.driver.v1.Values.parameters;
 @Component
 public class Neo4jDriver {
@@ -1984,81 +1985,6 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static Map<String, Object> getAllNodesAndLinks(){
-        Map<String, Object> final_list = new HashMap<>();
-        List<Map<String, Object>> result = new ArrayList<>();
-        List<Map<String, Object>> linkList = new ArrayList<>();
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
-
-        Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
-                "\t?s ?p ?o\n" +
-                "}");
-        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
-            QueryExecution qExec = conn.query(query);
-            ResultSet rs = qExec.execSelect();
-            while (rs.hasNext()) {
-                QuerySolution qs = rs.next() ;
-                String subject = qs.get("s").toString();
-                if(subject.contains("http")){
-                    System.out.println("Subject: " + subject);
-                    if(subject.contains("server")){
-                        result.add(getServer(subject));
-                        linkList.addAll(getLink(subject, "manage"));
-                    }
-                    else if(subject.contains("environment")){
-                        result.add(getEnv(subject));
-                        linkList.addAll(getLink(subject, "has"));
-                    }
-                    else if(subject.contains("namespace")){
-                        result.add(getNamespace(subject));
-                        linkList.addAll(getLink(subject, "supervises"));
-                    }
-                    else if(subject.contains("service")){
-                        if(subject.contains("db")){
-                            if (subject.contains("response_time")||subject.contains("throughput"))
-                                result.add(getPropertyNodes(subject, "serviceDatabase"));
-                            else{
-                                result.add(getService(subject));
-                                linkList.addAll(getLink(subject, "profile"));
-                            }
-                        }
-                        else {
-                            if (subject.contains("success_rate")||subject.contains("response_time"))
-                                result.add(getPropertyNodes(subject, "serviceServer"));
-                            else{
-                                result.add(getService(subject));
-                                linkList.addAll(getLink(subject, "profile"));
-                            }
-                        }
-                    }
-                    else if(subject.contains("pods")){
-                        result.add(getPod(subject));
-                        linkList.addAll(getLink(subject, "deployed_in"));
-                        linkList.addAll(getLink(subject, "contains"));
-                        linkList.addAll(getLink(subject, "provides"));
-                    }
-                    else if(subject.contains("containers")){
-                        if (subject.contains("container_fs_io_current")||subject.contains("container_fs_usage_bytes")||subject.contains("container_fs_reads_bytes_total")||subject.contains("container_fs_writes_bytes_total")){
-                            result.add(getPropertyNodes(subject, "containerStorage"));
-                        }else if (subject.contains("network_receive_bytes")||subject.contains("network_transmit_bytes")){
-                            result.add(getPropertyNodes(subject, "containerNetwork"));
-                        }else {
-                            result.add(getContainer(subject));
-                            linkList.addAll(getLink(subject, "profile"));
-                        }
-                    }
-                }
-            }
-            qExec.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        final_list.put("nodeList", result);
-        final_list.put("linkList", linkList);
-        return final_list;
-    }
-
     public static Map<String, Object> getNamespace(String urlNode){
         String[] l = urlNode.split("/");
         Map<String, Object> node = new HashMap<>();
@@ -2375,60 +2301,6 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static boolean addNode(HashMap data){
-        try {
-            String url = data.get("id").toString();
-            System.out.println(url);
-            HashMap property = (HashMap) data.get("property");
-
-            Model model = ModelFactory.createDefaultModel();
-            Resource resource = model.createResource(url);
-            try{
-                if (judgeExist((String)property.get("name"),url)){
-                    for (Object key : property.keySet()) {
-                        resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
-                    }
-                    DataAccessor.getInstance().add(model);
-                }
-                else {
-                    System.out.println("same name");
-                    return false;
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean addLink(HashMap data){
-        String fromUrl = (String)data.get("sid");
-        String toUrl = (String)data.get("tid");
-        String type = (String)data.get("type");
-        System.out.println(fromUrl);
-        System.out.println(toUrl);
-        System.out.println(type);
-        String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
-                "INSERT DATA{\n" +
-                "<"+fromUrl+"> j0:"+type +" <"+toUrl+">\n" +
-                "}";
-        System.out.println(addRelation);
-        RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/update");
-
-        try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
-            connAddRelation.update(addRelation);
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-
-    }
-
     public static boolean deleteOneLink(String sid, String tid){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
@@ -2471,60 +2343,13 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static boolean deleteLinks(List<HashMap> data){
-        try {
-            for (HashMap link: data) {
-                String sid = (String)link.get("sid");
-                String tid = (String)link.get("tid");
-                if(!deleteOneLink(sid, tid)) return false;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean deleteNodes(List<HashMap> data){
-        try {
-            for (HashMap link: data) {
-                String id = (String)link.get("id");
-                if(!deleteOneNode(id)) return false;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean deleteAll(){
-        try {
-            RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.181:30300/DevKGData/update");
-            String deleteAll = "DELETE WHERE\n" +
-                    "{\n" +
-                    "\t?s ?p ?o .\n" +
-                    "}";
-            try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
-                connAddRelation.update(deleteAll);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
     public static boolean save2Mongo(Map<String, Object> data){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("101.132.69.33", 27017);
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
             //连接到数据库
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("webdb");
-            System.out.println("Successfully conenct to mongoDB");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("moviesite");
-            System.out.println("Successfully get collection");
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("info");
             //获取当前时间
             Date day=new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -2542,15 +2367,13 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static Map<String, Object> getFromMongo(String time){
+    public static Map<String, Object> getOneFromMongo(String time){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("101.132.69.33", 27017);
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
             //连接到数据库
-            MongoDatabase mongoDatabase = mongoClient.getDatabase("webdb");
-            System.out.println("Successfully conenct to mongoDB");
-            MongoCollection<Document> collection = mongoDatabase.getCollection("moviesite");
-            System.out.println("Successfully get collection");
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("info");
             //单一条件查询
             FindIterable<Document> findIterable = collection.find(Filters.eq("time", time));//如果只有一个条件可以用这样的形式
             MongoCursor<Document> mongoCursor = findIterable.iterator();
@@ -2563,13 +2386,28 @@ public class Neo4jDriver {
                 map.putAll(d);
                 result.add(map);
             }
-            System.out.println(result.size());
+            if(result.size()==0) return null;
             System.out.println(result.get(0));
             return result.get(0);
         } catch (Exception e){
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static List<String> getTimesFromMongo(){
+        MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("info");
+        FindIterable<Document> findIterable = collection.find();
+        MongoCursor<Document> mongoCursor = findIterable.iterator();
+        List<String> result = new ArrayList<>();
+        while(mongoCursor.hasNext()){
+            Document d=mongoCursor.next();
+            System.out.println(d.get("time"));
+            result.add(d.get("time").toString());
+        }
+        return result;
     }
 
     public static void main(String[] args) {
@@ -2588,10 +2426,11 @@ public class Neo4jDriver {
 //        storePodName("sock-shop");
 //        podToService("10.60.38.181","sock-shop");
 //        podToServer("10.60.38.181","sock-shop");
-//        Map<String, Object> result = getAllNodesAndLinks();
+        Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
 //        deleteOneNode("http://containers/10.60.38.181/sock-shop/carts");
-//        save2Mongo(result);
-        getFromMongo("2019-05-11 16:25:04");
+        save2Mongo(result);
+        getOneFromMongo("2019-05-13 00:32:42");
+        getTimesFromMongo();
     }
 }

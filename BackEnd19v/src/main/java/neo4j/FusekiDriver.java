@@ -31,56 +31,199 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+import static neo4j.Neo4jDriver.*;
 import static org.neo4j.driver.v1.Values.parameters;
 
 @Component
 public class FusekiDriver {
 
-    // get address from uri
-    public static String getAddress(String address) {
-        URL url = null;
-        HttpURLConnection httpConn = null;
-        BufferedReader in = null;
 
-        StringBuffer sb = new StringBuffer();
-        try {
-            url = new URL(address);
-            in = new BufferedReader(new InputStreamReader(url.openStream(), "utf-8"));
-            String str = null;
-            while ((str = in.readLine()) != null) {
-                sb.append(str);
-            }
-        } catch (Exception ex) {
-        } finally {
-            try {
-                if (in != null) {
+    public static Map<String, Object> getAllNodesAndLinks(){
+        Map<String, Object> final_list = new HashMap<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> linkList = new ArrayList<>();
+        List<String> timeList = new ArrayList<>();
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.181:30300/DevKGData/query");
 
-                    in.close();
+        Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
+                "\t?s ?p ?o\n" +
+                "}");
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qExec = conn.query(query);
+            ResultSet rs = qExec.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution qs = rs.next() ;
+                String subject = qs.get("s").toString();
+                if(subject.contains("http")){
+                    System.out.println("Subject: " + subject);
+                    if(subject.contains("server")){
+                        result.add(getServer(subject));
+                        linkList.addAll(getLink(subject, "manage"));
+                    }
+                    else if(subject.contains("environment")){
+                        result.add(getEnv(subject));
+                        linkList.addAll(getLink(subject, "has"));
+                    }
+                    else if(subject.contains("namespace")){
+                        result.add(getNamespace(subject));
+                        linkList.addAll(getLink(subject, "supervises"));
+                    }
+                    else if(subject.contains("service")){
+                        if(subject.contains("db")){
+                            if (subject.contains("response_time")||subject.contains("throughput"))
+                                result.add(getPropertyNodes(subject, "serviceDatabase"));
+                            else{
+                                result.add(getService(subject));
+                                linkList.addAll(getLink(subject, "profile"));
+                            }
+                        }
+                        else {
+                            if (subject.contains("success_rate")||subject.contains("response_time"))
+                                result.add(getPropertyNodes(subject, "serviceServer"));
+                            else{
+                                result.add(getService(subject));
+                                linkList.addAll(getLink(subject, "profile"));
+                            }
+                        }
+                    }
+                    else if(subject.contains("pods")){
+                        result.add(getPod(subject));
+                        linkList.addAll(getLink(subject, "deployed_in"));
+                        linkList.addAll(getLink(subject, "contains"));
+                        linkList.addAll(getLink(subject, "provides"));
+                    }
+                    else if(subject.contains("containers")){
+                        if (subject.contains("container_fs_io_current")||subject.contains("container_fs_usage_bytes")||subject.contains("container_fs_reads_bytes_total")||subject.contains("container_fs_writes_bytes_total")){
+                            result.add(getPropertyNodes(subject, "containerStorage"));
+                        }else if (subject.contains("network_receive_bytes")||subject.contains("network_transmit_bytes")){
+                            result.add(getPropertyNodes(subject, "containerNetwork"));
+                        }else {
+                            result.add(getContainer(subject));
+                            linkList.addAll(getLink(subject, "profile"));
+                        }
+                    }
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
+            qExec.close();
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        String data = sb.toString();
-        return data;
+        try {
+            timeList = getTimesFromMongo();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        final_list.put("nodeList", result);
+        final_list.put("linkList", linkList);
+        final_list.put("timeList", timeList);
+        return final_list;
     }
 
-    // delete all on remote server
-    public static boolean delete() {
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+    public static Map<String, Object> getAllByTime(String time){
+        return getOneFromMongo(time);
+    }
+
+    public static boolean addNode(HashMap data){
+        try {
+            String url = data.get("id").toString();
+            System.out.println(url);
+            HashMap property = (HashMap) data.get("property");
+
+            Model model = ModelFactory.createDefaultModel();
+            Resource resource = model.createResource(url);
+            try{
+                if (judgeExist((String)property.get("name"),url)){
+                    for (Object key : property.keySet()) {
+                        resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
+                    }
+                    DataAccessor.getInstance().add(model);
+                }
+                else {
+                    System.out.println("same name");
+                    return false;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean addLink(HashMap data){
+        String fromUrl = (String)data.get("sid");
+        String toUrl = (String)data.get("tid");
+        String type = (String)data.get("type");
+        System.out.println(fromUrl);
+        System.out.println(toUrl);
+        System.out.println(type);
+        String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
+                "INSERT DATA{\n" +
+                "<"+fromUrl+"> j0:"+type +" <"+toUrl+">\n" +
+                "}";
+        System.out.println(addRelation);
+        RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.181:30300/DevKGData/update");
 
-        //update string
-        String updateString = "DELETE WHERE { ?s ?p ?o .}";
+        try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+            connAddRelation.update(addRelation);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
 
-        try (RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki) builder.build()) {
-            connAddRelation.update(updateString);
+    }
+
+    public static boolean deleteLinks(List<HashMap> data){
+        try {
+            for (HashMap link: data) {
+                String sid = (String)link.get("sid");
+                String tid = (String)link.get("tid");
+                if(!deleteOneLink(sid, tid)) return false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteNodes(List<HashMap> data){
+        try {
+            for (HashMap link: data) {
+                String id = (String)link.get("id");
+                if(!deleteOneNode(id)) return false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean deleteAll(){
+        try {
+            RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+                    .destination("http://10.60.38.181:30300/DevKGData/update");
+            String deleteAll = "DELETE WHERE\n" +
+                    "{\n" +
+                    "\t?s ?p ?o .\n" +
+                    "}";
+            try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+                connAddRelation.update(deleteAll);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
         return true;
     }
 
 
     public static void main(String[] args) {
-        delete();
     }
 }
