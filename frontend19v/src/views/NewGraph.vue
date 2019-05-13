@@ -526,16 +526,16 @@ export default {
       // })
       axios
         // API GET
-        // .get(reqUrl + "/api/getNodesAndLinks")
+        .get(reqUrl + "/api/getNodesAndLinks")
 
         // API GET LOCAL
-        .get("/response.json")
+        // .get("/response.json")
         .then(response => {
           console.log(response);
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
-          this.nodes = this.nodes.concat(response.data.nodeList);
+          this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
           this.propertyNodes = this.nodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
@@ -572,7 +572,7 @@ export default {
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
-          this.nodes = this.nodes.concat(response.data.nodeList);
+          this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
           this.propertyNodes = this.nodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
@@ -590,19 +590,20 @@ export default {
           console.log(error);
         });
       }
+      else {
       // axios.post(reqUrl + '', {
     //     timeStamp: frontTimeFottoEnd(currentTimeStamp)
     // })
       //   .then(response => {
-      //     this.nodes = response.content.nodeList ?
-      //     this.links = response.content.linkList ?
+      //     this.nodes = response.data.content.nodeList ?
+      //     this.links = response.data.content.linkList ?
       //   })
       //   .catch(error => {
       //     console.error(error)
       //   })
+      }
     },
     getAllTimeStamps() {
-
       // axios.get(reqUrl + '')
       //   .then(response => {
       //     this.allTimeStamps = response.data ? .map(time => { //foreach会改变原数组
@@ -709,17 +710,20 @@ export default {
           // console.log(JSON.stringify(removeNodeList))
           // console.log(JSON.stringify(removeLinkList))
           // 删除请求（先删除关系->怕后端出问题
-          // axios.post(reqUrl + '', removeLinkList)
-          //   .then(response => {
-          //     console.log('删除边的请求成功')
-          //     axios.post(reqUrl + '', removeNodeList) 
-          //       .then(response => {
-          //         console.log('删除节点的请求成功')
-          //       })
-          //   }) 
-          //   .catch(error => {
-          //     console.error(error)
-          //   })
+          axios.post(reqUrl + '/api/delLinks', removeLinkList)
+            .then(response => {
+              console.log('删除边的请求成功')
+              axios.post(reqUrl + '/api/delNodes', removeNodeList) 
+                .then(response => {
+                  console.log('删除节点的请求成功')
+                })
+                .catch(error => {
+                  console.log(error)
+                })
+            }) 
+            .catch(error => {
+              console.error(error)
+            })
         }
         // 修改节点
         if (_this.radio === "5") {
@@ -1001,21 +1005,22 @@ export default {
       };
       this.links.push(newLink);
 
-      // axios
-      //   .post(reqUrl + "/api/addNewNode", newNode)
-      //   .then(response => {
-      //     axios
-      //       .post(reqUrl + "/api/addNewLink", newLink)
-      //       .then(response => {
-      //         console.log(response);
-      //       })
-      //       .catch(function(error) {
-      //         console.log(error);
-      //       });
-      //   })
-      //   .catch(function(error) {
-      //     console.log(error);
-      //   });
+      axios
+        .post(reqUrl + "/api/addNewNode", newNode)
+        .then(response => {
+          console.log(response.data);
+          axios
+            .post(reqUrl + "/api/addNewLink", newLink)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
 
       this.$message({
         message: "添加成功",
@@ -1205,7 +1210,6 @@ export default {
   stroke-width: 4px;
 }
 
-
 #new-graph .nodesInit {
   fill: lightblue;
 }
@@ -1236,9 +1240,6 @@ export default {
 #new-graph .nodesServiceServer {
   fill: lightgoldenrodyellow;
   r: 12;
-}
-
-#new-graph .profile {
 }
 
 #new-graph .nodesNamespace {
