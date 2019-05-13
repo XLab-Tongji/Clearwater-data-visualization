@@ -127,13 +127,18 @@ public class FusekiDriver {
     public static boolean addNode(HashMap data){
         try {
             String url = data.get("id").toString();
-            System.out.println(url);
+            String[] temp = url.split("/");
+            String urltemp = url.replace("/"+temp[temp.length-1],"");
+            System.out.println(urltemp);
             HashMap property = (HashMap) data.get("property");
 
             Model model = ModelFactory.createDefaultModel();
             Resource resource = model.createResource(url);
             try{
-                if (judgeExist((String)property.get("name"),url)){
+                if (judgeExist(url)){
+                    resource.addProperty(model.createProperty(urltemp, "/name"),(String)data.get("name"));
+                    resource.addProperty(model.createProperty(url,"/type"),(String)data.get("type"));
+                    System.out.println(data.get("name"));
                     for (Object key : property.keySet()) {
                         resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
                     }
@@ -223,6 +228,36 @@ public class FusekiDriver {
         return true;
     }
 
+    public static boolean modifyNode(HashMap data){
+        try {
+            String url = data.get("id").toString();
+            boolean flag = deleteOneNode(url);
+            if (!flag){
+                return flag;
+            }else{
+                return addNode(data);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean modifyLink(HashMap data){
+        try {
+            String fromUrl = (String)data.get("sid");
+            String toUrl = (String)data.get("tid");
+            boolean flag = deleteOneLink(fromUrl,toUrl);
+            if (!flag){
+                return flag;
+            }else{
+                return addLink(data);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 
     public static void main(String[] args) {
     }

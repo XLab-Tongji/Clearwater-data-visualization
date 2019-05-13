@@ -495,4 +495,14 @@ public class IndexRestController {
     public Boolean delLinks(@RequestBody List<HashMap> data){
         return deleteLinks(data);
     }
+
+    @RequestMapping(value = "/api/modifyOneNode",method = RequestMethod.POST,produces = "application/json")
+    public Boolean modifyOneNode(@RequestBody HashMap data){
+        return modifyNode(data);
+    }
+
+    @RequestMapping(value = "/api/modifyOneLink",method = RequestMethod.POST,produces = "application/json")
+    public Boolean modifyOneLink(@RequestBody HashMap data){
+        return modifyLink(data);
+    }
 }

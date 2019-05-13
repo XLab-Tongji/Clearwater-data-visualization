@@ -2278,22 +2278,21 @@ public class Neo4jDriver {
         return list;
     }
 
-    public static boolean judgeExist(String name,String url){
+    public static boolean judgeExist(String url){
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.181:30300/DevKGData/query");
 
-        Query query = QueryFactory.create("PREFIX j0:<" + url + ">\n" +
-                "SELECT ?o WHERE {\n" +
-                "\t?s j0:name ?o\n" +
+        Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
+                "\t?s ?p ?o\n" +
                 "}");
-        try (RDFConnectionFuseki connServiceName = (RDFConnectionFuseki) builder.build()) {
 
-            QueryExecution qName = connServiceName.query(query);
-            ResultSet rsName = qName.execSelect();
-            while (rsName.hasNext()) {
-                QuerySolution qsName = rsName.next();
-                String subjectName = qsName.get("o").toString();
-                if (subjectName.equals(name)){
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qExec = conn.query(query);
+            ResultSet rs = qExec.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution qs = rs.next();
+                String subject = qs.get("s").toString();
+                if (subject.equals(url)){
                     return false;
                 }
             }
