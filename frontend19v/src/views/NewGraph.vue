@@ -154,7 +154,7 @@
       >确定</el-button>
     </el-card>
     <!-- 时间线 -->
-    <timeline :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
+    <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
   </div>
 </template>
 
@@ -447,7 +447,8 @@ export default {
           relName: "profile",
           relType: "profile"
         }
-      ]
+      ],
+      showTimeline: false
     };
   },
   computed: {
@@ -535,8 +536,12 @@ export default {
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
+
           this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
+          this.allTimeStamps = response.data.timeList;
+          this.showTimeline = true
+
           this.propertyNodes = this.nodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
               return true;
@@ -569,11 +574,13 @@ export default {
         // .get("/response.json")
         .then(response => {
           console.log(response);
-          response.data.nodeList.map(x => {
+          response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
+          
           this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
+          
           this.propertyNodes = this.nodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
               return true;
@@ -591,28 +598,27 @@ export default {
         });
       }
       else {
-      // axios.post(reqUrl + '', {
-    //     timeStamp: frontTimeFottoEnd(currentTimeStamp)
-    // })
-      //   .then(response => {
-      //     this.nodes = response.data.content.nodeList ?
-      //     this.links = response.data.content.linkList ?
-      //   })
-      //   .catch(error => {
-      //     console.error(error)
-      //   })
+        axios.get(reqUrl + '/api/getAllByTime?time=' + currentTimeStamp)
+          .then(response => {
+            response.data.nodeList.forEach(x => {
+              x.svgSym = nodeIcons[x.type];
+            });
+            
+            this.nodes = response.data.nodeList;
+            this.links = response.data.linkList;
+            
+            this.propertyNodes = this.nodes.filter(node => {
+              if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
+                return true;
+              } else {
+                return false;
+              }
+            });
+          })
+          .catch(error => {
+            console.error(error)
+          })
       }
-    },
-    getAllTimeStamps() {
-      // axios.get(reqUrl + '')
-      //   .then(response => {
-      //     this.allTimeStamps = response.data ? .map(time => { //foreach会改变原数组
-      //       return endTimeFottoFront(time)
-      //     })
-      //   })
-      //   .catch(error => {
-      //     console.error(error)
-      //   })
     },
     // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
     frontTimeFottoEnd(time) { 
@@ -681,7 +687,7 @@ export default {
               _this.links.push({
                 sid: _this.sourceNodeId,
                 tid: _this.targetNodeId
-              });
+              }); 
               _this.sourceNodeId = 0;
               _this.targetNodeId = 0;
             }
@@ -725,7 +731,7 @@ export default {
               console.error(error)
             })
         }
-        // 修改节点
+        // 修改节点名
         if (_this.radio === "5") {
           _this.displayOneNode(node);
           _this
@@ -735,11 +741,19 @@ export default {
             })
             .then(({ value }) => {
               if (value) {
-                _this.$message({
-                  type: "success",
-                  message: "修改成功"
-                });
                 node.name = value;
+                axios.post(reqUrl + '/api/modifyOneNode', node)
+                  .then(response => {
+                    if (response) {
+                      _this.$message({
+                        type: "success",
+                        message: "修改成功"
+                      });
+                    }
+                  })
+                  .catch(error => {
+                    console.log(error)
+                  }) 
               }
             })
             .catch(() => {
@@ -753,6 +767,7 @@ export default {
     },
     clickLink(e, link) {
       this.displayOneLink(link);
+      // 修改关系名
       if (this.radio === "5") {
         this.$prompt("请输入新的关系名", "修改", {
           confirmButtonText: "确定",
@@ -763,11 +778,16 @@ export default {
           .then(({ value }) => {
             // value 不为空
             if (value) {
-              this.$message({
-                type: "success",
-                message: "修改成功"
-              });
               link.name = value;
+              axios.post(reqUrl + '/api/modifyOneLink', link) 
+                .then(response => {
+                  if (response) {
+                    this.$message({
+                      type: "success",
+                      message: "修改成功"
+                    });
+                  }
+                })
             }
           })
           .catch(() => {
