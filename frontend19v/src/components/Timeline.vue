@@ -54,8 +54,8 @@ export default {
 
 <style scoped>
 #timelineContainer {
-  position: absolute;
-  bottom: -95px;
+  position: fixed;
+  bottom: -110px;
   width: 70%;
   /* height: 100px; */
   text-align: center;
