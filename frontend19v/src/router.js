@@ -45,9 +45,9 @@ export default new Router({
           component: () => import('./views/CausationView.vue'),
         },
         {
-          path: 'newGraph',
+          path: 'class',
           name: 'NewGraph',
-          component: () => import('./views/NewGraph.vue'),
+          component: () => import('./views/ClassGraph.vue'),
         }
       ]
     }

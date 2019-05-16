@@ -1,6 +1,6 @@
 
 <template>
-  <div id="search-tree">
+  <div id="search-tree-for-class">
     <el-input prefix-icon="el-icon-search" placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
     <el-tree
       class="filter-tree"
@@ -25,13 +25,9 @@ export default {
   computed: {
     data() {
       let data = [
-        { name: "server", data: [] },
-        { name: "masterServer", data: [] },
-        { name: "pod", data: [] },
-        { name: "container", data: [] },
-        { name: "service", data: [] },
-        { name: "namespace", data: [] },
-        { name: "environment", data: [] }
+        { name: 0, data: [] },
+        { name: 1, data: [] },
+        { name: 2, data: [] },
       ];
       let nodes = this.nodes;
       nodes.forEach(node => {
@@ -175,13 +171,17 @@ export default {
 </script>
 
 <style scope>
-#search-tree {
+#search-tree-for-class {
   /* margin: 5px; */
   max-height: 88%;
   overflow: auto;
   position: absolute;
-  width: 250px;
+  width: 300px;
   float: right;
+}
+
+.el-tree-node__children {
+  overflow: auto !important;
 }
 
 .el-tree {

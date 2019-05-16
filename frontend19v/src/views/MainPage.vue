@@ -18,10 +18,10 @@
                             <i class="el-icon-view"></i>
                             <span slot="title">Entity/Relation Characteristic</span>
                         </el-menu-item>
-                        <!-- <el-menu-item index="ModiData">
-                            <i class="el-icon-edit"></i>
-                            <span slot="title">Modify Dataset</span>
-                        </el-menu-item> -->
+                        <el-menu-item index="NewGraph">
+                            <i class="el-icon-wallet"></i>
+                            <span slot="title">Class</span>
+                        </el-menu-item>
                         <el-submenu index="ModiDataMenu">
                             <template slot="title">
                                 <i class="el-icon-edit"></i>
@@ -36,7 +36,7 @@
                         </el-submenu>
                         <el-submenu index="DecisionRep">
                             <template slot="title">
-                                <i class="el-icon-document"></i>
+                                <i class="el-icon-data-line"></i>
                                 <span slot="title">Decision Report</span>
                             </template>
                             <el-menu-item-group>
