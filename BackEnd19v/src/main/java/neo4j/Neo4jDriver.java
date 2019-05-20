@@ -13,17 +13,29 @@ import com.mongodb.client.model.Filters;
 import neo4jentities.DataAccessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.auth.HttpAuthenticator;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.riot.web.HttpOp;
+import org.apache.jena.sparql.engine.http.Params;
 import org.bson.Document;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.Node;
@@ -39,6 +51,8 @@ import util.CommonUtil;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -1605,7 +1619,7 @@ public class Neo4jDriver {
         try {
             String envName = "http://environment/"+address;
             RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.181:30300/DevKGData/query");
+                    .destination("http://10.60.38.173:3030/DevKGData/query");
             Query query = QueryFactory.create("SELECT ?p ?o " +
                     "WHERE { <http://backup/"+address+"> ?p ?o }");
             try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
@@ -1622,7 +1636,15 @@ public class Neo4jDriver {
                             "<"+envName+"> j0:has "+"<"+urlNode+">\n" +
                             "}";
                     RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                            .destination("http://10.60.38.181:30300/DevKGData/update");
+                            .destination("http://10.60.38.173:3030/DevKGData/update");
+                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                    Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+                    credsProvider.setCredentials(AuthScope.ANY, credentials);
+                    HttpClient httpclient = HttpClients.custom()
+                            .setDefaultCredentialsProvider(credsProvider)
+                            .build();
+                    HttpOp.setDefaultHttpClient(httpclient);
+                    builderAddRelation.httpClient(httpclient);
 
                     try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                         connAddRelation.update(addRelation);
@@ -1647,7 +1669,7 @@ public class Neo4jDriver {
         // save master url
         String urlMasterNode = "http://server/"+address+"/"+masterName;
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         // execute query, get all nodes
         Query query = QueryFactory.create("SELECT ?p ?o " +
                 "WHERE { <http://backup/"+address+"> ?p ?o }");
@@ -1660,6 +1682,26 @@ public class Neo4jDriver {
                 System.out.println("server name: " + subject);
                 // add relations between master and other nodes
                 if(!subject.equals(masterName)){
+
+//                    HttpClientContext httpContext = new HttpClientContext();
+//
+//// first we use a method on HttpOp to log in and get our cookie
+//                    Params params = new Params();
+//                    params.addParam("username", "admin");
+//                    params.addParam("password", "admin");
+//                    HttpOp.execHttpPostForm("http://10.60.38.173:3030", params , null, null, null, httpContext);
+//
+//// now our cookie is stored in httpContext
+//                    CookieStore cookieStore = httpContext.getCookieStore();
+//
+//// lastly we build a client that uses that cookie
+//                    HttpClient httpclient = HttpClients.custom()
+//                            .setDefaultCookieStore(cookieStore)
+//                            .build();
+//                    HttpOp.setDefaultHttpClient(httpclient);
+
+
+
                     String urlNode = "http://server/"+address+"/"+subject;
 
                     String addRelation = "PREFIX j0:<"+urlMasterNode+"/>\n" +
@@ -1667,9 +1709,17 @@ public class Neo4jDriver {
                             "<"+urlMasterNode+"> j0:manage "+"<"+urlNode+">\n" +
                             "}";
                     RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                            .destination("http://10.60.38.181:30300/DevKGData/update");
+                            .destination("http://10.60.38.173:3030/DevKGData/update");
+                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                    Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+                    credsProvider.setCredentials(AuthScope.ANY, credentials);
+                    HttpClient httpclient = HttpClients.custom()
+                            .setDefaultCredentialsProvider(credsProvider)
+                            .build();
+                    HttpOp.setDefaultHttpClient(httpclient);
+                    builderAddRelation.httpClient(httpclient);
 
-                    try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+                    try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build()) {
                         connAddRelation.update(addRelation);
                     }
                 }
@@ -1872,7 +1922,7 @@ public class Neo4jDriver {
     public static boolean podToService(String address, String namespace) {
         String urlPod = "http://pods/" + address + "/" + namespace + "/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<" + urlPod + ">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -1908,7 +1958,15 @@ public class Neo4jDriver {
                                 "<" + urlPod + temp + ">  j0:provides " + "<" + urlService + ">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://10.60.38.181:30300/DevKGData/update");
+                                .destination("http://10.60.38.173:3030/DevKGData/update");
+                        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+                        credsProvider.setCredentials(AuthScope.ANY, credentials);
+                        HttpClient httpclient = HttpClients.custom()
+                                .setDefaultCredentialsProvider(credsProvider)
+                                .build();
+                        HttpOp.setDefaultHttpClient(httpclient);
+                        builderAddRelation.httpClient(httpclient);
 
                         try (RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki) builderAddRelation.build()) {
                             connAddRelation.update(addRelation);
@@ -1930,7 +1988,7 @@ public class Neo4jDriver {
     public static boolean podToServer(String address,String namespace){
         String urlPod = "http://pods/"+address+"/"+namespace+"/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<"+urlPod+">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -1966,7 +2024,15 @@ public class Neo4jDriver {
                                 "<"+urlPod+subject+">  j0:deployed_in "+"<"+urlNode+">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://10.60.38.181:30300/DevKGData/update");
+                                .destination("http://10.60.38.173:3030/DevKGData/update");
+                        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+                        credsProvider.setCredentials(AuthScope.ANY, credentials);
+                        HttpClient httpclient = HttpClients.custom()
+                                .setDefaultCredentialsProvider(credsProvider)
+                                .build();
+                        HttpOp.setDefaultHttpClient(httpclient);
+                        builderAddRelation.httpClient(httpclient);
 
                         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                             connAddRelation.update(addRelation);
@@ -1992,7 +2058,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "namespace");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2023,7 +2089,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "environment");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2057,7 +2123,7 @@ public class Neo4jDriver {
         else
             node.put("type", "server");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2093,7 +2159,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "service");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2136,7 +2202,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", type);
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2167,7 +2233,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "pod");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2216,7 +2282,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "container");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2255,7 +2321,7 @@ public class Neo4jDriver {
     public static List<Map<String, Object>> getLink(String url, String linkType){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
                 "\t?s <"+url+"/"+linkType+"> ?o\n" +
                 "}");
@@ -2280,7 +2346,7 @@ public class Neo4jDriver {
 
     public static boolean judgeExist(String url){
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
 
         Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
                 "\t?s ?p ?o\n" +
@@ -2303,11 +2369,20 @@ public class Neo4jDriver {
     public static boolean deleteOneLink(String sid, String tid){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.181:30300/DevKGData/update");
+                    .destination("http://10.60.38.173:3030/DevKGData/update");
+
             String delete = "DELETE WHERE\n" +
                     "{\n" +
                     "<"+sid+"> ?p <"+tid+"> .\n" +
                     "}";
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+            credsProvider.setCredentials(AuthScope.ANY, credentials);
+            HttpClient httpclient = HttpClients.custom()
+                    .setDefaultCredentialsProvider(credsProvider)
+                    .build();
+            HttpOp.setDefaultHttpClient(httpclient);
+            builder2.httpClient(httpclient);
             try ( RDFConnectionFuseki connUpdate = (RDFConnectionFuseki)builder2.build() ) {
                 connUpdate.update(delete);
             } catch (Exception e){
@@ -2324,7 +2399,7 @@ public class Neo4jDriver {
     public static boolean deleteOneNode(String url){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.181:30300/DevKGData/update");
+                    .destination("http://10.60.38.173:3030/$/DevKGData/update");
             String delete = "DELETE WHERE\n" +
                     "{\n" +
                     "<"+url+"> ?p ?o .\n" +
@@ -2418,16 +2493,17 @@ public class Neo4jDriver {
 //        boolean result = addNode(data);
 //        System.out.println(result);
 //        storeNamespaceName();
-//        storeEnvironment("10.60.38.181");
+//        storeEnvironment("10.60.38.173");
 //        storeServerName();
 //        storeMasterNode("192.168.199.191");
 //        storeServiceName("sock-shop");
 //        storePodName("sock-shop");
-//        podToService("10.60.38.181","sock-shop");
-//        podToServer("10.60.38.181","sock-shop");
+//        podToService("10.60.38.173","sock-shop");
+//        podToServer("10.60.38.173","sock-shop");
         Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
-//        deleteOneNode("http://containers/10.60.38.181/sock-shop/carts");
+//        System.out.println(result);
+//        deleteOneNode("http://containers/10.60.38.173/sock-shop/carts");
         save2Mongo(result);
         getOneFromMongo("2019-05-13 00:32:42");
         getTimesFromMongo();

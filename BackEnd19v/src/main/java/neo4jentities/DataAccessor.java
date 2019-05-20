@@ -4,7 +4,7 @@ import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.query.DatasetAccessorFactory;
 
 public class DataAccessor {
-    public static String serviceURI = "http://10.60.38.181:30300/DevKGData";
+    public static String serviceURI = "http://10.60.38.173:3030/DevKGData";
     public static DatasetAccessorFactory factory = null;
     public static DatasetAccessor accessor;
 

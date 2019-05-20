@@ -5,10 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
 import neo4jentities.DataAccessor;
 import org.apache.http.HttpEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -18,6 +26,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.riot.web.HttpOp;
+import org.apache.jena.sparql.engine.http.Params;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.types.Node;
 import org.neo4j.driver.v1.types.Path;
@@ -44,7 +54,7 @@ public class FusekiDriver {
         List<Map<String, Object>> linkList = new ArrayList<>();
         List<String> timeList = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/query");
+                .destination("http://10.60.38.173:3030/DevKGData/query");
 
         Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
                 "\t?s ?p ?o\n" +
@@ -171,7 +181,16 @@ public class FusekiDriver {
                 "}";
         System.out.println(addRelation);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.181:30300/DevKGData/update");
+                .destination("http://10.60.38.173:3030/DevKGData/update");
+
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+        credsProvider.setCredentials(AuthScope.ANY, credentials);
+        HttpClient httpclient = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider)
+                .build();
+        HttpOp.setDefaultHttpClient(httpclient);
+        builderAddRelation.httpClient(httpclient);
 
         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
             connAddRelation.update(addRelation);
@@ -213,11 +232,36 @@ public class FusekiDriver {
     public static boolean deleteAll(){
         try {
             RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.181:30300/DevKGData/update");
+                    .destination("http://10.60.38.173:3030/DevKGData/update");
             String deleteAll = "DELETE WHERE\n" +
                     "{\n" +
                     "\t?s ?p ?o .\n" +
                     "}";
+
+//// first we use a method on HttpOp to log in and get our cookie
+//            Params params = new Params();
+//            params.addParam("username", "admin");
+//            params.addParam("password", "D0rlghQl5IAgYOm");
+//            HttpOp.execHttpPostForm("http://10.60.38.173:3030", params , null, null, null, httpContext);
+//
+//// now our cookie is stored in httpContext
+//            CookieStore cookieStore = httpContext.getCookieStore();
+//
+//// lastly we build a client that uses that cookie
+//            HttpClient httpclient = HttpClients.custom()
+//                            .setDefaultCookieStore(cookieStore)
+//                            .build();
+//            HttpOp.setDefaultHttpClient(httpclient);
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+            credsProvider.setCredentials(AuthScope.ANY, credentials);
+            HttpClient httpclient = HttpClients.custom()
+                    .setDefaultCredentialsProvider(credsProvider)
+                    .build();
+            HttpOp.setDefaultHttpClient(httpclient);
+            builderAddRelation.httpClient(httpclient);
+
+
             try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                 connAddRelation.update(deleteAll);
             }
@@ -225,6 +269,9 @@ public class FusekiDriver {
             e.printStackTrace();
             return false;
         }
+
+
+
         return true;
     }
 
