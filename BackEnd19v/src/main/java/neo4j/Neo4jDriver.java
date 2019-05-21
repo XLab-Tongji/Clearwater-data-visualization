@@ -12,7 +12,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import neo4jentities.DataAccessor;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
