@@ -7,6 +7,7 @@ import neo4j.Neo4jDriver;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -29,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static neo4j.FusekiDriver.*;
 import static neo4j.Neo4jDriver.*;
-import static neo4j.prometheusDriver.proTemp;
+import static neo4j.prometheusDriver.*;
 
 
 @RestController
@@ -509,4 +510,7 @@ public class IndexRestController {
 
     @RequestMapping(value = "/api/prometheusSearch",method = RequestMethod.POST,produces = "application/json")
     public Boolean prometheusSearch(@RequestBody String url){ return proTemp(url);}
+
+    @RequestMapping(value = "/api/createPrometheus", method = RequestMethod.POST, produces = "application/json")
+    public Boolean createPrometheus(@RequestBody HashMap data) { return newPrometheus(data);}
 }

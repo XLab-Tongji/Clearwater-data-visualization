@@ -12,6 +12,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import neo4jentities.DataAccessor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -2047,6 +2048,62 @@ public class Neo4jDriver {
             qExec.close();
         }catch (Exception e){
             e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static boolean storePrometheus(String url, String namespace, String serviceName){
+        try {
+            System.out.println("storing prometheus...");
+            String proName = "http://prometheus/"+url;
+            System.out.println("prometheus name: "+proName);
+            Model model = ModelFactory.createDefaultModel();
+            try {
+                Resource res = model.createResource(proName);
+                res.addProperty(model.createProperty(proName+"/url"), url);
+                //存储fuseki
+                DataAccessor.getInstance().add(model);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return false;
+            }
+            String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_svc/"+namespace;
+            try {
+                String jsonString = getData(httpUrl);
+                JSONObject jsonObject = JSONObject.parseObject(jsonString);
+                String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
+                RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                        .destination("http://10.60.38.173:3030/DevKGData/update");
+                String response_time = "http://services/" + address + "/" + namespace + "/" + serviceName + "/response_time";
+                String proRelation = "PREFIX j0:<"+response_time+"/>\n" +
+                        "INSERT DATA{\n" +
+                        "<"+response_time+"> j0:stored_in "+"<"+proName+">\n" +
+                        "}";
+                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+                credsProvider.setCredentials(AuthScope.ANY, credentials);
+                HttpClient httpclient = HttpClients.custom()
+                        .setDefaultCredentialsProvider(credsProvider)
+                        .build();
+                HttpOp.setDefaultHttpClient(httpclient);
+                builder.httpClient(httpclient);
+
+                try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builder.build() ) {
+                    connAddRelation.update(proRelation);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return false;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        finally {
+            System.out.println("finish storing prometheus");
         }
         return true;
     }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
 import neo4jentities.DataAccessor;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -158,6 +159,8 @@ public class FusekiDriver {
                     System.out.println("same name");
                     return false;
                 }
+                Map<String, Object> result = getAllNodesAndLinks();
+                if(!save2Mongo(result)) return false;
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -194,6 +197,8 @@ public class FusekiDriver {
 
         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
             connAddRelation.update(addRelation);
+            Map<String, Object> result = getAllNodesAndLinks();
+            if(!save2Mongo(result)) return false;
         }catch (Exception e){
             e.printStackTrace();
             return false;
@@ -209,6 +214,8 @@ public class FusekiDriver {
                 String tid = (String)link.get("tid");
                 if(!deleteOneLink(sid, tid)) return false;
             }
+            Map<String, Object> result = getAllNodesAndLinks();
+            if(!save2Mongo(result)) return false;
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -222,6 +229,8 @@ public class FusekiDriver {
                 String id = (String)link.get("id");
                 if(!deleteOneNode(id)) return false;
             }
+            Map<String, Object> result = getAllNodesAndLinks();
+            if(!save2Mongo(result)) return false;
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -264,6 +273,8 @@ public class FusekiDriver {
 
             try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
                 connAddRelation.update(deleteAll);
+                Map<String, Object> result = getAllNodesAndLinks();
+                if(!save2Mongo(result)) return false;
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -281,9 +292,11 @@ public class FusekiDriver {
             boolean flag = deleteOneNode(url);
             if (!flag){
                 return flag;
-            }else{
-                return addNode(data);
+            }else if(addNode(data)){
+                Map<String, Object> result = getAllNodesAndLinks();
+                if(!save2Mongo(result)) return false;
             }
+            else return false;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -297,9 +310,11 @@ public class FusekiDriver {
             boolean flag = deleteOneLink(fromUrl,toUrl);
             if (!flag){
                 return flag;
-            }else{
-                return addLink(data);
+            }else if(addLink(data)){
+                Map<String, Object> result = getAllNodesAndLinks();
+                if(!save2Mongo(result)) return false;
             }
+            else return false;
         }catch (Exception e){
             e.printStackTrace();
         }
