@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static neo4j.FusekiDriver.*;
 import static neo4j.Neo4jDriver.*;
+import static neo4j.prometheusDriver.proTemp;
 
 
 @RestController
@@ -505,4 +506,7 @@ public class IndexRestController {
     public Boolean modifyOneLink(@RequestBody HashMap data){
         return modifyLink(data);
     }
+
+    @RequestMapping(value = "/api/prometheusSearch",method = RequestMethod.POST,produces = "application/json")
+    public Boolean prometheusSearch(@RequestBody String url){ return proTemp(url);}
 }
