@@ -6,10 +6,10 @@ body
 
 div.upload_file_div
 {
-    width:300px;
-    max-height: 80px;
-    min-height:70px;
-    padding:16px;
+    width:360px;
+    max-height: 90px;
+    min-height:75px;
+    padding:8px;
     background: #D1EEEE;
     border: 1px solid #D1EEEE;
     border-radius: 5px;
@@ -24,6 +24,12 @@ div.upload_file_div
 #select_div
 {
 
+}
+div#legend
+{
+    position:absolute;
+    top:0px;
+    right:-300px;
 }
 #submit_div
 {
@@ -45,7 +51,7 @@ div.upload_file_div
 }
 #select
 {
-    width:60px;
+    width:80px;
     height:20px;
 }
 

@@ -9,9 +9,13 @@ function initAll() {
             var formData = new FormData();
             formData.append('file', $('#file')[0].files[0]);
             formData.append("algorithm", $('#select')[0].value);
+            formData.append('format', $('#format')[0].value);
             $.ajax({
                 // url: 'http://10.60.38.182:10080/search/' + $('#select')[0].value,
-                url: window.location + "causality",
+                url: 'http://10.60.38.173:10080/causality',
+
+                // url: window.location + "causality",
+                // url: window.location + "search/"+$('#select')[0].value,
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -19,9 +23,18 @@ function initAll() {
                 dataType: 'json',
                 crossDomain: true,
                 success: function (fb_data) {
+                    console.log(JSON.stringify(fb_data))
                     // $('#fountainG').show();
-                    // console.log(fb_data['msg']);
+                    // console.log(fb_data);
                     // if (fb_data['msg'] == 'Success' && fb_data['code'] == 200) {
+                    // console.log(fb_data);
+                    if (fb_data.code == 500)
+                    {
+                        cleanShow();
+                        var error_message = fb_data.message;
+                        alert(error_message);
+                        return;
+                    }
                     if (fb_data.message == 'Success' && fb_data.code == 200) {
                         // console.log(fb_data['data']);
                         let analysis_result = $.parseJSON(fb_data.data);
@@ -80,8 +93,8 @@ function initAll() {
                                             my_links.push({
                                                 source: node2Index,
                                                 target: node1Index,
-                                                link_type: clear_cause_type,
-                                                is_biorientation: false
+                                                link_type: clear_cause_type
+                                                // is_biorientation: false
                                             });
                                         }
                                     }
@@ -90,8 +103,8 @@ function initAll() {
                                             my_links.push({
                                                 source: node1Index,
                                                 target: node2Index,
-                                                link_type: clear_cause_type,
-                                                is_biorientation: false
+                                                link_type: clear_cause_type
+                                                // is_biorientation: false
                                             });
                                         }
                                     }
@@ -100,8 +113,8 @@ function initAll() {
                                             my_links.push({
                                                 source: node2Index,
                                                 target: node1Index,
-                                                link_type: possible_cause_type_o_a,
-                                                is_biorientation: false
+                                                link_type: possible_cause_type_o_a
+                                                // is_biorientation: false
                                             });
                                         }
                                     }
@@ -111,8 +124,8 @@ function initAll() {
                                             my_links.push({
                                                 source: node1Index,
                                                 target: node2Index,
-                                                link_type: possible_cause_type_o_a,
-                                                is_biorientation: false
+                                                link_type: possible_cause_type_o_a
+                                                // is_biorientation: false
                                             });
                                         }
                                     }
@@ -123,8 +136,8 @@ function initAll() {
                                                 source: node1Index,
                                                 target: node2Index,
                                                 // link_type: possible_cause_type_o_o
-                                                link_type: possible_cause_type_line,
-                                                is_biorientation: true
+                                                link_type: possible_cause_type_line
+                                                // is_biorientation: true
                                             });
                                         }
                                     }
@@ -150,6 +163,7 @@ function initAll() {
                             var width = 1024;
                             var height = 1024;
                             var total_links_lines = [];
+                            var total_links_lines_2 = [];
                             var node_distance = 180; // 节点之间的距离
                             var sources = [];  // 记录点击的节点的因节点,存的是节点的index
                             var sources_layer = []; //记录每个因节点对应的因的层级
@@ -166,18 +180,17 @@ function initAll() {
                             //构建了11层的因节点颜色
                             var cause_layer_color =
                                 [
+                                    '#f188df',
                                     '#FFC0CB',
-                                    // '#f1bf88',
-                                    // '#f1b788',
-                                    // '#f1a688',
-                                    // '#f19c88',
-                                    // '#f19188',
+                                    '#f19c88',
+                                    '#f19188',
                                     '#f18889',
                                     '#f1889f',
                                     '#f188aa',
                                     '#f188c3',
-                                    '#f188d0',
-                                    '#f188df'];
+                                    '#f188d0'
+                                    // '#f188df'
+                                ];
 
                             //path颜色
                             var usual_path_color = '#62aeef';
@@ -195,9 +208,20 @@ function initAll() {
 
                             for (var i = 0; i < links.length; i++) {
                                 total_links_lines.push(links[i]);
+                                // total_links_lines_2.push(JSON.parse(JSON.stringify(links[i])));
                             }
                             for (var i = 0; i < lines.length; i++) {
                                 total_links_lines.push(lines[i]);
+                                // total_links_lines_2.push(JSON.parse(JSON.stringify(lines[i])));
+                            }
+
+                            function buildTotalLinksLines2()
+                            {
+                                total_links_lines_2 = [];
+                                for(var i=0;i<total_links_lines.length;i++)
+                                {
+                                    total_links_lines_2.push(JSON.parse(JSON.stringify(total_links_lines[i])));
+                                }
                             }
                             if (window.innerWidth) {
                                 width = window.innerWidth;
@@ -211,11 +235,6 @@ function initAll() {
                             else if (document.body && document.body.clientHeight) {
                                 height = document.body.clientHeight;
                             }
-
-                            // for(let i=0;i<total_links_lines.length;i++)
-                            // {
-                            //     console.log(i+"---"+total_links_lines[i].source+","+total_links_lines[i].target+","+total_links_lines[i].link_type);
-                            // }
 
                             var svg = d3.select("body")
                                 .append("svg")
@@ -399,13 +418,14 @@ function initAll() {
                             //  }
                             //*******************************************//
                             function searchSources(_nodeName) {
+                                buildTotalLinksLines2();
                                 sources = [];
                                 sources_layer = [];
                                 sources_path = [];
                                 sources_line = [];
                                 var nodeIndex = nodesName.indexOf(_nodeName);
                                 if (nodeIndex === -1) {
-                                    return [];
+                                    return;
                                 }
                                 sources.push(nodeIndex);
                                 sources_layer.push(0); //本身节点是第0层
@@ -418,99 +438,96 @@ function initAll() {
                                 target_source_json_obj = target_json;
                                 //利用广度优先搜索算法来向上搜索source节点
                                 _searchSources(nodeIndex, 1, target_json); // 1代表搜索第一层因节点
+                                // recoverBiorientation();
                             }
 
-                            var kk=0;
                             function _searchSources(_target_index, current_layer, _target_json) {
                                 var sub_sources = [];
                                 var target_index = _target_index;
+                                var splice_index = [];
 
                                 //***********在所有links和line中查找
-                                for (let link_index = 0; link_index < total_links_lines.length; link_index++) {
-                                    // console.log(link_index);
-                                    let link = total_links_lines[link_index];
-                                    if (link.link_type === possible_cause_type_line) {
-                                        // console.log(link.target.index);
-                                        // console.log(link.target);
-                                        // console.log(link);
-                                        // console.log(total_links_lines[link_index].is_biorientation);
-                                        if (link.is_biorientation) {
-                                            if (link.source.index === target_index) {
-                                                if (sub_sources.includes(link.target.index)) {
-                                                    continue;
-                                                }
-                                                sub_sources.push(link.target.index);
-                                                // total_links_lines[link_index]
-                                                // console.log("target:" + target_index + "---" + link.source.index + "," + link.target.index);
-                                                // link.source.index = link.target.index;
-                                                // link.target.index = target_index;
-                                                // console.log("target:" + target_index + "---" + link.source.index + "," + link.target.index);
-                                                // console.log("target:" + target_index + "---" + total_links_lines[link_index].source.index + "," + total_links_lines[link_index].target.index);
+                                // for (let link_index = 0; link_index < total_links_lines_2.length; link_index++) {
+                                for (let link_index = 0; link_index <total_links_lines_2.length; link_index++) {
+                                    // console.log(total_links_lines_2.length);
+                                    let link = total_links_lines_2[link_index];
+                                    if (link.link_type === possible_cause_type_line)
+                                    {
+                                        // if (link.is_biorientation)
+                                        // {
+                                        if (link.source.index === target_index)
+                                        {
+                                            if (sub_sources.includes(link.target.index)) {
+                                                splice_index.push(link_index);
+                                                continue;
+                                            }
+                                            sub_sources.push(link.target.index);
+                                            var _source_json = {};
+                                            _source_json.children = [];
+                                            _source_json.name = link.target.name;
+                                            _source_json.index = link.target.index;
+                                            _source_json.type = link.link_type;
+                                            _target_json.children.push(_source_json);
+                                            sources_line.push(JSON.parse(JSON.stringify(link)));
+                                            sources_layer.push(current_layer);
+                                            splice_index.push(link_index);
+                                        } else if (link.target.index === target_index) {
+                                            if (sub_sources.includes(link.source.index)) {
+                                                splice_index.push(link_index);
+                                                continue;
+                                            }
+                                            var _source_json = {};
+                                            _source_json.children = [];
+                                            _source_json.name = link.source.name;
+                                            _source_json.index = link.source.index;
+                                            _source_json.type = link.link_type;
+                                            _target_json.children.push(_source_json);
+                                            sub_sources.push(_source_json.index);
+                                            link.is_biorientation = false;
+                                            sources_line.push(JSON.parse(JSON.stringify(link)));
+                                            sources_layer.push(current_layer);
+                                            splice_index.push(link_index);
 
-                                                // continue;
-                                                var _source_json = {};
-                                                _source_json.children = [];
-                                                _source_json.name = link.target.name;
-                                                _source_json.index = link.target.index;
-                                                _source_json.type = link.link_type;
-                                                _target_json.children.push(_source_json);
-                                                link.is_biorientation = false;
-                                                sources_line.push(link);
-                                                sources_layer.push(current_layer);
-                                            }
-                                            else if (link.target.index === target_index) {
-                                                if (sub_sources.includes(link.source.index)) {
-                                                    continue;
-                                                }
-                                                kk++;
-                                                console.log(kk);
-                                                sub_sources.push(link.source.index);
-                                                var _source_json = {};
-                                                _source_json.children = [];
-                                                _source_json.name = link.source.name;
-                                                _source_json.index = link.source.index;
-                                                _source_json.type = link.link_type;
-                                                _target_json.children.push(_source_json);
-                                                link.is_biorientation = false;
-                                                sources_line.push(link);
-                                                sources_layer.push(current_layer);
-                                            }
-                                            // link.is_biorientation=false;
-                                            // console.log(total_links_lines[link_index].is_biorientation);
-                                            // sources_line.push(link);
                                         }
+
+                                        // }
                                     }
                                     else if (link.target.index === target_index) {
                                         if (sub_sources.includes(link.source.index)) {
+                                            splice_index.push(link_index);
                                             continue;
                                         }
-                                        sub_sources.push(link.source.index);
-                                        sources_layer.push(current_layer);
-                                        sources_path.push(link);
-                                        // if (link.link_type === clear_cause_type || link.link_type === possible_cause_type_o_a)//path
-                                        // {
-                                        //     sources_path.push(link);
-                                        // }
-                                        // else if (link.link_type === possible_cause_type_o_o || link.link_type === possible_cause_type_line) {
-                                        //     sources_line.push(link);
-                                        // }
                                         var _source_json = {};
                                         _source_json.children = [];
                                         _source_json.name = link.source.name;
                                         _source_json.index = link.source.index;
                                         _source_json.type = link.link_type;
                                         _target_json.children.push(_source_json);
+                                        sub_sources.push(link.source.index);
+                                        sources_layer.push(current_layer);
+                                        sources_path.push(JSON.parse(JSON.stringify(link)));
+                                        splice_index.push(link_index);
                                     }
                                 }
+                                // console.log(splice_index);
                                 if (sub_sources.length < 1) {
                                     return;
                                 }
+                                total_links_lines_2 = total_links_lines_2.filter((item,index) =>{
+                                    return splice_index.indexOf(index) == -1;
+                                } );
+                                // console.log(total_links_lines_2.length);
+                                // var temp_sources =
                                 sources.push.apply(sources, sub_sources);
+                                // for(var i=0;i<sub_sources.length;i++)
+                                // {
+                                //     sources.push(sub_sources[i]);
+                                // }
                                 for (let i = 0; i < sub_sources.length; i++) {
                                     //此处要考虑双向的情况
                                     _searchSources(sub_sources[i], current_layer + 1, _target_json.children[i]);
                                 }
-                                recoverBiorientation();
+
                             }
 
                             function recoverBiorientation() //恢复最初是否是双向的判断
@@ -552,7 +569,8 @@ function initAll() {
                                         if (d.name === current_clicked_node_name) {
                                             return target_color;
                                         }
-                                        return cause_layer_color[current_source_layer - 1];
+                                        var color_layer_num = current_source_layer % cause_layer_color.length;
+                                        return cause_layer_color[color_layer_num];
                                     }
                                     else {
                                         return usual_color;
