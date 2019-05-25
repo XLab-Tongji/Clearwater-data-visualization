@@ -46,8 +46,13 @@ export default new Router({
         },
         {
           path: 'class',
-          name: 'NewGraph',
+          name: 'ClassGraph',
           component: () => import('./views/ClassGraph.vue'),
+        },
+        {
+          path: 'causerel',
+          name: 'CauseRel',
+          component: () => import('./views/CauseRel.vue'),
         }
       ]
     }

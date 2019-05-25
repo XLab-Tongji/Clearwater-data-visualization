@@ -18,7 +18,7 @@
                             <i class="el-icon-view"></i>
                             <span slot="title">Entity/Relation Characteristic</span>
                         </el-menu-item>
-                        <el-menu-item index="NewGraph">
+                        <el-menu-item index="ClassGraph">
                             <i class="el-icon-wallet"></i>
                             <span slot="title">Class</span>
                         </el-menu-item>
