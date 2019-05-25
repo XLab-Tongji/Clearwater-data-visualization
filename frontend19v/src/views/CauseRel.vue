@@ -30,6 +30,10 @@ export default {
       //上传文件按钮
 
       cleanShow();
+      var formData = new FormData();
+      formData.append("filename", "sock-results-4-28-cleaned.csv"); 
+      formData.append("algorithm", "Fci");
+
       // var formData = new FormData();
       // formData.append("file", $("#file")[0].files[0]);
       // formData.append("algorithm", $("#select")[0].value);
@@ -40,11 +44,12 @@ export default {
 
         // url: window.location + "causality",
         // url: window.location + "search/"+$('#select')[0].value,
-        url: "/cause.json",
-        type: "GET",
+        // url: "/cause.json",
+        url: "http://10.60.38.173:9990/bbs/api/postCSV",
+        type: "POST",
         processData: false,
         contentType: false,
-        // data: formData,
+        data: formData,
         dataType: "json",
         crossDomain: true,
         success: function(fb_data) {
