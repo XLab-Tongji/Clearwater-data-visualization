@@ -323,7 +323,10 @@ export default {
         "linkManage",
         "linkDeployed",
         "linkProvides",
-        "linkContains"
+        "linkContains",
+        "linkSupervises",
+        "linkHas",
+        "linkProfile"
       ],
       currentNode: {},
       propertyValues: [],
@@ -473,7 +476,8 @@ export default {
         fontSize: this.fontSize,
         nodeLabels: true,
         linkLabels: true,
-        canvas: this.canvas
+        canvas: this.canvas,
+        profileLinks: []
       };
     }
   },
