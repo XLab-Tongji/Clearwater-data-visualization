@@ -255,10 +255,10 @@ export default {
         links: {},
         nodes: {}
       },
-      allTimeStamps: ["2019-09-03 09:32:11", '2019-03-11 09:32:11'], // 不太确定是什么数据格式的 这涉及到排序
+      allTimeStamps: [], // 不太确定是什么数据格式的 这涉及到排序
       nodeSize: 40,
       fontSize: 14,
-      linkWidth: 3,
+      linkWidth: 1,
       canvas: false,
       nodeOperations:
         '<input type="button" value="开机">\t<input type="button" value="关机">',
@@ -286,6 +286,8 @@ export default {
         "containerStorage"
       ],
       propertyNodes: [], // 属性节点数组
+      propertyNodesCopy: [], // 属性节点的深拷贝
+      normalNodes: [],
       allPropertyNodeTypes: [ // 属性节点的类型
         "serviceServer",
         "serviceDatabase",
@@ -485,6 +487,7 @@ export default {
         this.propertyNodes.forEach(propertNode => {
           this.nodes.remove(propertNode)
         });
+        // this.nodes = JSON.parse(JSON.stringify(this.normalNodes))
         // 隐藏 link
         document.getElementsByClassName("profile").forEach(x => {
           x.style.visibility = "hidden";
@@ -492,7 +495,9 @@ export default {
         // 当显示属性时
       } else {
         // 重新渲染节点和 label
-        this.nodes = this.nodes.concat(this.propertyNodes);
+        // this.nodes = this.nodes.concat(this.propertyNodes);
+        // this.propertyNodes = JSON.parse(JSON.stringify(this.propertyNodesCopy))
+        this.nodes = this.normalNodes.concat(this.propertyNodes)
         // 显示边
         document.getElementsByClassName("profile").forEach(x => {
           x.style.visibility = "visible";
@@ -537,18 +542,29 @@ export default {
             x.svgSym = nodeIcons[x.type];
           });
 
-          this.nodes = response.data.nodeList;
-          this.links = response.data.linkList;
-          this.allTimeStamps = response.data.timeList;
-          this.showTimeline = true
 
-          this.propertyNodes = this.nodes.filter(node => {
+          this.allTimeStamps = response.data.timeList;
+          let allNodes = response.data.nodeList;
+          this.nodes = []
+          this.normalNodes = []
+          // this.nodes = response.data.nodeList;
+          this.links = response.data.linkList;
+          
+          this.propertyNodes = allNodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
               return true;
             } else {
+              this.normalNodes.push(node)
               return false;
             }
           });
+
+          this.propertyNodesCopy = JSON.parse(JSON.stringify(this.propertyNodes))
+          
+          this.nodes = this.normalNodes.concat(this.propertyNodes)
+
+          this.showTimeline = true
+
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
           // });
@@ -577,17 +593,28 @@ export default {
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
-          
-          this.nodes = response.data.nodeList;
+        
+          let allNodes = response.data.nodeList;
+          this.nodes = []
+          this.normalNodes = []
+          // this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
           
-          this.propertyNodes = this.nodes.filter(node => {
+          this.propertyNodes = allNodes.filter(node => {
             if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
               return true;
             } else {
+              this.normalNodes.push(node)
               return false;
             }
           });
+          this.propertyNodesCopy = JSON.parse(JSON.stringify(this.propertyNodes))
+
+          
+          this.nodes = this.normalNodes.concat(this.propertyNodes)
+
+          console.log("可显示")
+          this.propertyNodeSwitch = true
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
           // });
@@ -604,16 +631,28 @@ export default {
               x.svgSym = nodeIcons[x.type];
             });
             
-            this.nodes = response.data.nodeList;
+            
+            let allNodes = response.data.nodeList;
+            this.nodes = []
+            this.normalNodes = []
+            // this.nodes = response.data.nodeList;
             this.links = response.data.linkList;
             
-            this.propertyNodes = this.nodes.filter(node => {
+            this.propertyNodes = allNodes.filter(node => {
               if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
                 return true;
               } else {
+                this.normalNodes.push(node)
                 return false;
               }
             });
+            this.propertyNodesCopy = JSON.parse(JSON.stringify(this.propertyNodes))
+            
+            this.nodes = this.normalNodes.concat(this.propertyNodes)
+
+
+            console.log("可显示")
+            this.propertyNodeSwitch = true
           })
           .catch(error => {
             console.error(error)
