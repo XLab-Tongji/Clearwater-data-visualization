@@ -23,6 +23,7 @@ import java.util.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.yaml.snakeyaml.Yaml;
+import util.TimerUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -512,4 +513,40 @@ public class IndexRestController {
 
     @RequestMapping(value = "/api/createPrometheus", method = RequestMethod.POST, produces = "application/json")
     public Boolean createPrometheus(@RequestBody HashMap data) { return newPrometheus(data);}
+
+    private TimerUtil timerUtil;
+
+    @RequestMapping(value = "/api/openTimer", method = RequestMethod.POST, produces = "application/json")
+    public Boolean openTimer(@RequestBody Integer period){
+        try {
+            // 匿名方法
+            Runnable runnable = () -> {
+                // 把当前数据库中所有数据存到mongodb中
+                Map<String, Object> result = getNodesAndLinks();
+                save2Mongo(result);
+            };
+            final long time = 5;//延迟执行实际：5秒
+            timerUtil = new TimerUtil();
+            timerUtil.scheduleAtFixedRate(runnable,time,period);
+            System.out.println("定时存储Mongo服务已开启！模拟数据变化频率："+period+"秒");
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("调用timer失败");
+            return false;
+        }
+        return true;
+    }
+
+    @RequestMapping(value = "api/shutdownTimer", method = RequestMethod.POST, produces = "application/json")
+    public Boolean shutdownTimer(){
+        try {
+            timerUtil.shutdown();
+            System.out.println("定时存储Mongo服务已关闭");
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("调用timer失败");
+            return false;
+        }
+        return true;
+    }
 }
