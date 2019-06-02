@@ -26,8 +26,7 @@ import static neo4j.Neo4jDriver.*;
 
 @Component
 public class FusekiDriver {
-
-
+    
     public static Map<String, Object> getAllNodesAndLinks(){
         Map<String, Object> final_list = new HashMap<>();
         List<Map<String, Object>> result = new ArrayList<>();
