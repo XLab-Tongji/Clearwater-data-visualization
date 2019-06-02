@@ -1,48 +1,28 @@
 package neo4j;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.csvreader.CsvReader;
 import neo4jentities.DataAccessor;
-import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
-import org.apache.jena.riot.web.HttpOp;
-import org.apache.jena.sparql.engine.http.Params;
-import org.neo4j.driver.v1.*;
-import org.neo4j.driver.v1.types.Node;
-import org.neo4j.driver.v1.types.Path;
-import org.neo4j.driver.v1.types.Relationship;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
-import util.CommonUtil;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.apache.jena.riot.web.HttpOp;
+import org.springframework.stereotype.Component;
+
 import java.util.*;
 
 import static neo4j.Neo4jDriver.*;
-import static org.neo4j.driver.v1.Values.parameters;
+
 
 @Component
 public class FusekiDriver {
@@ -150,7 +130,7 @@ public class FusekiDriver {
                     resource.addProperty(model.createProperty(url,"/type"),(String)data.get("type"));
                     System.out.println(data.get("name"));
                     for (Object key : property.keySet()) {
-                        resource.addProperty(model.createProperty(url, "/" + (String) key), (String) property.get(key));
+                        resource.addProperty(model.createProperty(url, "/" + key), (String) property.get(key));
                     }
                     DataAccessor.getInstance().add(model);
                 }
@@ -182,6 +162,7 @@ public class FusekiDriver {
                 "<"+fromUrl+"> j0:"+type +" <"+toUrl+">\n" +
                 "}";
         System.out.println(addRelation);
+
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.173:3030/DevKGData/update");
 
@@ -260,6 +241,8 @@ public class FusekiDriver {
 //                            .setDefaultCookieStore(cookieStore)
 //                            .build();
 //            HttpOp.setDefaultHttpClient(httpclient);
+
+            System.out.println(Base64.class.getProtectionDomain().getCodeSource().getLocation());
             CredentialsProvider credsProvider = new BasicCredentialsProvider();
             Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
             credsProvider.setCredentials(AuthScope.ANY, credentials);
