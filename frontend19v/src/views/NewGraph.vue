@@ -180,6 +180,7 @@
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
 import Timeline from "../components/Timeline";
+import Diff from "../components/Diff"
 import axios from "axios";
 import { setTimeout } from "timers";
 
@@ -249,7 +250,8 @@ export default {
   components: {
     D3Network,
     SearchTree,
-    Timeline
+    Timeline,
+    Diff
   },
   data() {
     return {
@@ -1282,7 +1284,7 @@ export default {
     };
     el.onmouseup = e => {
       // 添加事件节点
-      if (this.radio === "2") {
+      if (this.radio === "2" && e.target.localName !== 'circle' && e.target.localName !== 'path') {
         this.showNewNodeInfoCard = true;
       } else {
         // 点击空白处取消高亮

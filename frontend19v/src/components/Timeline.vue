@@ -57,13 +57,13 @@ export default {
   position: fixed;
   bottom: -110px;
   width: 70%;
-  /* height: 100px; */
+  height: 100px;
   text-align: center;
   overflow: auto;
   border: 1px solid lightgray;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
-  padding-bottom: 30px;
+  padding-bottom: 20px;
   transition: bottom .3s;
 }
 
