@@ -1,5 +1,20 @@
 <template>
-  <div id="new-graph">
+  <div id="class-graph">
+
+    <transition name="flow-fade" >
+    
+   
+    <el-card class="flow-graph-container" v-if="isFlowVisibel">
+      <div slot="header" class="clearfix">
+        <span>流程图</span>
+        <el-button style="float: right; padding: 3px 0" type="text" @click="isFlowVisibel = false">关闭</el-button>
+      </div>
+      <div v-html="flowGraphSvg">
+
+      </div>
+    </el-card>
+    </transition>
+    <!-- <div class=""  ></div> -->
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
     <!-- 是否显示属性节点切换按钮 -->
@@ -11,7 +26,7 @@
         active-text="显示属性节点"
         inactive-text="隐藏属性节点">
       </el-switch>
-     </div> -->
+    </div>-->
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
       <d3-network
@@ -92,7 +107,7 @@
       </el-radio-group>
     </div>
     <!-- 属性卡片 -->
-    <el-card class="display-property">
+    <!-- <el-card class="display-property">
       <div slot="header" class="clearfix">
         <span style="font-weight: bold;font-size:16px;">{{currentNode.name}}</span>
         <span style="color:#555;">（{{currentNode.type}}）</span>
@@ -113,7 +128,7 @@
           <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain v-else>确定</el-button>
         </el-form-item>
       </el-form>
-    </el-card>
+    </el-card>-->
     <!-- 添加节点时选择类型 -->
     <el-card class="display-type-selection">
       <div slot="header" class="clearfix">
@@ -161,9 +176,10 @@
 <script>
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTreeforClass.vue";
-import Timeline from "../components/Timeline"
+import Timeline from "../components/Timeline";
 import axios from "axios";
 import { setTimeout } from "timers";
+import flowSvg from "@/lib/flowSvg.js";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -255,7 +271,7 @@ export default {
         links: {},
         nodes: {}
       },
-      allTimeStamps: ["2019-09-03 09:32:11", '2019-03-11 09:32:11'], // 不太确定是什么数据格式的 这涉及到排序
+      allTimeStamps: ["2019-09-03 09:32:11", "2019-03-11 09:32:11"], // 不太确定是什么数据格式的 这涉及到排序
       nodeSize: 40,
       fontSize: 14,
       linkWidth: 3,
@@ -286,7 +302,8 @@ export default {
         "containerStorage"
       ],
       propertyNodes: [], // 属性节点数组
-      allPropertyNodeTypes: [ // 属性节点的类型
+      allPropertyNodeTypes: [
+        // 属性节点的类型
         "serviceServer",
         "serviceDatabase",
         "containerNetwork",
@@ -448,7 +465,9 @@ export default {
           relType: "profile"
         }
       ],
-      showTimeline: false
+      showTimeline: false,
+      flowGraphSvg: '',
+      isFlowVisibel: false
     };
   },
   computed: {
@@ -460,7 +479,7 @@ export default {
       return {
         force: this.force,
         size: {
-          h: 800,
+          h: 800
           // w: 1240
         },
         offset: {
@@ -483,7 +502,7 @@ export default {
       if (newVal === false) {
         // 不渲染 node 和 label
         this.propertyNodes.forEach(propertNode => {
-          this.nodes.remove(propertNode)
+          this.nodes.remove(propertNode);
         });
         // 隐藏 link
         document.getElementsByClassName("profile").forEach(x => {
@@ -502,9 +521,17 @@ export default {
   },
   created() {
     // this.nodes.push(this.initialNode);
-    this.getData()
+    this.getData();
   },
   methods: {
+    showOrHidFlowGraph(e) {
+      console.log(e);
+      // 先从 e.target 拿到数据 然后转成 svg 显示出来
+      this.isFlowVisibel = !this.isFlowVisibel;
+      if (this.isFlowVisibel) {
+        this.flowGraphSvg = flowSvg.svg1;
+      }
+    },
     getData() {
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
@@ -534,22 +561,22 @@ export default {
         .get("/sample_data.json")
         .then(response => {
           console.log(response);
-        
+
           response.data.nodes.map(node => {
-            node.id = node.index
+            node.id = node.index;
           });
           response.data.links.map(link => {
-            link.sid = link.source.index
-            link.tid = link.target.index
-            link.id = link.index
+            link.sid = link.source.index;
+            link.tid = link.target.index;
+            link.id = link.index;
           });
 
           this.nodes = response.data.nodes;
           this.links = response.data.links;
 
-          console.log(this.nodes)
-          console.log(this.links)
-          
+          console.log(this.nodes);
+          console.log(this.links);
+
           // this.allTimeStamps = response.data.timeList;
           // this.showTimeline = true
 
@@ -576,48 +603,48 @@ export default {
       // displayProps.style.display = 'none'
     },
     getDatabyTimeStamp(currentTimeStamp) {
-      console.log(currentTimeStamp)
-      if (currentTimeStamp === 'now') {
+      console.log(currentTimeStamp);
+      if (currentTimeStamp === "now") {
         axios
-        // API GET
-        .get(reqUrl + "/api/getNodesAndLinks")
-        // API GET LOCAL
-        // .get("/response.json")
-        .then(response => {
-          console.log(response);
-          response.data.nodeList.forEach(x => {
-            x.svgSym = nodeIcons[x.type];
+          // API GET
+          .get(reqUrl + "/api/getNodesAndLinks")
+          // API GET LOCAL
+          // .get("/response.json")
+          .then(response => {
+            console.log(response);
+            response.data.nodeList.forEach(x => {
+              x.svgSym = nodeIcons[x.type];
+            });
+
+            this.nodes = response.data.nodeList;
+            this.links = response.data.linkList;
+
+            this.propertyNodes = this.nodes.filter(node => {
+              if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
+                return true;
+              } else {
+                return false;
+              }
+            });
+            // this.$nextTick(() => {
+            //   this.addDblClickEvent();
+            // });
+          })
+          .catch(function(error) {
+            // handle error
+            console.log(error);
           });
-          
-          this.nodes = response.data.nodeList;
-          this.links = response.data.linkList;
-          
-          this.propertyNodes = this.nodes.filter(node => {
-            if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-          // this.$nextTick(() => {
-          //   this.addDblClickEvent();
-          // });
-        })
-        .catch(function(error) {
-          // handle error
-          console.log(error);
-        });
-      }
-      else {
-        axios.get(reqUrl + '/api/getAllByTime?time=' + currentTimeStamp)
+      } else {
+        axios
+          .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
           .then(response => {
             response.data.nodeList.forEach(x => {
               x.svgSym = nodeIcons[x.type];
             });
-            
+
             this.nodes = response.data.nodeList;
             this.links = response.data.linkList;
-            
+
             this.propertyNodes = this.nodes.filter(node => {
               if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
                 return true;
@@ -627,23 +654,23 @@ export default {
             });
           })
           .catch(error => {
-            console.error(error)
-          })
+            console.error(error);
+          });
       }
     },
     // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
-    frontTimeFottoEnd(time) { 
-      let timeArr = time.split('')
-      timeArr.splice(4, 1)
-      timeArr.splice(6, 1)
-      return timeArr.join('')
+    frontTimeFottoEnd(time) {
+      let timeArr = time.split("");
+      timeArr.splice(4, 1);
+      timeArr.splice(6, 1);
+      return timeArr.join("");
     },
     // yyyyMMdd hh:mm:ss -> yyyy-MM-dd hh:mm:ss
     endTimeFottoFront(time) {
-      let timeArr = time.split('')
-      timeArr.splice(4, 0, '-')
-      timeArr.splice(7, 0, '-')
-      return timeArr.join('')
+      let timeArr = time.split("");
+      timeArr.splice(4, 0, "-");
+      timeArr.splice(7, 0, "-");
+      return timeArr.join("");
     },
     clickNode(e, node) {
       clearTimeout(timer);
@@ -698,7 +725,7 @@ export default {
               _this.links.push({
                 sid: _this.sourceNodeId,
                 tid: _this.targetNodeId
-              }); 
+              });
               _this.sourceNodeId = 0;
               _this.targetNodeId = 0;
             }
@@ -709,8 +736,8 @@ export default {
         if (_this.radio === "4") {
           // 删除
           let removeLinkList = []; // 要删除的边们
-          let removeNodeList = _this.relationalPropertyNodes(node) // 要删除的节点（点击的节点的第一层且是属性节点
-          removeNodeList.push(node) 
+          let removeNodeList = _this.relationalPropertyNodes(node); // 要删除的节点（点击的节点的第一层且是属性节点
+          removeNodeList.push(node);
           _this.links.forEach(element => {
             if (node.id == element.sid || node.id == element.tid) {
               removeLinkList.push(element);
@@ -722,25 +749,25 @@ export default {
           });
 
           removeNodeList.forEach(node => {
-              _this.nodes.remove(node);
+            _this.nodes.remove(node);
           });
           // console.log(JSON.stringify(removeNodeList))
           // console.log(JSON.stringify(removeLinkList))
           // 删除请求（先删除关系->怕后端出问题
-          axios.post(reqUrl + '/api/delLinks', removeLinkList)
-            .then(response => {
-              console.log('删除边的请求成功')
-              axios.post(reqUrl + '/api/delNodes', removeNodeList) 
-                .then(response => {
-                  console.log('删除节点的请求成功')
-                })
-                .catch(error => {
-                  console.log(error)
-                })
-            }) 
-            .catch(error => {
-              console.error(error)
-            })
+          // axios.post(reqUrl + '/api/delLinks', removeLinkList)
+          //   .then(response => {
+          //     console.log('删除边的请求成功')
+          //     axios.post(reqUrl + '/api/delNodes', removeNodeList)
+          //       .then(response => {
+          //         console.log('删除节点的请求成功')
+          //       })
+          //       .catch(error => {
+          //         console.log(error)
+          //       })
+          //   })
+          //   .catch(error => {
+          //     console.error(error)
+          //   })
         }
         // 修改节点名
         if (_this.radio === "5") {
@@ -753,18 +780,18 @@ export default {
             .then(({ value }) => {
               if (value) {
                 node.name = value;
-                axios.post(reqUrl + '/api/modifyOneNode', node)
-                  .then(response => {
-                    if (response) {
-                      _this.$message({
-                        type: "success",
-                        message: "修改成功"
-                      });
-                    }
-                  })
-                  .catch(error => {
-                    console.log(error)
-                  }) 
+                // axios.post(reqUrl + '/api/modifyOneNode', node)
+                //   .then(response => {
+                //     if (response) {
+                //       _this.$message({
+                //         type: "success",
+                //         message: "修改成功"
+                //       });
+                //     }
+                //   })
+                //   .catch(error => {
+                //     console.log(error)
+                //   })
               }
             })
             .catch(() => {
@@ -790,15 +817,15 @@ export default {
             // value 不为空
             if (value) {
               link.name = value;
-              axios.post(reqUrl + '/api/modifyOneLink', link) 
-                .then(response => {
-                  if (response) {
-                    this.$message({
-                      type: "success",
-                      message: "修改成功"
-                    });
-                  }
-                })
+              // axios.post(reqUrl + '/api/modifyOneLink', link)
+              //   .then(response => {
+              //     if (response) {
+              //       this.$message({
+              //         type: "success",
+              //         message: "修改成功"
+              //       });
+              //     }
+              //   })
             }
           })
           .catch(() => {
@@ -880,27 +907,26 @@ export default {
     },
     // 返回它第一层连着的节点且是属性节点
     relationalPropertyNodes(node) {
-      let relproNodes = []
+      let relproNodes = [];
       this.links.forEach(link => {
         if (link.sid === node.id) {
-          let anotherNode = this.findNodebyId(link.tid)
+          let anotherNode = this.findNodebyId(link.tid);
           if (this.allPropertyNodeTypes.indexOf(anotherNode.type) !== -1) {
-            relproNodes.push(anotherNode)
+            relproNodes.push(anotherNode);
+          }
+        } else if (link.tid === node.id) {
+          let anotherNode = this.findNodebyId(link.sid);
+          if (this.allPropertyNodeTypes.indexOf(anotherNode.type) !== -1) {
+            relproNodes.push(anotherNode);
           }
         }
-        else if (link.tid === node.id) {
-          let anotherNode = this.findNodebyId(link.sid)
-          if (this.allPropertyNodeTypes.indexOf(anotherNode.type) !== -1) {
-            relproNodes.push(anotherNode)
-          }
-        }
-      })
-      return relproNodes
+      });
+      return relproNodes;
     },
     findNodebyId(id) {
       return this.nodes.find(node => {
-        return node.id === id
-      })
+        return node.id === id;
+      });
     },
     focusNodePosition(node) {
       let netSvg = document.getElementsByClassName("net-svg")[0];
@@ -1036,22 +1062,22 @@ export default {
       };
       this.links.push(newLink);
 
-      axios
-        .post(reqUrl + "/api/addNewNode", newNode)
-        .then(response => {
-          console.log(response.data);
-          axios
-            .post(reqUrl + "/api/addNewLink", newLink)
-            .then(response => {
-              console.log(response.data);
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      // axios
+      //   .post(reqUrl + "/api/addNewNode", newNode)
+      //   .then(response => {
+      //     console.log(response.data);
+      //     axios
+      //       .post(reqUrl + "/api/addNewLink", newLink)
+      //       .then(response => {
+      //         console.log(response.data);
+      //       })
+      //       .catch(function(error) {
+      //         console.log(error);
+      //       });
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //   });
 
       this.$message({
         message: "添加成功",
@@ -1124,6 +1150,7 @@ export default {
         e.detail === 2 &&
         (e.target.localName === "path" || e.target.localName === "circle")
       ) {
+        this.showOrHidFlowGraph(e);
         let property = this.currentNode.property;
         this.propertyKeys = Object.keys(property);
         for (var key in property) {
@@ -1224,87 +1251,87 @@ export default {
 }
 
 /* 被选中的图标 */
-#new-graph .node-svg.selected {
+#class-graph .node-svg.selected {
   /* stroke:tomato !important; */
   stroke-width: 20px !important;
   fill: tomato !important;
 }
 
 /* 被选中的 link */
-#new-graph .link.selected {
+#class-graph .link.selected {
   marker-end: url(#m-end-selected);
 }
 
 /* 被选中的所有元素 */
-#new-graph .selected {
+#class-graph .selected {
   stroke: tomato !important;
   stroke-width: 4px;
 }
 
-#new-graph .nodesInit {
+#class-graph .nodesInit {
   fill: lightblue;
 }
 
-#new-graph .nodesServer {
+#class-graph .nodesServer {
   fill: darkcyan;
 }
 
-#new-graph .nodesPod {
+#class-graph .nodesPod {
   fill: rgb(7, 244, 188);
 }
 
-#new-graph .nodesContainer {
+#class-graph .nodesContainer {
   fill: dimgray;
 }
 
-#new-graph .nodesContainerNetwork,
-#new-graph .nodesContainerStorage {
+#class-graph .nodesContainerNetwork,
+#class-graph .nodesContainerStorage {
   fill: rgb(200, 255, 195);
   r: 12;
 }
 
-#new-graph .nodesService {
+#class-graph .nodesService {
   fill: cornflowerblue;
 }
 
-#new-graph .nodesServiceDatabase,
-#new-graph .nodesServiceServer {
+#class-graph .nodesServiceDatabase,
+#class-graph .nodesServiceServer {
   fill: lightgoldenrodyellow;
   r: 12;
 }
 
-#new-graph .nodesNamespace {
+#class-graph .nodesNamespace {
   fill: darkgoldenrod;
 }
 
-#new-graph .linkManage {
+#class-graph .linkManage {
   /* color: rgb(8, 113, 241); */
   /* fill: rgb(1, 1, 77); */
   fill: gray;
   text-anchor: middle;
 }
 
-#new-graph .linkDeployed {
+#class-graph .linkDeployed {
   fill: rgb(0, 71, 70);
   text-anchor: middle;
 }
 
-#new-graph .linkProvides {
+#class-graph .linkProvides {
   fill: rgb(2, 75, 58);
   text-anchor: middle;
 }
 
-#new-graph .linkContains {
+#class-graph .linkContains {
   fill: rgb(1, 78, 18);
   text-anchor: middle;
 }
 
-#new-graph .linkService {
+#class-graph .linkService {
   fill: rgb(68, 82, 2);
   text-anchor: middle;
 }
 
-#new-graph .linkNamespace {
+#class-graph .linkNamespace {
   fill: rgb(76, 2, 78);
   text-anchor: middle;
 }
@@ -1346,7 +1373,7 @@ export default {
   stroke-width: 30px;
 }
 
-#new-graph #switch-p-node {
+#class-graph #switch-p-node {
   background: white;
   border: 1px lightgray solid;
   border-radius: 10px;
@@ -1354,5 +1381,31 @@ export default {
   position: fixed;
   bottom: 90px;
   right: 60px;
+}
+#class-graph .flow-graph-container {
+  position: absolute;
+  z-index: 10;
+  width: 400px;
+  height: 95%;
+    right: 0;
+    overflow: auto;
+}
+
+#class-graph .flow-graph-container .node {
+  stroke: none;
+  stroke-width: 1px;
+
+}
+
+#class-graph .flow-fade-enter-active {
+  transition: all .3s linear;
+}
+#class-graph .flow-fade-leave-active {
+  transition: all .3s linear;
+}
+#class-graph .flow-fade-enter, .flow-fade-leave-to
+/* .flow-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(400px);
+  /* opacity: 0; */
 }
 </style>

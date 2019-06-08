@@ -59,6 +59,7 @@ export default {
   width: 70%;
   height: 100px;
   text-align: center;
+  white-space: nowrap; /* scroll x effects */
   overflow: auto;
   border: 1px solid lightgray;
   background-color: rgb(255, 255, 255);
