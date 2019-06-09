@@ -414,8 +414,10 @@ public class IndexRestController {
         String filePath = savePath + "/"  + filename;
         try{
            // File file = new File(filePath);
+            System.out.println("66");
             return csvPost(algorithm,filePath);
         }catch (Exception e) {
+            System.out.println("66");
             e.printStackTrace();
         }
         return null;
@@ -513,8 +515,8 @@ public class IndexRestController {
         return modifyLink(data);
     }
 
-    @RequestMapping(value = "/api/prometheusSearch",method = RequestMethod.POST,produces = "application/json")
-    public Boolean prometheusSearch(@RequestBody String url){ return proTemp(url);}
+//    @RequestMapping(value = "/api/prometheusSearch",method = RequestMethod.POST,produces = "application/json")
+//    public Boolean prometheusSearch(@RequestBody String url){ return proTemp(url);}
 
     @RequestMapping(value = "/api/createPrometheus", method = RequestMethod.POST, produces = "application/json")
     public Boolean createPrometheus(@RequestBody HashMap data) { return newPrometheus(data);}

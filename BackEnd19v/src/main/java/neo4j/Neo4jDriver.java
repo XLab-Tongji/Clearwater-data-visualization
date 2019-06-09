@@ -2455,7 +2455,7 @@ public class Neo4jDriver {
     public static boolean deleteOneNode(String url){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.173:3030/$/DevKGData/update");
+                    .destination("http://10.60.38.173:3030/DevKGData/update");
             String delete = "DELETE WHERE\n" +
                     "{\n" +
                     "<"+url+"> ?p ?o .\n" +
