@@ -170,6 +170,7 @@
         </div>
       </el-card>
     </transition>
+    <div id="visual"></div>
     <!-- 时间线 -->
     <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
   </div>
@@ -179,6 +180,7 @@
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
 import Timeline from "../components/Timeline";
+import Diff from "../components/Diff"
 import axios from "axios";
 import { setTimeout } from "timers";
 
@@ -248,10 +250,13 @@ export default {
   components: {
     D3Network,
     SearchTree,
-    Timeline
+    Timeline,
+    Diff
   },
   data() {
     return {
+      history: {},
+      now: {},
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -625,6 +630,58 @@ export default {
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
+
+      //测试jsondiffpatch结果是否正确
+      this.history = {
+      "linkList": [{
+          "name": "deployed_in",
+          "type": "deployed_in",
+          "tid": "http://server/10.60.38.181/192.168.199.188",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        }, {
+          "name": "contains",
+          "type": "contains",
+          "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        }, {
+          "name": "provides",
+          "type": "provides",
+          "tid": "http://services/10.60.38.181/sock-shop/catalogue-db",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+      }]
+    }
+    this.now = {
+      "linkList": [
+        {
+          "name": "provides",
+          "type": "provides",
+          "tid": "http://server/unset-base/TestService2",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
+        }, {
+          "name": "deployed_in",
+          "type": "deployed_in",
+          "tid": "http://server/10.60.38.181/192.168.199.188",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        }, {
+          "name": "contains",
+          "type": "contains",
+          "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        }, {
+          "name": "provides",
+          "type": "provides",
+          "tid": "http://services/10.60.38.181/sock-shop/catalogue-db",
+          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+      }]
+    }
+
+            var delta = jsondiffpatch.diff(this.history, this.now)
+            const diff = {
+              linkList: delta.linkList
+            }
+            jsondiffpatch.formatters.html.hideUnchanged();
+            const visualdiff = document.getElementById('visual');
+            visualdiff.innerHTML = jsondiffpatch.formatters.html.format(diff, this.history);
     },
     getDatabyTimeStamp(currentTimeStamp) {
       console.log(currentTimeStamp);
@@ -672,8 +729,23 @@ export default {
           });
       } else {
         axios
-          .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
-          .then(response => {
+          .all([axios.get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp),
+                axios.get(reqUrl + "/api/getNodesAndLinks")])
+          .then(axios.spread((response, res) => {
+            this.history = response.data
+            this.now = res.data
+            var delta = jsondiffpatch.diff(this.history, this.now)
+            //只展示nodelist和linklist
+            const diff = {
+              linkList: delta.linkList,
+              nodeList: delta.nodeList
+            }
+            //隐藏不变的部分
+            jsondiffpatch.formatters.html.hideUnchanged();
+            //展示diff
+            const visualdiff = document.getElementById('visual');
+            visualdiff.innerHTML = jsondiffpatch.formatters.html.format(diff, response.data);
+
             response.data.nodeList.forEach(x => {
               x.svgSym = nodeIcons[x.type];
             });
@@ -700,7 +772,7 @@ export default {
 
             console.log("可显示");
             this.propertyNodeSwitch = true;
-          })
+          }))
           .catch(error => {
             console.error(error);
           });
@@ -1212,7 +1284,7 @@ export default {
     };
     el.onmouseup = e => {
       // 添加事件节点
-      if (this.radio === "2") {
+      if (this.radio === "2" && e.target.localName !== 'circle' && e.target.localName !== 'path') {
         this.showNewNodeInfoCard = true;
       } else {
         // 点击空白处取消高亮
@@ -1306,6 +1378,12 @@ export default {
 
     addEvent(el, "mousewheel", onMouseWheel);
     addEvent(el, "DOMMouseScroll", onMouseWheel);
+
+    //引入jsondiffpatch
+    const jsondiff = document.createElement('script');
+    jsondiff.type = 'text/javascript';
+    jsondiff.src = 'https://cdn.jsdelivr.net/npm/jsondiffpatch/dist/jsondiffpatch.umd.min.js';
+    document.body.appendChild(jsondiff);
   }
 };
 </script>
@@ -1481,5 +1559,156 @@ export default {
 /* .infocard-leave-active for below version 2.1.8 */ {
   transform: translateX(400px);
   /* opacity: 0; */
+}
+
+/* jsonpatchdiff */
+.jsondiffpatch-delta {
+  font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace;
+  font-size: 12px;
+  margin: 0;
+  padding: 0 0 0 12px;
+  display: inline-block;
+}
+.jsondiffpatch-delta pre {
+  font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+ul.jsondiffpatch-delta {
+  list-style-type: none;
+  padding: 0 0 0 20px;
+  margin: 0;
+}
+.jsondiffpatch-delta ul {
+  list-style-type: none;
+  padding: 0 0 0 20px;
+  margin: 0;
+}
+.jsondiffpatch-added .jsondiffpatch-property-name,
+.jsondiffpatch-added .jsondiffpatch-value pre,
+.jsondiffpatch-modified .jsondiffpatch-right-value pre,
+.jsondiffpatch-textdiff-added {
+  background: #bbffbb;
+}
+.jsondiffpatch-deleted .jsondiffpatch-property-name,
+.jsondiffpatch-deleted pre,
+.jsondiffpatch-modified .jsondiffpatch-left-value pre,
+.jsondiffpatch-textdiff-deleted {
+  background: #ffbbbb;
+  text-decoration: line-through;
+}
+.jsondiffpatch-unchanged,
+.jsondiffpatch-movedestination {
+  color: gray;
+}
+.jsondiffpatch-unchanged,
+.jsondiffpatch-movedestination > .jsondiffpatch-value {
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  overflow-y: hidden;
+}
+.jsondiffpatch-unchanged-showing .jsondiffpatch-unchanged,
+.jsondiffpatch-unchanged-showing .jsondiffpatch-movedestination > .jsondiffpatch-value {
+  max-height: 100px;
+}
+.jsondiffpatch-unchanged-hidden .jsondiffpatch-unchanged,
+.jsondiffpatch-unchanged-hidden .jsondiffpatch-movedestination > .jsondiffpatch-value {
+  max-height: 0;
+}
+.jsondiffpatch-unchanged-hiding .jsondiffpatch-movedestination > .jsondiffpatch-value,
+.jsondiffpatch-unchanged-hidden .jsondiffpatch-movedestination > .jsondiffpatch-value {
+  display: block;
+}
+.jsondiffpatch-unchanged-visible .jsondiffpatch-unchanged,
+.jsondiffpatch-unchanged-visible .jsondiffpatch-movedestination > .jsondiffpatch-value {
+  max-height: 100px;
+}
+.jsondiffpatch-unchanged-hiding .jsondiffpatch-unchanged,
+.jsondiffpatch-unchanged-hiding .jsondiffpatch-movedestination > .jsondiffpatch-value {
+  max-height: 0;
+}
+.jsondiffpatch-unchanged-showing .jsondiffpatch-arrow,
+.jsondiffpatch-unchanged-hiding .jsondiffpatch-arrow {
+  display: none;
+}
+.jsondiffpatch-value {
+  display: inline-block;
+}
+.jsondiffpatch-property-name {
+  display: inline-block;
+  padding-right: 5px;
+  vertical-align: top;
+}
+.jsondiffpatch-property-name:after {
+  content: ': ';
+}
+.jsondiffpatch-child-node-type-array > .jsondiffpatch-property-name:after {
+  content: ': [';
+}
+.jsondiffpatch-child-node-type-array:after {
+  content: '],';
+}
+div.jsondiffpatch-child-node-type-array:before {
+  content: '[';
+}
+div.jsondiffpatch-child-node-type-array:after {
+  content: ']';
+}
+.jsondiffpatch-child-node-type-object > .jsondiffpatch-property-name:after {
+  content: ': {';
+}
+.jsondiffpatch-child-node-type-object:after {
+  content: '},';
+}
+div.jsondiffpatch-child-node-type-object:before {
+  content: '{';
+}
+div.jsondiffpatch-child-node-type-object:after {
+  content: '}';
+}
+.jsondiffpatch-value pre:after {
+  content: ',';
+}
+li:last-child > .jsondiffpatch-value pre:after,
+.jsondiffpatch-modified > .jsondiffpatch-left-value pre:after {
+  content: '';
+}
+.jsondiffpatch-modified .jsondiffpatch-value {
+  display: inline-block;
+}
+.jsondiffpatch-modified .jsondiffpatch-right-value {
+  margin-left: 5px;
+}
+.jsondiffpatch-moved .jsondiffpatch-value {
+  display: none;
+}
+.jsondiffpatch-moved .jsondiffpatch-moved-destination {
+  display: inline-block;
+  background: #ffffbb;
+  color: #888;
+}
+.jsondiffpatch-moved .jsondiffpatch-moved-destination:before {
+  content: ' => ';
+}
+ul.jsondiffpatch-textdiff {
+  padding: 0;
+}
+.jsondiffpatch-textdiff-location {
+  color: #bbb;
+  display: inline-block;
+  min-width: 60px;
+}
+.jsondiffpatch-textdiff-line {
+  display: inline-block;
+}
+.jsondiffpatch-textdiff-line-number:after {
+  content: ',';
+}
+.jsondiffpatch-error {
+  background: red;
+  color: white;
+  font-weight: bold;
 }
 </style>
