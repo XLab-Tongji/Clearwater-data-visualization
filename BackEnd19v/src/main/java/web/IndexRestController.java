@@ -483,6 +483,11 @@ public class IndexRestController {
         return addLink(data);
     }
 
+    @RequestMapping(value = "/api/addNewEvent",method = RequestMethod.POST,produces = "application/json")
+    public Boolean addNewEvent(@RequestBody HashMap data){
+        return addEvent(data);
+    }
+
     @RequestMapping(value = "/api/deleteAll",method = RequestMethod.POST,produces = "application/json")
     public Boolean deleteAllNodes(){
         return deleteAll();
