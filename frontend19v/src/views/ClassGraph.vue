@@ -558,7 +558,8 @@ export default {
         // .get(reqUrl + "/api/getNodesAndLinks")
 
         // API GET LOCAL
-        .get("/sample_data.json")
+        // .get("/sample_data.json")
+        .get("/class.json")
         .then(response => {
           console.log(response);
 
