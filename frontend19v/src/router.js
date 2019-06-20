@@ -52,6 +52,11 @@ export default new Router({
           component: () => import('./views/ClassGraph.vue'),
         },
         {
+          path: 'struct',
+          name: 'DirStruct',
+          component: () => import('./views/DirStruct.vue'),
+        },
+        {
           path: 'causerel',
           name: 'CauseRel',
           component: () => import('./views/CauseRel.vue'),

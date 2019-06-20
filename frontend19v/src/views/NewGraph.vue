@@ -121,30 +121,26 @@
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayTypeCard">关闭</el-button>
       </div>
       <label>节点类型：</label>
-      <el-select v-model="newNodeType" placeholder="请选择节点类型">
-        <el-option
+      <el-select  class="selection-card-label" v-model="newNodeType" placeholder="请选择节点类型">
+        <el-option 
           v-for="(item,index) in selectNodeInfo"
           :key="index"
           :label="item.type"
           :value="item.type"
         ></el-option>
       </el-select>
-      <br>
       <label>节点&#32;ID：</label>
-      <el-input
+      <el-input class="selection-card-label"
         v-model="newNodeId"
         placeholder="请输入节点id"
         :minlength="1"
-        style="margin-top:10px; width:200px"
       ></el-input>
-      <br>
       <label>节点名称：</label>
-      <el-input
+      <el-input class="selection-card-label"
         v-model="newNodeName"
         placeholder="请输入节点名"
         :minlength="1"
         :maxlength="20"
-        style="margin-top:10px; width:200px"
       ></el-input>
       <el-button
         @click="updateTypeHandler"
@@ -1522,7 +1518,7 @@ export default {
   top: 0;
   right: -360px;
   width: 340px;
-  height: 350px;
+  height: 400px;
   transition: right linear 0.2s;
   overflow: auto;
 }
@@ -1710,5 +1706,9 @@ ul.jsondiffpatch-textdiff {
   background: red;
   color: white;
   font-weight: bold;
+}
+.selection-card-label {
+  display: block;
+  padding: 10px 0;
 }
 </style>

@@ -17,6 +17,7 @@
     "pug-plain-loader": "^1.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "viz.js": "^2.1.2",
     "vue": "^2.5.17",
     "vue-d3-network": "^0.1.28",
     "vue-router": "^3.0.1",

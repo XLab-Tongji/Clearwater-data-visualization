@@ -28,10 +28,19 @@
               <i class="el-icon-share"></i>
               <span slot="title">因果关系图</span>
             </el-menu-item>
-            <el-menu-item index="ClassGraph">
-              <i class="el-icon-wallet"></i>
-              <span slot="title">类图</span>
-            </el-menu-item>
+
+            <el-submenu index="ClassGraph">
+              <template slot="title">
+                <i class="el-icon-wallet"></i>
+                <span slot="title">类图</span>
+              </template>
+              <el-menu-item-group>
+                <span slot="title">class diagram</span>
+                <el-menu-item index="ClassGraph">类图</el-menu-item>
+                <el-menu-item index="DirStruct">层级图</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+
             <el-submenu index="ModiDataMenu">
               <template slot="title">
                 <i class="el-icon-edit"></i>
@@ -43,6 +52,7 @@
                 <el-menu-item index="EnterRel">Entering Relationship</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
+
             <el-submenu index="DecisionRep">
               <template slot="title">
                 <i class="el-icon-data-line"></i>
