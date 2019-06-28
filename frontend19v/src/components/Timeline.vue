@@ -1,11 +1,11 @@
 <template>
   <!-- 时间线面板 -->
   <div id="timelineContainer">
-    <div class="timeline" v-for="timeStamp in orderedTimeStamps" :key="timeStamp">
+    <div class="timeline" v-for="(timeStamp,index) in orderedTimeStamps" :key="timeStamp">
       <div class="time">
         <div class="line">----------------</div>
         <!-- radio 有用 name 来区分多个表单，没有 name 默认是一个 -->
-        <input type="radio" :value="timeStamp" v-model="pickedTimeStamp" class="timePoint">
+        <input type="radio" :value="index" v-model="pickedTimeStamp" class="timePoint">
         <div class="timeText">{{timeStamp.slice(0,10)}}</div>
         <div class="timeText">{{timeStamp.slice(11)}}</div>
       </div>
@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      pickedTimeStamp: "now"
+      pickedTimeStamp: "now" // pick 的时间戳的 index（now 除外）
     };
   },
   computed: {
@@ -46,7 +46,24 @@ export default {
   },
   watch: {
     pickedTimeStamp(newVal) {
-      this.$emit("click", newVal);
+      let lastVal = 0;
+      if (newVal) {
+        // 当不是第一个时间戳时
+        if (newVal === "now") {
+          // 如果是 now
+          lastVal = this.orderedTimeStamps.length - 1;
+        } else {
+          lastVal = newVal - 1;
+        }
+      } else {
+        // 如果是第一个时间戳 对比的数据是相同的就行
+        lastVal = newVal;
+      }
+      this.$emit(
+        "click",
+        this.orderedTimeStamps[newVal],
+        this.orderedTimeStamps[lastVal]
+      );
     }
   }
 };
@@ -65,7 +82,7 @@ export default {
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   padding-bottom: 20px;
-  transition: bottom .3s;
+  transition: bottom 0.3s;
 }
 
 #timelineContainer:hover {

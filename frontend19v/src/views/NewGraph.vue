@@ -11,6 +11,14 @@
         active-text="显示属性节点"
         inactive-text="隐藏属性节点"
       ></el-switch>
+      <br>
+      <el-switch
+        v-model="diffSwitch"
+        active-color="#409EFF"
+        inactive-color="lightgray"
+        active-text="显示 diff"
+        inactive-text="隐藏 diff"
+      ></el-switch>
     </div>
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
@@ -121,8 +129,8 @@
         <el-button style="float: right; padding: 3px 0" type="text" @click="closeDisplayTypeCard">关闭</el-button>
       </div>
       <label>节点类型：</label>
-      <el-select  class="selection-card-label" v-model="newNodeType" placeholder="请选择节点类型">
-        <el-option 
+      <el-select class="selection-card-label" v-model="newNodeType" placeholder="请选择节点类型">
+        <el-option
           v-for="(item,index) in selectNodeInfo"
           :key="index"
           :label="item.type"
@@ -130,13 +138,15 @@
         ></el-option>
       </el-select>
       <label>节点&#32;ID：</label>
-      <el-input class="selection-card-label"
+      <el-input
+        class="selection-card-label"
         v-model="newNodeId"
         placeholder="请输入节点id"
         :minlength="1"
       ></el-input>
       <label>节点名称：</label>
-      <el-input class="selection-card-label"
+      <el-input
+        class="selection-card-label"
         v-model="newNodeName"
         placeholder="请输入节点名"
         :minlength="1"
@@ -159,14 +169,13 @@
         <p>请输入节点标识符 (ID)：</p>
         <el-input v-model="newNodeId" placeholder="请输入内容"></el-input>
         <br>
-        <br>    
+        <br>
         <div>
           <el-button type="primary" @click="addNewNodeByClickBlank">添加节点</el-button>
           <el-button @click="showNewNodeInfoCard = false">取消</el-button>
         </div>
       </el-card>
     </transition>
-    <div id="visual"></div>
     <!-- 时间线 -->
     <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
   </div>
@@ -176,9 +185,9 @@
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
 import Timeline from "../components/Timeline";
-import Diff from "../components/Diff"
 import axios from "axios";
-import { setTimeout } from "timers";
+import { nodeIcons } from "@/lib/nodeIcons.js";
+import jsondiffpatch from "@/lib/diff.js";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -222,37 +231,14 @@ function addEvent(obj, xEvent, fn) {
 
 var timer = null;
 
-const nodeIcons = {
-  masterServer: "",
-  server:
-    '<svg t="1554884263168" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15590" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M784 48v928H240V48h544m0-48H240a48 48 0 0 0-48 48v928a48 48 0 0 0 48 48h544a48 48 0 0 0 48-48V48a48 48 0 0 0-48-48zM680 152v83H343v-83h337m24-24H319v131h385V128z m-23 216v83H344v-83h337m24-24H320v131h385V320zM432 528v32h-96v-32h96m16-16H320v64h128v-64z m64 192a16 16 0 1 0 16 16 16 16 0 0 0-16-16z" fill="" p-id="15591"></path><path d="M512 848m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" fill="#1890FF" p-id="15592"></path></svg>',
-  pod:
-    '<svg t="1554883368654" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2427" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M512 580.266667c-2.133333 0-4.266667 0-4.266667-2.133334L277.333333 465.066667c-4.266667-2.133333-6.4-8.533333-4.266666-14.933334 2.133333-4.266667 8.533333-6.4 14.933333-4.266666L512 556.8l224-113.066667c4.266667-2.133333 10.666667 0 14.933333 4.266667 2.133333 4.266667 0 10.666667-4.266666 14.933333l-230.4 115.2c0 2.133333-2.133333 2.133333-4.266667 2.133334z" fill="#ED1E79" p-id="2428"></path><path d="M512 866.133333c-6.4 0-10.666667-4.266667-10.666667-10.666666V569.6c0-6.4 4.266667-10.666667 10.666667-10.666667s10.666667 4.266667 10.666667 10.666667v285.866667c0 6.4-4.266667 10.666667-10.666667 10.666666z" fill="#ED1E79" p-id="2429"></path><path d="M742.4 981.333333c-2.133333 0-4.266667 0-4.266667-2.133333L512 868.266667 288 981.333333H277.333333L49.066667 870.4c-4.266667 0-6.4-4.266667-6.4-8.533333V569.6c0-4.266667 2.133333-8.533333 6.4-8.533333L273.066667 448V168.533333c0-4.266667 2.133333-8.533333 6.4-8.533333l230.4-115.2c2.133333-2.133333 6.4-2.133333 8.533333 0L746.666667 157.866667c4.266667 2.133333 6.4 6.4 6.4 8.533333V448l224 110.933333c4.266667 2.133333 6.4 6.4 6.4 8.533334v292.266666c0 4.266667-2.133333 8.533333-6.4 10.666667L746.666667 981.333333h-4.266667zM512 844.8c2.133333 0 4.266667 0 4.266667 2.133333L740.266667 960 960 855.466667V576l-224-110.933333c-4.266667-2.133333-6.4-6.4-6.4-8.533334V174.933333L512 66.133333 294.4 174.933333v279.466667c0 4.266667-2.133333 8.533333-6.4 8.533333L64 576v279.466667L281.6 960l224-113.066667c2.133333-2.133333 4.266667-2.133333 6.4-2.133333zM281.6 454.4z" fill="#108EE9" p-id="2430"></path></svg>',
-  container:
-    '<svg t="1554884950404" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17333" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M998.4 455.2c-3.2-0.8-70.4-24-131.2-13.6-5.6-30.4-21.6-80.8-72-100l-5.6-2.4-5.6 1.6c-2.4 0.8-24 4.8-40 29.6-19.2 28.8-23.2 72-12 128.8h-672c-11.2 0-41.6-0.8-44 24.8-0.8 6.4-1.6 15.2-1.6 17.6-0.8 4-0.8 4.8-0.8 16 0 298.4 216 332.8 378.4 332.8 317.6 0 432.8-170.4 473.6-316 34.4 6.4 120.8 11.2 146.4-96l4-17.6-17.6-5.6z m-130.4 79.2c-17.6-4-36 7.2-40.8 25.6-64 240-272.8 290.4-436 290.4-234.4 0-338.4-90.4-338.4-292.8v-8c0.8-2.4 0.8-4.8 1.6-11.2h687.2c9.6 0 18.4-4 24-12 6.4-7.2 8-17.6 6.4-27.2-16.8-77.6 0-110.4 14.4-119.2 41.6 21.6 42.4 84 42.4 85.6v28l26.4-9.6c36-12.8 84-4.8 110.4 1.6-19.2 54.4-63.2 56.8-97.6 48.8zM71.2 382.4h85.6v85.6H71.2z" p-id="17334"></path><path d="M196 382.4h85.6v85.6H196zM321.6 382.4h85.6v85.6H321.6zM446.4 382.4h85.6v85.6H446.4zM196 252h85.6v85.6H196zM321.6 252h85.6v85.6H321.6zM446.4 252h85.6v85.6H446.4zM446.4 121.6h85.6v85.6H446.4zM572 382.4h85.6v85.6H572zM228.8 607.2c-28.8 0-52 23.2-52 52s23.2 52 52 52 52-23.2 52-52-23.2-52-52-52z m0 64c-6.4 0-12-5.6-12-12s5.6-12 12-12 12 5.6 12 12-5.6 12-12 12z" p-id="17335"></path></svg>',
-  service:
-    '<svg t="1554884138254" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12163" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M306.820741 191.525926c-51.579259 11.188148-103.632593 63.241481-114.820741 114.820741-21.428148 99.176296 53.475556 186.785185 148.954074 186.785185l152.651852 0 0-6.447407 0-31.478519L493.605926 333.937778l-0.18963 0C489.623704 241.682963 403.816296 170.571852 306.820741 191.525926zM455.68 455.205926l-114.725926 0c-63.905185 0-115.579259-52.242963-114.725926-116.337778 0.853333-61.819259 51.294815-112.260741 113.114074-113.114074 64.094815-0.853333 116.337778 50.820741 116.337778 114.725926L455.68 455.205926z" p-id="12164"></path><path d="M832.663704 306.346667c-11.188148-51.579259-63.241481-103.632593-114.820741-114.820741-96.900741-20.954074-182.802963 50.157037-186.595556 142.506667l-0.18963 0 0 121.173333 0 31.478519 0 6.447407 152.651852 0C779.093333 493.131852 854.091852 405.522963 832.663704 306.346667zM568.983704 340.48c0-63.905185 52.242963-115.579259 116.337778-114.725926 61.819259 0.853333 112.260741 51.294815 113.114074 113.114074 0.853333 64.094815-50.820741 116.337778-114.725926 116.337778l-114.725926 0L568.983704 340.48z" p-id="12165"></path><path d="M192 717.842963c11.188148 51.579259 63.241481 103.632593 114.820741 114.820741 96.900741 20.954074 182.802963-50.157037 186.595556-142.506667l0.18963 0L493.605926 568.983704l0-31.478519 0-6.447407-152.651852 0C245.475556 531.057778 170.571852 618.666667 192 717.842963zM455.68 683.70963c0 63.905185-52.242963 115.579259-116.337778 114.725926-61.819259-0.853333-112.260741-51.294815-113.114074-113.114074-0.853333-64.094815 50.820741-116.337778 114.725926-116.337778l114.725926 0L455.68 683.70963z" p-id="12166"></path><path d="M683.70963 531.057778l-152.651852 0 0 6.447407 0 31.478519 0 121.173333 0.18963 0c3.887407 92.34963 89.694815 163.460741 186.595556 142.506667 51.579259-11.188148 103.632593-63.241481 114.820741-114.820741C854.091852 618.666667 779.093333 531.057778 683.70963 531.057778zM798.435556 685.321481C797.582222 747.140741 747.140741 797.582222 685.321481 798.435556c-64.094815 0.853333-116.337778-50.820741-116.337778-114.725926l0-114.725926 114.725926 0C747.614815 568.983704 799.288889 621.226667 798.435556 685.321481z" p-id="12167"></path></svg>',
-  namespace:
-    '<svg t="1554884521660" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16549" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M988.576 411.328c-10.848-74.88-133.44-104.224-244-115.424V231.168h-27.36v-0.032l27.008-0.192c-0.928-127.136-318.496-130.784-354.72-130.784-31.264 0-306.496 2.912-348.8 103.904l-5.792 38.432h-0.224c0-2.112 0.256-3.872 0.512-4.96l-0.8 3.488 0.288 7.936-0.352 411.264c-0.224 86.624 138.272 121.44 245.856 135.392 6.368 123.488 318.08 128.128 357.056 128.224 35.968 0 351.52-3.616 352-130.208l0.384-372.448-1.056-9.856z m-53.664 382.176c-0.16 35.84-127.424 75.968-300.576 75.968-171.872-0.544-300.16-41.472-300.064-77.76l0.096-97.44h114.272v-54.368h-114.368v-207.808h24.64v-54.368H279.904v263.52h0.096l-0.064 99.424c-130.912-17.76-191.264-52.672-191.232-80.384l0.352-412.48 3.168-25.536c21.312-37.632 152.448-67.776 297.28-67.776 171.552 0 300.064 40.576 300.352 76.768l0.16 24.672 0.16 0.064-0.032 121.728h-127.04v54.368h127.072v208.064h-24.64v54.368h79.008v-297.888h-0.032v-45.728c119.936 13.088 186.56 43.104 190.176 67.968l0.576 4.16-0.352 370.464z" fill="" p-id="16550"></path><path d="M490.464 640.16h43.072v54.368h-43.072v-54.368zM578.464 640.16h43.104v54.368h-43.104v-54.368zM484 377.728h43.104v54.368h-43.104v-54.368zM401.728 377.728H444.8v54.368h-43.072v-54.368z" fill="" p-id="16551"></path></svg>',
-  environment:
-    '<svg t="1554883839636" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5763" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><circle cx="512" cy="512" r="512" stroke="" stroke-width="0" fill="white"/><path d="M896 166.4h-128v25.6h128v-25.6z m-486.4-76.8v204.8h512v102.4h-230.4v51.2h230.4v76.8h51.2v-435.2H409.6z m512 153.6H460.8v-102.4h460.8v102.4z m-153.6 76.8v25.6h128v-25.6h-128z" fill="#999999" p-id="5764"></path><path d="M768 524.8h-102.4c0-112.64-92.16-204.8-204.8-204.8s-204.8 92.16-204.8 204.8c-112.64 0-204.8 92.16-204.8 204.8s92.16 204.8 204.8 204.8h512c112.64 0 204.8-92.16 204.8-204.8s-92.16-204.8-204.8-204.8z m0 358.4H256c-92.16 0-153.6-61.44-153.6-153.6s61.44-153.6 153.6-153.6h51.2v-51.2c0-92.16 61.44-153.6 153.6-153.6s153.6 61.44 153.6 153.6v51.2h153.6c92.16 0 153.6 61.44 153.6 153.6s-61.44 153.6-153.6 153.6z" fill="#333333" p-id="5765"></path></svg>',
-  serviceServer: "",
-  // serviceDatabase: '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32"><path d="M12 30c-6.626 0-12-1.793-12-4 0-1.207 0-2.527 0-4 0-0.348 0.174-0.678 0.424-1 1.338 1.723 5.99 3 11.576 3s10.238-1.277 11.576-3c0.25 0.322 0.424 0.652 0.424 1 0 1.158 0 2.387 0 4 0 2.207-5.375 4-12 4zM12 22c-6.626 0-12-1.793-12-4 0-1.208 0-2.526 0-4 0-0.212 0.080-0.418 0.188-0.622v0c0.061-0.128 0.141-0.254 0.236-0.378 1.338 1.722 5.99 3 11.576 3s10.238-1.278 11.576-3c0.096 0.124 0.176 0.25 0.236 0.378v0c0.107 0.204 0.188 0.41 0.188 0.622 0 1.158 0 2.386 0 4 0 2.207-5.375 4-12 4zM12 14c-6.626 0-12-1.792-12-4 0-0.632 0-1.3 0-2 0-0.636 0-1.296 0-2 0-2.208 5.374-4 12-4s12 1.792 12 4c0 0.624 0 1.286 0 2 0 0.612 0 1.258 0 2 0 2.208-5.375 4-12 4zM12 4c-4.418 0-8 0.894-8 2s3.582 2 8 2 8-0.894 8-2-3.582-2-8-2z"></path></svg>',
-  containerNetwork: "",
-  containerStorage: ""
-};
-
 export default {
   components: {
     D3Network,
     SearchTree,
-    Timeline,
-    Diff
+    Timeline
   },
   data() {
     return {
-      history: {},
-      now: {},
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -273,7 +259,10 @@ export default {
         links: {},
         nodes: {}
       },
-      allTimeStamps: [], // 不太确定是什么数据格式的 这涉及到排序
+      allTimeStamps: [], // 排好序的 字符串数组
+      // currentTimeStampNodes: [], // 没有被d3-force化的当前节点数组（用于 diff）
+      lastTimeStamp: "", // 用于（diff）
+      currentTimeStamp: "now", // 用于 diff 时恢复
       nodeSize: 40,
       fontSize: 14,
       linkWidth: 1,
@@ -302,7 +291,30 @@ export default {
         "serviceDatabase",
         "containerNetwork",
         "containerStorage",
-        "eventNode"
+        "eventNode",
+        "deletedNode",
+        "deletedPropertyNode",
+        "addedNode",
+        "addedPropertyNode"
+      ],
+      styleList: [
+        // 需要与 allNodeType 的位置对应
+        "nodesmasterServer",
+        "nodesServer",
+        "nodesPod",
+        "nodesContainer",
+        "nodesService",
+        "nodesNamespace",
+        "nodesEnvironment",
+        "nodesServiceServer",
+        "nodesServiceDatabase",
+        "nodesContainerNetwork",
+        "nodesContainerStorage",
+        "nodesEventNode",
+        "nodesDeletedNode",
+        "nodesDeletedPropertyNode",
+        "nodesAddedNode",
+        "nodesAddedPropertyNode"
       ],
       propertyNodes: [], // 属性节点数组
       propertyNodesCopy: [], // 属性节点的深拷贝
@@ -315,6 +327,7 @@ export default {
         "containerStorage"
       ],
       propertyNodeSwitch: true, // 是否显示属性节点
+      diffSwitch: false, // 显示 diff 开关
       // 增加节点时可以选择的类型
       selectNodeInfo: [],
       allLinkType: [
@@ -325,19 +338,6 @@ export default {
         "supervises",
         "has",
         "profile"
-      ],
-      styleList: [
-        "nodesmasterServer",
-        "nodesServer",
-        "nodesPod",
-        "nodesContainer",
-        "nodesService",
-        "nodesNamespace",
-        "nodesEnvironment",
-        "nodesServiceServer",
-        "nodesServiceDatabase",
-        "nodesContainerNetwork",
-        "nodesContainerStorage"
       ],
       linkStyleList: [
         "linkManage",
@@ -486,6 +486,7 @@ export default {
         noselect: true,
         crosshair: false
       }
+      // deletedNodeCount: 0
     };
   },
   computed: {
@@ -519,11 +520,11 @@ export default {
       // 添加节点 鼠标变成十字
       if (newVal === "2") {
         this.svgClass.crosshair = true;
-      }
-      else {
-        this.svgClass.crosshair = false
+      } else {
+        this.svgClass.crosshair = false;
       }
     },
+
     // 显示/隐藏属性节点
     // 别写成 key-value 的形式
     propertyNodeSwitch(newVal) {
@@ -549,12 +550,80 @@ export default {
           x.style.visibility = "visible";
         });
       }
+    },
+    diffSwitch(newVal) {
+      if (newVal) {
+        // 当显示 diff 时
+        axios
+          .get(reqUrl + "/api/getAllByTime?time=" + this.lastTimeStamp)
+          .then(res => {
+            this.diffNodes(res);
+            this.diffLinks(res);
+          });
+      } else {
+        this.nodes = this.getDatabyTimeStamp(
+          this.currentTimeStamp,
+          this.lastTimeStamp
+        );
+      }
     }
   },
   created() {
     this.nodes.push(this.initialNode);
   },
   methods: {
+    diffNodes(res) {
+      let { nodeList: nodeBefore } = res.data;
+      let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
+      Object.keys(delta).forEach(key => {
+        // 删除的！位置 2 是 0 ！
+        if (key.startsWith("_")) {
+          if (delta[key][2] === 0) {
+            let deletedNode = delta[key][0];
+            // deletedNode.type = 'pod'
+            // let nodeType = deletedNode.type;
+            deletedNode.svgSym = nodeIcons[deletedNode.type];
+            if (this.allPropertyNodeTypes.indexOf(deletedNode.type) !== -1) {
+              deletedNode.type = "deletedPropertyNode";
+            } else {
+              deletedNode.type = "deletedNode";
+            }
+            this.nodes.push(deletedNode);
+          }
+        }
+        // 新增的！
+        else {
+          console.log(this.nodes[key]);
+          if (this.allPropertyNodeTypes.indexOf(this.nodes[key].type) !== -1) {
+            this.nodes[key]._cssClass = "nodesAddedPropertyNode";
+          } else {
+            this.nodes[key]._cssClass = "nodesAddedNode";
+          }
+        }
+      });
+    },
+    diffLinks(res) {
+      let { linkList: linkBefore } = res.data;
+      console.log(linkBefore);
+      console.log(this.links);
+      let delta = jsondiffpatch.diffLinks(linkBefore, this.links);
+      console.log(delta);
+      Object.keys(delta).forEach(key => {
+        // 删除的！位置 2 是 0 ！
+        if (key.startsWith("_")) {
+          if (delta[key][2] === 0) {
+            let deletedlink = delta[key][0];
+            // 凡是 push 进去的都会经过 lcb 所以直接设置 _color 没用！
+            deletedlink.diffType = "delete";
+            this.links.push(deletedlink);
+          }
+        }
+        // 新增的！
+        else {
+          this.links[key]._color = "blue";
+        }
+      });
+    },
     getData() {
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
@@ -578,17 +647,22 @@ export default {
       // })
       axios
         // API GET
-        .get(reqUrl + "/api/getNodesAndLinks")
+        // .get(reqUrl + "/api/getNodesAndLinks")
+        .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
 
         // API GET LOCAL
         // .get("/response.json")
         .then(response => {
+          // this.currentTimeStampNodes = response.data.nodeList.slice()
           console.log(response);
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
 
           this.allTimeStamps = response.data.timeList;
+          this.lastTimeStamp = this.allTimeStamps[
+            this.allTimeStamps.length - 1
+          ];
           let allNodes = response.data.nodeList;
           this.nodes = [];
           this.normalNodes = [];
@@ -626,61 +700,13 @@ export default {
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
-
-      //测试jsondiffpatch结果是否正确
-      this.history = {
-      "linkList": [{
-          "name": "deployed_in",
-          "type": "deployed_in",
-          "tid": "http://server/10.60.38.181/192.168.199.188",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-        }, {
-          "name": "contains",
-          "type": "contains",
-          "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-        }, {
-          "name": "provides",
-          "type": "provides",
-          "tid": "http://services/10.60.38.181/sock-shop/catalogue-db",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-      }]
-    }
-    this.now = {
-      "linkList": [
-        {
-          "name": "provides",
-          "type": "provides",
-          "tid": "http://server/unset-base/TestService2",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
-        }, {
-          "name": "deployed_in",
-          "type": "deployed_in",
-          "tid": "http://server/10.60.38.181/192.168.199.188",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-        }, {
-          "name": "contains",
-          "type": "contains",
-          "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-        }, {
-          "name": "provides",
-          "type": "provides",
-          "tid": "http://services/10.60.38.181/sock-shop/catalogue-db",
-          "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
-      }]
-    }
-
-            var delta = jsondiffpatch.diff(this.history, this.now)
-            const diff = {
-              linkList: delta.linkList
-            }
-            jsondiffpatch.formatters.html.hideUnchanged();
-            const visualdiff = document.getElementById('visual');
-            visualdiff.innerHTML = jsondiffpatch.formatters.html.format(diff, this.history);
     },
-    getDatabyTimeStamp(currentTimeStamp) {
-      console.log(currentTimeStamp);
+    getDatabyTimeStamp(currentTimeStamp, lastTimeStamp) {
+      this.currentTimeStamp = currentTimeStamp;
+      this.lastTimeStamp = lastTimeStamp;
+      console.log("lastTimeStamp: " + lastTimeStamp);
+
+      console.log("currentTimeStamp: " + currentTimeStamp);
       if (currentTimeStamp === "now") {
         axios
           // API GET
@@ -689,6 +715,7 @@ export default {
           // .get("/response.json")
           .then(response => {
             console.log(response);
+            // this.currentTimeStampNodes = response.data.nodeList.slice()
             response.data.nodeList.forEach(x => {
               x.svgSym = nodeIcons[x.type];
             });
@@ -715,6 +742,7 @@ export default {
 
             console.log("可显示");
             this.propertyNodeSwitch = true;
+            this.diffSwitch = false;
             // this.$nextTick(() => {
             //   this.addDblClickEvent();
             // });
@@ -725,23 +753,9 @@ export default {
           });
       } else {
         axios
-          .all([axios.get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp),
-                axios.get(reqUrl + "/api/getNodesAndLinks")])
-          .then(axios.spread((response, res) => {
-            this.history = response.data
-            this.now = res.data
-            var delta = jsondiffpatch.diff(this.history, this.now)
-            //只展示nodelist和linklist
-            const diff = {
-              linkList: delta.linkList,
-              nodeList: delta.nodeList
-            }
-            //隐藏不变的部分
-            jsondiffpatch.formatters.html.hideUnchanged();
-            //展示diff
-            const visualdiff = document.getElementById('visual');
-            visualdiff.innerHTML = jsondiffpatch.formatters.html.format(diff, response.data);
-
+          .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
+          .then(response => {
+            // this.currentTimeStampNodes = response.data.nodeList.slice()
             response.data.nodeList.forEach(x => {
               x.svgSym = nodeIcons[x.type];
             });
@@ -768,7 +782,8 @@ export default {
 
             console.log("可显示");
             this.propertyNodeSwitch = true;
-          }))
+            this.diffSwitch = false;
+          })
           .catch(error => {
             console.error(error);
           });
@@ -963,7 +978,11 @@ export default {
       }
     },
     lcb(link) {
-      link._color = "lightgray";
+      if ("diffType" in link) {
+        link._color = "red";
+      } else {
+        link._color = "lightgray";
+      }
       link._svgAttrs = {
         "stroke-width": this.linkWidth,
         opacity: 1,
@@ -1236,11 +1255,6 @@ export default {
         for (let label of labels) {
           // console.log(label)
           if (label.href.animVal.indexOf(linkid) != -1) {
-            // console.log(label)
-            // console.log(label.href.animVal)
-            // console.log(linkid)
-            // console.log(label.innerHTML)
-            // label.attr('font-size', '20px');
             label.setAttribute("style", "font-size:15px;");
             setTimeout(() => {
               label.setAttribute("style", "font-size:0px;");
@@ -1259,7 +1273,17 @@ export default {
         type: this.newNodeType,
         property: this.properties[this.newNodeType]
       };
+
       this.nodes.push(newNode);
+      axios
+        .post(reqUrl + "/api/addNewNode", newNode)
+        .then(response => {
+          console.log("添加成功");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
       this.currentNode = newNode;
       // 显示属性面板
       this.showNewNodeInfoCard = false;
@@ -1279,8 +1303,12 @@ export default {
       this.staCoor = getCoordInDocument(e);
     };
     el.onmouseup = e => {
-      // 添加事件节点
-      if (this.radio === "2" && e.target.localName !== 'circle' && e.target.localName !== 'path') {
+      // 点击空白处添加节点（因事件节点而起）
+      if (
+        this.radio === "2" &&
+        e.target.localName !== "circle" &&
+        e.target.localName !== "path"
+      ) {
         this.showNewNodeInfoCard = true;
       } else {
         // 点击空白处取消高亮
@@ -1376,10 +1404,11 @@ export default {
     addEvent(el, "DOMMouseScroll", onMouseWheel);
 
     //引入jsondiffpatch
-    const jsondiff = document.createElement('script');
-    jsondiff.type = 'text/javascript';
-    jsondiff.src = 'https://cdn.jsdelivr.net/npm/jsondiffpatch/dist/jsondiffpatch.umd.min.js';
-    document.body.appendChild(jsondiff);
+    // const jsondiff = document.createElement("script");
+    // jsondiff.type = "text/javascript";
+    // jsondiff.src =
+    //   "https://cdn.jsdelivr.net/npm/jsondiffpatch/dist/jsondiffpatch.umd.min.js";
+    // document.body.appendChild(jsondiff);
   }
 };
 </script>
@@ -1535,180 +1564,52 @@ export default {
   position: fixed;
   bottom: 90px;
   right: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .new-node-info-card {
   position: absolute;
   right: 10px;
-  top: 5px
+  top: 5px;
 }
 
 /* 可以设置不同的进入和离开动画 */
 /* 设置持续时间和动画函数 */
 .infocard-enter-active {
-  transition: all .3s linear;
+  transition: all 0.3s linear;
 }
 .infocard-leave-active {
-  transition: all .3s linear;
+  transition: all 0.3s linear;
 }
 .infocard-enter, .infocard-leave-to
 /* .infocard-leave-active for below version 2.1.8 */ {
   transform: translateX(400px);
   /* opacity: 0; */
 }
-
-/* jsonpatchdiff */
-.jsondiffpatch-delta {
-  font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace;
-  font-size: 12px;
-  margin: 0;
-  padding: 0 0 0 12px;
-  display: inline-block;
-}
-.jsondiffpatch-delta pre {
-  font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Courier, monospace;
-  font-size: 12px;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-}
-ul.jsondiffpatch-delta {
-  list-style-type: none;
-  padding: 0 0 0 20px;
-  margin: 0;
-}
-.jsondiffpatch-delta ul {
-  list-style-type: none;
-  padding: 0 0 0 20px;
-  margin: 0;
-}
-.jsondiffpatch-added .jsondiffpatch-property-name,
-.jsondiffpatch-added .jsondiffpatch-value pre,
-.jsondiffpatch-modified .jsondiffpatch-right-value pre,
-.jsondiffpatch-textdiff-added {
-  background: #bbffbb;
-}
-.jsondiffpatch-deleted .jsondiffpatch-property-name,
-.jsondiffpatch-deleted pre,
-.jsondiffpatch-modified .jsondiffpatch-left-value pre,
-.jsondiffpatch-textdiff-deleted {
-  background: #ffbbbb;
-  text-decoration: line-through;
-}
-.jsondiffpatch-unchanged,
-.jsondiffpatch-movedestination {
-  color: gray;
-}
-.jsondiffpatch-unchanged,
-.jsondiffpatch-movedestination > .jsondiffpatch-value {
-  transition: all 0.5s;
-  -webkit-transition: all 0.5s;
-  overflow-y: hidden;
-}
-.jsondiffpatch-unchanged-showing .jsondiffpatch-unchanged,
-.jsondiffpatch-unchanged-showing .jsondiffpatch-movedestination > .jsondiffpatch-value {
-  max-height: 100px;
-}
-.jsondiffpatch-unchanged-hidden .jsondiffpatch-unchanged,
-.jsondiffpatch-unchanged-hidden .jsondiffpatch-movedestination > .jsondiffpatch-value {
-  max-height: 0;
-}
-.jsondiffpatch-unchanged-hiding .jsondiffpatch-movedestination > .jsondiffpatch-value,
-.jsondiffpatch-unchanged-hidden .jsondiffpatch-movedestination > .jsondiffpatch-value {
-  display: block;
-}
-.jsondiffpatch-unchanged-visible .jsondiffpatch-unchanged,
-.jsondiffpatch-unchanged-visible .jsondiffpatch-movedestination > .jsondiffpatch-value {
-  max-height: 100px;
-}
-.jsondiffpatch-unchanged-hiding .jsondiffpatch-unchanged,
-.jsondiffpatch-unchanged-hiding .jsondiffpatch-movedestination > .jsondiffpatch-value {
-  max-height: 0;
-}
-.jsondiffpatch-unchanged-showing .jsondiffpatch-arrow,
-.jsondiffpatch-unchanged-hiding .jsondiffpatch-arrow {
-  display: none;
-}
-.jsondiffpatch-value {
-  display: inline-block;
-}
-.jsondiffpatch-property-name {
-  display: inline-block;
-  padding-right: 5px;
-  vertical-align: top;
-}
-.jsondiffpatch-property-name:after {
-  content: ': ';
-}
-.jsondiffpatch-child-node-type-array > .jsondiffpatch-property-name:after {
-  content: ': [';
-}
-.jsondiffpatch-child-node-type-array:after {
-  content: '],';
-}
-div.jsondiffpatch-child-node-type-array:before {
-  content: '[';
-}
-div.jsondiffpatch-child-node-type-array:after {
-  content: ']';
-}
-.jsondiffpatch-child-node-type-object > .jsondiffpatch-property-name:after {
-  content: ': {';
-}
-.jsondiffpatch-child-node-type-object:after {
-  content: '},';
-}
-div.jsondiffpatch-child-node-type-object:before {
-  content: '{';
-}
-div.jsondiffpatch-child-node-type-object:after {
-  content: '}';
-}
-.jsondiffpatch-value pre:after {
-  content: ',';
-}
-li:last-child > .jsondiffpatch-value pre:after,
-.jsondiffpatch-modified > .jsondiffpatch-left-value pre:after {
-  content: '';
-}
-.jsondiffpatch-modified .jsondiffpatch-value {
-  display: inline-block;
-}
-.jsondiffpatch-modified .jsondiffpatch-right-value {
-  margin-left: 5px;
-}
-.jsondiffpatch-moved .jsondiffpatch-value {
-  display: none;
-}
-.jsondiffpatch-moved .jsondiffpatch-moved-destination {
-  display: inline-block;
-  background: #ffffbb;
-  color: #888;
-}
-.jsondiffpatch-moved .jsondiffpatch-moved-destination:before {
-  content: ' => ';
-}
-ul.jsondiffpatch-textdiff {
-  padding: 0;
-}
-.jsondiffpatch-textdiff-location {
-  color: #bbb;
-  display: inline-block;
-  min-width: 60px;
-}
-.jsondiffpatch-textdiff-line {
-  display: inline-block;
-}
-.jsondiffpatch-textdiff-line-number:after {
-  content: ',';
-}
-.jsondiffpatch-error {
-  background: red;
-  color: white;
-  font-weight: bold;
-}
 .selection-card-label {
   display: block;
   padding: 10px 0;
+}
+
+#new-graph .nodesAddedNode {
+  stroke: blue;
+  stroke-width: 50px;
+}
+
+#new-graph .nodesDeletedNode {
+  stroke: red;
+  stroke-width: 50px;
+}
+
+#new-graph .nodesDeletedPropertyNode {
+  stroke: red;
+  r: 12;
+}
+
+#new-graph .nodesAddedPropertyNode {
+  stroke: blue;
+  r: 12;
 }
 </style>
