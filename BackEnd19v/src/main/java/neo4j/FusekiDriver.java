@@ -1,5 +1,6 @@
 package neo4j;
 
+import com.alibaba.fastjson.JSONObject;
 import neo4jentities.DataAccessor;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -19,6 +20,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.jena.riot.web.HttpOp;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static neo4j.Neo4jDriver.*;
@@ -71,7 +73,7 @@ public class FusekiDriver {
                                 linkList.addAll(getLink(subject, "profile"));
                             }
                         }
-                        if(subject.contains("event")){
+                        else if(subject.contains("event")){
                             Map<String, Object> event = getEventNodes(subject);
                             result.add(event);
                             eventList.add(event);
@@ -161,57 +163,105 @@ public class FusekiDriver {
         return true;
     }
 
-    public static boolean addEvent(HashMap data){
-        String serviceUrl = data.get("serviceUrl").toString();
+    public static boolean readJekins(HashMap data){
+        String fullurl = ((HashMap)data.get("build")).get("full_url").toString();
         String name = data.get("name").toString();
-        String start = data.get("start").toString();
-        String end = data.get("end").toString();
-        String description = data.get("description").toString();
+        String number = String.valueOf((int)((HashMap)data.get("build")).get("number"));
+        String status = ((HashMap)data.get("build")).get("status").toString();
+        String phase= ((HashMap)data.get("build")).get("phase").toString();
+        if (phase.equals("FINALIZED")){
+            // 创建Timestamp节点 返回id
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = df.format(day);
+            // 创建Timestamp节点 返回id
+            String timeID = storeTimestamp(time);
+            String eventID = findEvent(fullurl);
+            //连接
+            HashMap hashMap = new HashMap();
+            hashMap.put("sid",eventID);
+            hashMap.put("tid",timeID);
+            hashMap.put("type","starts_at");
+            addLink(hashMap);
+        }else{
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = df.format(day);
+            // 创建Timestamp节点 返回id
+            String timeID = storeTimestamp(time);
+            HashMap map = new HashMap();
+            map.put("full_url",fullurl);
+            map.put("name",name);
+            map.put("number",number);
+            map.put("status",status);
+            String eventID = addEvent(map);
+            //连接
+            HashMap hashMap = new HashMap();
+            hashMap.put("sid",eventID);
+            hashMap.put("tid",timeID);
+            hashMap.put("type","ends_at");
+            addLink(hashMap);
+
+        }
+        return true;
+    }
+
+    public static String addEvent(HashMap data){
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+        String jsonString = getData(httpUrl);
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
+        String full_url = data.get("full_url").toString();
+        String name = data.get("name").toString();
+        String number = data.get("number").toString();
+        String status = data.get("status").toString();
+        String serviceUrl = "http://event/"+address+"/"+name;
         try {
             Model model = ModelFactory.createDefaultModel();
-            Resource resource = model.createResource(serviceUrl+"/event/"+name);
+            Resource resource = model.createResource(serviceUrl+"/"+name);
             System.out.println(serviceUrl);
             System.out.println("-------");
             // if service name exists in db, add event node into  it and then save to mongodb
             if(!judgeExist(serviceUrl)){
-                resource.addProperty(model.createProperty(serviceUrl, "/event/start"), start);
-                resource.addProperty(model.createProperty(serviceUrl, "/event/end"), end);
-                resource.addProperty(model.createProperty(serviceUrl, "/event/description"), description);
+                resource.addProperty(model.createProperty(serviceUrl, "/full_url"), full_url);
+                resource.addProperty(model.createProperty(serviceUrl, "/name"), name);
+                resource.addProperty(model.createProperty(serviceUrl, "/nubmer"), number);
+                resource.addProperty(model.createProperty(serviceUrl, "/status"), status);
                 DataAccessor.getInstance().add(model);
-                String addRelation = "PREFIX j0:<"+serviceUrl+"/>\n" +
-                        "INSERT DATA{\n" +
-                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/"+name+">\n" +
-                        "}";
-                RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                        .destination("http://10.60.38.173:3030/DevKGData/update");
-
-                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
-                credsProvider.setCredentials(AuthScope.ANY, credentials);
-                HttpClient httpclient = HttpClients.custom()
-                        .setDefaultCredentialsProvider(credsProvider)
-                        .build();
-                HttpOp.setDefaultHttpClient(httpclient);
-                builderAddRelation.httpClient(httpclient);
-
-                try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
-                    connAddRelation.update(addRelation);
-                    Map<String, Object> result = getAllNodesAndLinks();
-                    if(!save2Mongo(result)) return false;
-                }catch (Exception e){
-                    e.printStackTrace();
-                    return false;
-                }
+//                String addRelation = "PREFIX j0:<"+serviceUrl+"/>\n" +
+//                        "INSERT DATA{\n" +
+//                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/"+name+">\n" +
+//                        "}";
+//                RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+//                        .destination("http://10.60.38.173:3030/DevKGData/update");
+//
+//                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//                Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+//                credsProvider.setCredentials(AuthScope.ANY, credentials);
+//                HttpClient httpclient = HttpClients.custom()
+//                        .setDefaultCredentialsProvider(credsProvider)
+//                        .build();
+//                HttpOp.setDefaultHttpClient(httpclient);
+//                builderAddRelation.httpClient(httpclient);
+//
+//                try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+//                    connAddRelation.update(addRelation);
+//                    Map<String, Object> result = getAllNodesAndLinks();
+//                    if(!save2Mongo(result)) return false;
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                    return false;
+//                }
             }
             else {
                 System.out.println("no such service");
-                return false;
+                return null;
             }
         } catch (Exception e){
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
+        return serviceUrl;
     }
 
     public static boolean addLink(HashMap data){

@@ -1507,12 +1507,13 @@ public class Neo4jDriver {
         return true;
     }
 
-    public static boolean storeTimestamp(String time){
+    public static String storeTimestamp(String time){
+        String np = "";
         try {
             String address = "10.60.38.181";
             String[] l = time.split(" ");
             String t = l[0]+"-"+l[1];
-            String np = "http://timestamp/"+address+"/"+t;
+            np = "http://timestamp/"+address+"/"+t;
             System.out.println("storing timestamp node: "+np);
             Model model = ModelFactory.createDefaultModel();
             try {
@@ -1521,13 +1522,13 @@ public class Neo4jDriver {
                 DataAccessor.getInstance().add(model);
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                return false;
+                return null;
             }
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
+        return np;
     }
 
     public static boolean storeServerName(){
@@ -2356,20 +2357,17 @@ public class Neo4jDriver {
                 String[] plist = q.get("p").toString().split("/");
                 String p = plist[plist.length-1];
                 String o = q.get("o").toString();
-                if(p.equals("serviceUrl")){
-                    pro.put("serviceUrl", o);
+                if(p.equals("full_url")){
+                    pro.put("full_url", o);
                 }
                 if(p.equals("name")){
                     pro.put("name", o);
                 }
-                if(p.equals("start")){
-                    pro.put("start", o);
+                if(p.equals("nubmer")){
+                    pro.put("nubmer", o);
                 }
-                if(p.equals("end")){
-                    pro.put("end", o);
-                }
-                if(p.equals("description")){
-                    pro.put("description", o);
+                if(p.equals("status")){
+                    pro.put("status", o);
                 }
             }
             qE.close();
@@ -2578,6 +2576,30 @@ public class Neo4jDriver {
         return true;
     }
 
+    public static String findEvent(String full_url){
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.173:3030/DevKGData/query");
+        Query qNode = QueryFactory.create("SELECT ?s ?p ?o WHERE {\n" +
+                "\t?s ?p <"+full_url+">\n" +
+                "}");
+        String eventID = "";
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qE = conn.query(qNode);
+            ResultSet rs = qE.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution q = rs.next() ;
+                String[] plist = q.get("p").toString().split("/");
+                String p = plist[plist.length-1];
+                if(p.equals("full_url")){
+                    eventID = q.get("s").toString();
+                }
+            }
+            qE.close();
+        }
+        System.out.println(eventID);
+        return eventID;
+    }
+
     public static boolean save2Mongo(Map<String, Object> data){
         try {
             //连接到mongodb服务
@@ -2595,7 +2617,7 @@ public class Neo4jDriver {
                     append("time", time);
             collection.insertOne(document);
             System.out.println("文档插入成功");
-            if(!storeTimestamp(time))
+            if(storeTimestamp(time)==null)
                 return false;
         } catch (Exception e){
             e.printStackTrace();
