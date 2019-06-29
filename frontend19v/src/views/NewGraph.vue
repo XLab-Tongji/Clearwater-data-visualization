@@ -487,8 +487,11 @@ export default {
       svgClass: {
         noselect: true,
         crosshair: false
+      },
+      diffDelta: {
+        add: {nodes:[], links: []},
+        deleta: {nodes: [], links: []}
       }
-      // deletedNodeCount: 0
     };
   },
   computed: {
@@ -577,10 +580,12 @@ export default {
     diffNodes(res) {
       let { nodeList: nodeBefore } = res.data;
       let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
+      console.log(delta)
       Object.keys(delta).forEach(key => {
         // 删除的！位置 2 是 0 ！
         if (key.startsWith("_")) {
           if (delta[key][2] === 0) {
+            this.diffDelta.delete.nodes.push(delta[key][0])
             let deletedNode = delta[key][0];
             // deletedNode.type = 'pod'
             // let nodeType = deletedNode.type;
@@ -594,8 +599,10 @@ export default {
           }
         }
         // 新增的！
+        else if (key === '_t') {}
         else {
-          console.log(this.nodes[key]);
+          // console.log(this.nodes[key]);
+          this.diffDelta.add.nodes.push(delta[key][0]) //???? 是 0 吗
           if (this.allPropertyNodeTypes.indexOf(this.nodes[key].type) !== -1) {
             this.nodes[key]._cssClass = "nodesAddedPropertyNode";
           } else {
@@ -606,14 +613,12 @@ export default {
     },
     diffLinks(res) {
       let { linkList: linkBefore } = res.data;
-      console.log(linkBefore);
-      console.log(this.links);
       let delta = jsondiffpatch.diffLinks(linkBefore, this.links);
-      console.log(delta);
       Object.keys(delta).forEach(key => {
         // 删除的！位置 2 是 0 ！
         if (key.startsWith("_")) {
           if (delta[key][2] === 0) {
+            this.diffDelta.delete.links.push(delta[key][0])
             let deletedlink = delta[key][0];
             // 凡是 push 进去的都会经过 lcb 所以直接设置 _color 没用！
             deletedlink.diffType = "delete";
@@ -622,6 +627,7 @@ export default {
         }
         // 新增的！
         else {
+          this.diffDelta.add.links.push(delta[key][0]) //???? 是 0 吗
           this.links[key]._color = "blue";
         }
       });
