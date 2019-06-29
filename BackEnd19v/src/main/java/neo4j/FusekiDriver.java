@@ -115,6 +115,7 @@ public class FusekiDriver {
             e.printStackTrace();
         }
         final_list.put("nodeList", result);
+        final_list.put("eventList", eventList);
         final_list.put("linkList", linkList);
         final_list.put("timeList", timeList);
         return final_list;
