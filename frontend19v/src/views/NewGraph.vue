@@ -11,7 +11,7 @@
         active-text="显示属性节点"
         inactive-text="隐藏属性节点"
       ></el-switch>
-      <br>
+      <br />
       <el-switch
         v-model="diffSwitch"
         active-color="#409EFF"
@@ -48,7 +48,7 @@
           orient="auto"
           markerUnits="strokeWidth"
         >
-          <path d="M0,0 L0,3.6 L3.6,1.8 z"></path>
+          <path d="M0,0 L0,3.6 L3.6,1.8 z" />
         </marker>
         <!-- 高亮箭头 -->
         <marker
@@ -60,7 +60,7 @@
           orient="auto"
           markerUnits="strokeWidth"
         >
-          <path d="M0,0 L0,3.6 L3.6,1.8 z"></path>
+          <path d="M0,0 L0,3.6 L3.6,1.8 z" />
         </marker>
       </defs>
     </svg>
@@ -168,8 +168,8 @@
         </el-select>
         <p>请输入节点标识符 (ID)：</p>
         <el-input v-model="newNodeId" placeholder="请输入内容"></el-input>
-        <br>
-        <br>
+        <br />
+        <br />
         <div>
           <el-button type="primary" @click="addNewNodeByClickBlank">添加节点</el-button>
           <el-button @click="showNewNodeInfoCard = false">取消</el-button>
@@ -177,7 +177,7 @@
       </el-card>
     </transition>
     <!-- 时间线 -->
-    <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" @click="getDatabyTimeStamp"></timeline>
+    <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" :eventList="eventList" @click="getDatabyTimeStamp"></timeline>
   </div>
 </template>
 
@@ -192,6 +192,7 @@ import jsondiffpatch from "@/lib/diff.js";
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
 const reqUrl = "http://10.60.38.173:9990/bbs";
+// const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == val) return i;
@@ -259,8 +260,9 @@ export default {
         links: {},
         nodes: {}
       },
-      allTimeStamps: [], // 排好序的 字符串数组
+      allTimeStamps: [], // 排好序的 字符串
       // currentTimeStampNodes: [], // 没有被d3-force化的当前节点数组（用于 diff）
+      eventList: [],
       lastTimeStamp: "", // 用于（diff）
       currentTimeStamp: "now", // 用于 diff 时恢复
       nodeSize: 40,
@@ -291,7 +293,7 @@ export default {
         "serviceDatabase",
         "containerNetwork",
         "containerStorage",
-        "eventNode",
+        "event",
         "deletedNode",
         "deletedPropertyNode",
         "addedNode",
@@ -310,7 +312,7 @@ export default {
         "nodesServiceDatabase",
         "nodesContainerNetwork",
         "nodesContainerStorage",
-        "nodesEventNode",
+        "nodesEvent",
         "nodesDeletedNode",
         "nodesDeletedPropertyNode",
         "nodesAddedNode",
@@ -409,7 +411,7 @@ export default {
           dataPort: "",
           type: ""
         },
-        eventNode: {
+        event: {
           start: "",
           end: "",
           discription: ""
@@ -648,16 +650,16 @@ export default {
       axios
         // API GET
         // .get(reqUrl + "/api/getNodesAndLinks")
-        .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
-
-        // API GET LOCAL
-        // .get("/response.json")
+        .get("/example.json")
+        // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           console.log(response);
           response.data.nodeList.map(x => {
             x.svgSym = nodeIcons[x.type];
           });
+
+          this.eventList = response.data.eventList;
 
           this.allTimeStamps = response.data.timeList;
           this.lastTimeStamp = this.allTimeStamps[
@@ -685,6 +687,8 @@ export default {
           this.nodes = this.normalNodes.concat(this.propertyNodes);
 
           this.showTimeline = true;
+          this.propertyNodeSwitch = true;
+          this.diffSwitch = false;
 
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
@@ -708,49 +712,7 @@ export default {
 
       console.log("currentTimeStamp: " + currentTimeStamp);
       if (currentTimeStamp === "now") {
-        axios
-          // API GET
-          .get(reqUrl + "/api/getNodesAndLinks")
-          // API GET LOCAL
-          // .get("/response.json")
-          .then(response => {
-            console.log(response);
-            // this.currentTimeStampNodes = response.data.nodeList.slice()
-            response.data.nodeList.forEach(x => {
-              x.svgSym = nodeIcons[x.type];
-            });
-
-            let allNodes = response.data.nodeList;
-            this.nodes = [];
-            this.normalNodes = [];
-            // this.nodes = response.data.nodeList;
-            this.links = response.data.linkList;
-
-            this.propertyNodes = allNodes.filter(node => {
-              if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-                return true;
-              } else {
-                this.normalNodes.push(node);
-                return false;
-              }
-            });
-            this.propertyNodesCopy = JSON.parse(
-              JSON.stringify(this.propertyNodes)
-            );
-
-            this.nodes = this.normalNodes.concat(this.propertyNodes);
-
-            console.log("可显示");
-            this.propertyNodeSwitch = true;
-            this.diffSwitch = false;
-            // this.$nextTick(() => {
-            //   this.addDblClickEvent();
-            // });
-          })
-          .catch(function(error) {
-            // handle error
-            console.log(error);
-          });
+         this.getData()
       } else {
         axios
           .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
@@ -1181,46 +1143,52 @@ export default {
       }
     },
     addNewNode(sid, tid, linkName, linkType, newNodeType, property, svgSym) {
-      // 新节点的 id 已经自增过了 这里不必增加
-      let newNode = {
-        id: this.newNodeId,
-        name: this.newNodeName ? this.newNodeName : newNodeType + "-" + this.id,
-        type: newNodeType,
-        property: property,
-        svgSym: svgSym
-      };
-      this.nodes.push(newNode);
+      // 检查 id 是否符合标准
+      if (this.newNodeId.startsWith("http://")) {
+        let newNode = {
+          id: this.newNodeId,
+          name: this.newNodeName
+            ? this.newNodeName
+            : newNodeType + "-" + this.id,
+          type: newNodeType,
+          property: property,
+          svgSym: svgSym
+        };
+        this.nodes.push(newNode);
 
-      let newLink = {
-        sid: sid,
-        tid: tid,
-        name: linkName,
-        type: linkType
-      };
-      this.links.push(newLink);
+        let newLink = {
+          sid: sid,
+          tid: tid,
+          name: linkName,
+          type: linkType
+        };
+        this.links.push(newLink);
 
-      axios
-        .post(reqUrl + "/api/addNewNode", newNode)
-        .then(response => {
-          console.log(response.data);
-          axios
-            .post(reqUrl + "/api/addNewLink", newLink)
-            .then(response => {
-              console.log(response.data);
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        })
-        .catch(function(error) {
-          console.log(error);
+        axios
+          .post(reqUrl + "/api/addNewNode", newNode)
+          .then(response => {
+            console.log(response.data);
+            axios
+              .post(reqUrl + "/api/addNewLink", newLink)
+              .then(response => {
+                console.log(response.data);
+              })
+              .catch(function(error) {
+                console.log(error);
+              });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+
+        this.$message({
+          message: "添加成功",
+          type: "success"
         });
-
-      this.$message({
-        message: "添加成功",
-        type: "success"
-      });
-      this.closeDisplayTypeCard();
+        this.closeDisplayTypeCard();
+      } else {
+        this.$message.error("添加失败，节点 ID 应为 URI");
+      }
     },
     // 把事件监听器加在每个节点上台费性能惹
     // 加在画布上就可以 搜 mousedown 可以看到
@@ -1265,36 +1233,42 @@ export default {
       }
     },
     addNewNodeByClickBlank() {
-      let newNode = {
-        id: this.newNodeId,
-        name: this.newNodeName
-          ? this.newNodeName
-          : this.newNodeType + "-" + this.id,
-        type: this.newNodeType,
-        property: this.properties[this.newNodeType]
-      };
+      if (this.newNodeId.startsWith("http://")) {
+        let newNode = {
+          id: this.newNodeId,
+          name: this.newNodeName
+            ? this.newNodeName
+            : this.newNodeType + "-" + this.id,
+          type: this.newNodeType,
+          property: this.properties[this.newNodeType]
+        };
 
-      this.nodes.push(newNode);
-      axios
-        .post(reqUrl + "/api/addNewNode", newNode)
-        .then(response => {
-          console.log("添加成功");
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+        this.nodes.push(newNode);
+        axios
+          .post(reqUrl + "/api/addNewNode", newNode)
+          .then(response => {
+            console.log("添加成功");
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
 
-      this.currentNode = newNode;
-      // 显示属性面板
-      this.showNewNodeInfoCard = false;
-      let property = this.currentNode.property;
-      this.propertyKeys = Object.keys(property);
-      for (var key in this.propertyKeys) {
-        this.propertyValues.push(property[key]);
+        this.currentNode = newNode;
+        // 显示属性面板
+        this.showNewNodeInfoCard = false;
+        let property = this.currentNode.property;
+        this.propertyKeys = Object.keys(property);
+        for (var key in this.propertyKeys) {
+          this.propertyValues.push(property[key]);
+        }
+        let displayProps = document.getElementsByClassName(
+          "display-property"
+        )[0];
+        // displayProps.style.display = 'block'
+        displayProps.style.right = "0px";
+      } else {
+        this.$message.error("添加失败，节点 ID 应为 URI");
       }
-      let displayProps = document.getElementsByClassName("display-property")[0];
-      // displayProps.style.display = 'block'
-      displayProps.style.right = "0px";
     }
   },
   mounted() {

@@ -1,9 +1,10 @@
 <template>
   <!-- 时间线面板 -->
-  <div id="timelineContainer">
+  <div id="timeline-container">
     <div class="timeline" v-for="(timeStamp,index) in orderedTimeStamps" :key="timeStamp">
+      <event-label :eventList="eventList" :timeStamp="timeStamp"></event-label>
       <div class="time">
-        <div class="line">----------------</div>
+        <div class="line">-------------------------</div>
         <!-- radio 有用 name 来区分多个表单，没有 name 默认是一个 -->
         <input type="radio" :value="index" v-model="pickedTimeStamp" class="timePoint">
         <div class="timeText">{{timeStamp.slice(0,10)}}</div>
@@ -12,7 +13,7 @@
     </div>
     <div class="timeline">
       <div class="time">
-        <div class="line">----------------</div>
+        <div class="line">-------------------------</div>
         <input type="radio" value="now" v-model="pickedTimeStamp" class="timePoint">
         <div class="timeText">now</div>
         <div class="timeText">&emsp;</div>
@@ -22,9 +23,14 @@
 </template>
 
 <script>
+import EventLabel from '@/components/EventLabel'
 export default {
   props: {
-    allTimeStamps: Array
+    allTimeStamps: Array,
+    eventList: Array
+  },
+  components: {
+    EventLabel
   },
   data() {
     return {
@@ -61,7 +67,7 @@ export default {
       }
       this.$emit(
         "click",
-        this.orderedTimeStamps[newVal],
+        newVal === "now"? "now":this.orderedTimeStamps[newVal],
         this.orderedTimeStamps[lastVal]
       );
     }
@@ -70,11 +76,12 @@ export default {
 </script>
 
 <style scoped>
-#timelineContainer {
+#timeline-container {
   position: fixed;
-  bottom: -110px;
+  /* bottom: -0px; */
+  bottom: -210px;
   width: 70%;
-  height: 100px;
+  height: 200px;
   text-align: center;
   white-space: nowrap; /* scroll x effects */
   overflow: auto;
@@ -85,14 +92,18 @@ export default {
   transition: bottom 0.3s;
 }
 
-#timelineContainer:hover {
+#timeline-container:hover {
   bottom: 0px;
 }
 
 .timeline {
   display: inline-block;
+  width: 130px;
 }
-
+.time {
+  position: relative;
+  top: 35px;
+}
 .timePoint {
   position: relative;
   cursor: pointer;
