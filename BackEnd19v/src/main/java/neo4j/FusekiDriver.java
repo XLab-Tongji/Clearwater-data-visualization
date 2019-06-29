@@ -30,6 +30,7 @@ public class FusekiDriver {
     public static Map<String, Object> getAllNodesAndLinks(){
         Map<String, Object> final_list = new HashMap<>();
         List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String, Object>> eventList = new ArrayList<>();
         List<Map<String, Object>> linkList = new ArrayList<>();
         List<String> timeList = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
@@ -50,6 +51,9 @@ public class FusekiDriver {
                         result.add(getServer(subject));
                         linkList.addAll(getLink(subject, "manage"));
                     }
+                    else if(subject.contains("timestamp")){
+                        result.add(getTimestamp(subject));
+                    }
                     else if(subject.contains("environment")){
                         result.add(getEnv(subject));
                         linkList.addAll(getLink(subject, "has"));
@@ -66,6 +70,12 @@ public class FusekiDriver {
                                 result.add(getService(subject));
                                 linkList.addAll(getLink(subject, "profile"));
                             }
+                        }
+                        if(subject.contains("event")){
+                            Map<String, Object> event = getEventNodes(subject);
+                            result.add(event);
+                            eventList.add(event);
+                            linkList.addAll(getLink(subject, "happens_at"));
                         }
                         else {
                             if (subject.contains("success_rate")||subject.contains("response_time"))
@@ -105,6 +115,7 @@ public class FusekiDriver {
             e.printStackTrace();
         }
         final_list.put("nodeList", result);
+        final_list.put("eventList", eventList);
         final_list.put("linkList", linkList);
         final_list.put("timeList", timeList);
         return final_list;
@@ -169,7 +180,7 @@ public class FusekiDriver {
                 DataAccessor.getInstance().add(model);
                 String addRelation = "PREFIX j0:<"+serviceUrl+"/>\n" +
                         "INSERT DATA{\n" +
-                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/name>\n" +
+                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/"+name+">\n" +
                         "}";
                 RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
                         .destination("http://10.60.38.173:3030/DevKGData/update");
