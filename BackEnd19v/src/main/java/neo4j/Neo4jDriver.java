@@ -1507,6 +1507,29 @@ public class Neo4jDriver {
         return true;
     }
 
+    public static boolean storeTimestamp(String time){
+        try {
+            String address = "10.60.38.181";
+            String[] l = time.split(" ");
+            String t = l[0]+"-"+l[1];
+            String np = "http://timestamp/"+address+"/"+t;
+            System.out.println("storing timestamp node: "+np);
+            Model model = ModelFactory.createDefaultModel();
+            try {
+                Resource res = model.createResource(np);
+                res.addProperty(model.createProperty(np+"/attr"), "none");
+                DataAccessor.getInstance().add(model);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static boolean storeServerName(){
         String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
         try {
@@ -2138,6 +2161,37 @@ public class Neo4jDriver {
         return node;
     }
 
+    public static Map<String, Object> getTimestamp(String url){
+        String[] l = url.split("/");
+        Map<String, Object> node = new HashMap<>();
+        node.put("id", url);
+        node.put("name", l[l.length-1]);
+        node.put("type", "timestamp");
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.173:3030/DevKGData/query");
+        Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
+                "\t<"+url+"> ?p ?o\n" +
+                "}");
+        Map<String, Object> pro = new HashMap<>();
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qE = conn.query(qNode);
+            ResultSet rs = qE.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution q = rs.next() ;
+                String[] plist = q.get("p").toString().split("/");
+                String p = plist[plist.length-1];
+                String o = q.get("o").toString();
+                if(p.equals("attr")){
+                    pro.put("attr", o);
+                }
+            }
+            qE.close();
+        }
+        node.put("property", pro);
+        System.out.println(node);
+        return node;
+    }
+
     public static Map<String, Object> getEnv(String urlNode){
         String[] l = urlNode.split("/");
         Map<String, Object> node = new HashMap<>();
@@ -2273,6 +2327,49 @@ public class Neo4jDriver {
                 String o = q.get("o").toString();
                 if(p.equals("value")){
                     pro.put("value", o);
+                }
+            }
+            qE.close();
+        }
+        node.put("property", pro);
+        System.out.println(node);
+        return node;
+    }
+
+    public static Map<String, Object> getEventNodes(String url){
+        String[] l = url.split("/");
+        Map<String, Object> node = new HashMap<>();
+        node.put("id", url);
+        node.put("name", l[l.length-1]);
+        node.put("type", "event");
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
+                .destination("http://10.60.38.173:3030/DevKGData/query");
+        Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
+                "\t<"+url+"> ?p ?o\n" +
+                "}");
+        Map<String, Object> pro = new HashMap<>();
+        try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
+            QueryExecution qE = conn.query(qNode);
+            ResultSet rs = qE.execSelect();
+            while (rs.hasNext()) {
+                QuerySolution q = rs.next() ;
+                String[] plist = q.get("p").toString().split("/");
+                String p = plist[plist.length-1];
+                String o = q.get("o").toString();
+                if(p.equals("serviceUrl")){
+                    pro.put("serviceUrl", o);
+                }
+                if(p.equals("name")){
+                    pro.put("name", o);
+                }
+                if(p.equals("start")){
+                    pro.put("start", o);
+                }
+                if(p.equals("end")){
+                    pro.put("end", o);
+                }
+                if(p.equals("description")){
+                    pro.put("description", o);
                 }
             }
             qE.close();
@@ -2482,7 +2579,6 @@ public class Neo4jDriver {
     }
 
     public static boolean save2Mongo(Map<String, Object> data){
-        String time = "";
         try {
             //连接到mongodb服务
             MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
@@ -2492,39 +2588,18 @@ public class Neo4jDriver {
             //获取当前时间
             Date day=new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            time = df.format(day);
+            String time = df.format(day);
             System.out.println(time);
             //插入文档
             Document document = new Document(data).
                     append("time", time);
             collection.insertOne(document);
             System.out.println("文档插入成功");
+            if(!storeTimestamp(time))
+                return false;
         } catch (Exception e){
             e.printStackTrace();
             return false;
-        }
-        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
-        try {
-            // get address string
-            String jsonString = getData(httpUrl);
-            JSONObject jsonObject = JSONObject.parseObject(jsonString);
-            String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
-            try {
-                // create model
-                Model model = ModelFactory.createDefaultModel();
-                // namespace string
-                String np = "http://timestamp/"+address+"/"+time;
-                Resource res = model.createResource(np);
-                res.addProperty(model.createProperty(np+"/attr"), "none");
-                //存储fuseki
-                model.write(System.out, "RDF/XML-ABBREV");
-                DataAccessor.getInstance().add(model);
-                model.write(System.out, "N-TRIPLE");
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
         }
         return true;
     }

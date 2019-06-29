@@ -521,7 +521,7 @@ public class IndexRestController {
     @RequestMapping(value = "/api/createPrometheus", method = RequestMethod.POST, produces = "application/json")
     public Boolean createPrometheus(@RequestBody HashMap data) { return newPrometheus(data);}
 
-    private TimerUtil timerUtil;
+    private TimerUtil timerUtil = new TimerUtil();
 
     @RequestMapping(value = "/api/openTimer", method = RequestMethod.POST, produces = "application/json")
     public Boolean openTimer(@RequestBody Integer period){
@@ -533,7 +533,6 @@ public class IndexRestController {
                 save2Mongo(result);
             };
             final long time = 5;//延迟执行实际：5秒
-            timerUtil = new TimerUtil();
             timerUtil.scheduleAtFixedRate(runnable,time,period);
             System.out.println("定时存储Mongo服务已开启！模拟数据变化频率："+period+"秒");
         } catch (Exception e){
