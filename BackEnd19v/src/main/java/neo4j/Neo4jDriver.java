@@ -2460,6 +2460,14 @@ public class Neo4jDriver {
                     "{\n" +
                     "<"+url+"> ?p ?o .\n" +
                     "}";
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+            credsProvider.setCredentials(AuthScope.ANY, credentials);
+            HttpClient httpclient = HttpClients.custom()
+                    .setDefaultCredentialsProvider(credsProvider)
+                    .build();
+            HttpOp.setDefaultHttpClient(httpclient);
+            builder2.httpClient(httpclient);
             try ( RDFConnectionFuseki connUpdate = (RDFConnectionFuseki)builder2.build() ) {
                 connUpdate.update(delete);
             } catch (Exception e){

@@ -169,7 +169,7 @@ public class FusekiDriver {
                 DataAccessor.getInstance().add(model);
                 String addRelation = "PREFIX j0:<"+serviceUrl+"/>\n" +
                         "INSERT DATA{\n" +
-                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/name>\n" +
+                        "<"+serviceUrl+"> j0:happens_at <"+serviceUrl+"/event/name>\n" +
                         "}";
                 RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
                         .destination("http://10.60.38.173:3030/DevKGData/update");
