@@ -544,7 +544,7 @@ public class IndexRestController {
         return true;
     }
 
-    @RequestMapping(value = "api/shutdownTimer", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/api/shutdownTimer", method = RequestMethod.POST, produces = "application/json")
     public Boolean shutdownTimer(){
         try {
             timerUtil.shutdown();

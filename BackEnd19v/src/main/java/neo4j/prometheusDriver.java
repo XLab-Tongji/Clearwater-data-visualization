@@ -21,9 +21,9 @@ import static neo4j.Neo4jDriver.*;
 @Component
 public class prometheusDriver {
 
-    public static ArrayList proTemp(String urlNode) {
+    public static ArrayList proTemp(String urlNode, int start, int end) {
 //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
-        String url = "http://10.60.38.181:31003/api/v1/query?query="+urlNode;
+        String url = "http://10.60.38.181:31003/api/v1/query?query="+urlNode+"&start="+String.valueOf(start)+"&end="+String.valueOf(end)+"&step=1s";
         ArrayList arrayList = new ArrayList();
         InputStream is = null;
         try {
@@ -82,7 +82,7 @@ public class prometheusDriver {
             String serviceName = query.split("\"")[1];
             String name = "service/"+serviceName+"/"+attribute;
             System.out.println(name);
-            arrayList = proTemp(query);
+            arrayList = proTemp(query, startTime, endTime);
             hashMap.put(name,arrayList);
         }
         System.out.println(hashMap);
@@ -138,9 +138,11 @@ public class prometheusDriver {
 
 
      public static void main(String[] args) throws IOException {
+        int startTime = 0;
+        int endTime = 1;
 //        String query = "APIServiceOpenAPIAggregationControllerQueue1_adds{instance=\"192.168.199.191:6443\",job=\"kubernetes-apiservers\"}";
         String query = "sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))";
-        proTemp(query);
+        proTemp(query, startTime, endTime);
         ArrayList<HashMap> arrayList = new ArrayList<>();
         HashMap hashMap = new HashMap<String,String>();
         hashMap.put("type","response_time");
@@ -158,8 +160,6 @@ public class prometheusDriver {
         hashMap.put("type","success_rate1");
         hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))");
         arrayList.add(hashMap);
-        int startTime = 0;
-        int endTime = 1;
         DealPrometheusRequest(startTime,endTime,arrayList);
     }
 
