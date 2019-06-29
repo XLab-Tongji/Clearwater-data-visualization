@@ -2580,7 +2580,7 @@ public class Neo4jDriver {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
                 .destination("http://10.60.38.173:3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?s ?p ?o WHERE {\n" +
-                "\t?s ?p <"+full_url+">\n" +
+                "\t<"+full_url+"> ?p ?o\n" +
                 "}");
         String eventID = "";
         try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {

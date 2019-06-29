@@ -64,6 +64,13 @@ public class FusekiDriver {
                         result.add(getNamespace(subject));
                         linkList.addAll(getLink(subject, "supervises"));
                     }
+                    else if(subject.contains("event")){
+                        Map<String, Object> event = getEventNodes(subject);
+                        result.add(event);
+                        eventList.add(event);
+                        linkList.addAll(getLink(subject, "starts_at"));
+                        linkList.addAll(getLink(subject, "ends_at"));
+                    }
                     else if(subject.contains("service")){
                         if(subject.contains("db")){
                             if (subject.contains("response_time")||subject.contains("throughput"))
@@ -73,12 +80,6 @@ public class FusekiDriver {
                                 linkList.addAll(getLink(subject, "profile"));
                             }
                         }
-                        else if(subject.contains("event")){
-                            Map<String, Object> event = getEventNodes(subject);
-                            result.add(event);
-                            eventList.add(event);
-                            linkList.addAll(getLink(subject, "happens_at"));
-                        }
                         else {
                             if (subject.contains("success_rate")||subject.contains("response_time"))
                                 result.add(getPropertyNodes(subject, "serviceServer"));
@@ -87,7 +88,6 @@ public class FusekiDriver {
                                 linkList.addAll(getLink(subject, "profile"));
                             }
                         }
-                        linkList.addAll(getLink(subject, "has_event"));
                     }
                     else if(subject.contains("pods")){
                         result.add(getPod(subject));
@@ -169,6 +169,11 @@ public class FusekiDriver {
         String number = String.valueOf((int)((HashMap)data.get("build")).get("number"));
         String status = ((HashMap)data.get("build")).get("status").toString();
         String phase= ((HashMap)data.get("build")).get("phase").toString();
+        String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_node";
+        String jsonString = getData(httpUrl);
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
+        String serviceUrl = "http://event/"+address+"/"+name;
         if (phase.equals("FINALIZED")){
             // 创建Timestamp节点 返回id
             Date day=new Date();
@@ -176,12 +181,14 @@ public class FusekiDriver {
             String time = df.format(day);
             // 创建Timestamp节点 返回id
             String timeID = storeTimestamp(time);
-            String eventID = findEvent(fullurl);
+//            String eventID = findEvent(serviceUrl);
+            String eventID = serviceUrl;
+            System.out.println("-----------"+eventID);
             //连接
             HashMap hashMap = new HashMap();
             hashMap.put("sid",eventID);
             hashMap.put("tid",timeID);
-            hashMap.put("type","starts_at");
+            hashMap.put("type","ends_at");
             addLink(hashMap);
         }else{
             Date day=new Date();
@@ -199,7 +206,7 @@ public class FusekiDriver {
             HashMap hashMap = new HashMap();
             hashMap.put("sid",eventID);
             hashMap.put("tid",timeID);
-            hashMap.put("type","ends_at");
+            hashMap.put("type","starts_at");
             addLink(hashMap);
 
         }
@@ -221,42 +228,11 @@ public class FusekiDriver {
             Resource resource = model.createResource(serviceUrl+"/"+name);
             System.out.println(serviceUrl);
             System.out.println("-------");
-            // if service name exists in db, add event node into  it and then save to mongodb
-            if(!judgeExist(serviceUrl)){
-                resource.addProperty(model.createProperty(serviceUrl, "/full_url"), full_url);
-                resource.addProperty(model.createProperty(serviceUrl, "/name"), name);
-                resource.addProperty(model.createProperty(serviceUrl, "/nubmer"), number);
-                resource.addProperty(model.createProperty(serviceUrl, "/status"), status);
-                DataAccessor.getInstance().add(model);
-//                String addRelation = "PREFIX j0:<"+serviceUrl+"/>\n" +
-//                        "INSERT DATA{\n" +
-//                        "<"+serviceUrl+"> j0:has_event <"+serviceUrl+"/event/"+name+">\n" +
-//                        "}";
-//                RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-//                        .destination("http://10.60.38.173:3030/DevKGData/update");
-//
-//                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//                Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
-//                credsProvider.setCredentials(AuthScope.ANY, credentials);
-//                HttpClient httpclient = HttpClients.custom()
-//                        .setDefaultCredentialsProvider(credsProvider)
-//                        .build();
-//                HttpOp.setDefaultHttpClient(httpclient);
-//                builderAddRelation.httpClient(httpclient);
-//
-//                try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
-//                    connAddRelation.update(addRelation);
-//                    Map<String, Object> result = getAllNodesAndLinks();
-//                    if(!save2Mongo(result)) return false;
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                    return false;
-//                }
-            }
-            else {
-                System.out.println("no such service");
-                return null;
-            }
+            resource.addProperty(model.createProperty(serviceUrl, "/full_url"), full_url);
+            resource.addProperty(model.createProperty(serviceUrl, "/name"), name);
+            resource.addProperty(model.createProperty(serviceUrl, "/nubmer"), number);
+            resource.addProperty(model.createProperty(serviceUrl, "/status"), status);
+            DataAccessor.getInstance().add(model);
         } catch (Exception e){
             e.printStackTrace();
             return null;
