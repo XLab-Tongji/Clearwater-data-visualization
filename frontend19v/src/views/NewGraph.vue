@@ -294,6 +294,7 @@ export default {
         "containerNetwork",
         "containerStorage",
         "event",
+        "timestamp",
         "deletedNode",
         "deletedPropertyNode",
         "addedNode",
@@ -313,6 +314,7 @@ export default {
         "nodesContainerNetwork",
         "nodesContainerStorage",
         "nodesEvent",
+        "nodesTimestamp",
         "nodesDeletedNode",
         "nodesDeletedPropertyNode",
         "nodesAddedNode",
@@ -655,13 +657,13 @@ export default {
       // })
       axios
         // API GET
-        // .get(reqUrl + "/api/getNodesAndLinks")
-        .get("/example.json")
+        .get(reqUrl + "/api/getNodesAndLinks")
+        // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           console.log(response);
-          response.data.nodeList.map(x => {
+          response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
 

@@ -1106,7 +1106,7 @@
                 "name": "monitoring"
             },
             "id": "http://namespace/10.60.38.181/monitoring",
-            "type": "namespace"
+            "type": "event"
         },
         {
             "name": "sock-shop",
@@ -1114,7 +1114,7 @@
                 "name": "sock-shop"
             },
             "id": "http://namespace/10.60.38.181/sock-shop",
-            "type": "namespace"
+            "type": "timestamp"
         },
         {
             "name": "192.168.199.133",
