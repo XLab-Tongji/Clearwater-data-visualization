@@ -27,14 +27,14 @@ export default {
     itsTime() {
       let flag = false;
       this.eventList.forEach(event => {
-        if (event.property.start === this.timeStamp) {
+        if (event.starts_at === this.timeStamp) {
           this.eventName = event.name;
           this.startOrEnd = "started";
           this.color = getColor(event.id);
           flag = true;
         }
         // 某一个时间又是开始时间又是结束时间？不太可能吧
-        else if (event.property.end === this.timeStamp) {
+        else if (event.ends_at === this.timeStamp) {
           this.eventName = event.name;
           this.startOrEnd = "ended";
           this.color = getColor(event.id);

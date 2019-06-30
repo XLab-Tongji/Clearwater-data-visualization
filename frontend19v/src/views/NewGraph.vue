@@ -177,7 +177,12 @@
       </el-card>
     </transition>
     <!-- 时间线 -->
-    <timeline v-if="showTimeline" :allTimeStamps="allTimeStamps" :eventList="eventList" @click="getDatabyTimeStamp"></timeline>
+    <timeline
+      v-if="showTimeline"
+      :allTimeStamps="allTimeStamps"
+      :eventList="perfEventList"
+      @click="getDatabyTimeStamp"
+    ></timeline>
   </div>
 </template>
 
@@ -416,7 +421,7 @@ export default {
         event: {
           start: "",
           end: "",
-          discription: ""
+          description: ""
         }
       },
       // 添加节点时点击空白处需要填写的属性
@@ -491,12 +496,36 @@ export default {
         crosshair: false
       },
       diffDelta: {
-        add: {nodes:[], links: []},
-        deleta: {nodes: [], links: []}
+        add: { nodes: [], links: [] },
+        delete: { nodes: [], links: [] }
       }
     };
   },
   computed: {
+    perfEventList() {
+      return this.eventList.map(event => {
+        this.links.forEach(link => {
+          if (link.tid === event.id) {
+            let arr = link.sid.slice(
+              link.sid.length - 1 - 18,
+              link.sid.length
+            ).split("");
+            arr[10] = " "
+            event[link.name] = arr.join("");
+          }
+          if (link.sid === event.id) {
+            let arr = link.tid.slice(
+              link.tid.length - 1 - 18,
+              link.tid.length
+            ).split("");
+            arr[10] = " "
+            event[link.name] = arr.join("");
+          }
+        });
+        console.log(event)
+        return event;
+      });
+    },
     // 节点数量
     id() {
       return this.nodes.length;
@@ -566,6 +595,7 @@ export default {
           .then(res => {
             this.diffNodes(res);
             this.diffLinks(res);
+            console.log(JSON.stringify(this.diffDelta))
           });
       } else {
         this.nodes = this.getDatabyTimeStamp(
@@ -582,12 +612,12 @@ export default {
     diffNodes(res) {
       let { nodeList: nodeBefore } = res.data;
       let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
-      console.log(delta)
+      console.log(delta);
       Object.keys(delta).forEach(key => {
         // 删除的！位置 2 是 0 ！
         if (key.startsWith("_")) {
           if (delta[key][2] === 0) {
-            this.diffDelta.delete.nodes.push(delta[key][0])
+            this.diffDelta.delete.nodes.push(delta[key][0]);
             let deletedNode = delta[key][0];
             // deletedNode.type = 'pod'
             // let nodeType = deletedNode.type;
@@ -601,10 +631,10 @@ export default {
           }
         }
         // 新增的！
-        else if (key === '_t') {}
-        else {
+        else if (key === "_t") {
+        } else {
           // console.log(this.nodes[key]);
-          this.diffDelta.add.nodes.push(delta[key][0]) //???? 是 0 吗
+          this.diffDelta.add.nodes.push(delta[key][0]); //???? 是 0 吗
           if (this.allPropertyNodeTypes.indexOf(this.nodes[key].type) !== -1) {
             this.nodes[key]._cssClass = "nodesAddedPropertyNode";
           } else {
@@ -620,7 +650,7 @@ export default {
         // 删除的！位置 2 是 0 ！
         if (key.startsWith("_")) {
           if (delta[key][2] === 0) {
-            this.diffDelta.delete.links.push(delta[key][0])
+            this.diffDelta.delete.links.push(delta[key][0]);
             let deletedlink = delta[key][0];
             // 凡是 push 进去的都会经过 lcb 所以直接设置 _color 没用！
             deletedlink.diffType = "delete";
@@ -629,7 +659,7 @@ export default {
         }
         // 新增的！
         else {
-          this.diffDelta.add.links.push(delta[key][0]) //???? 是 0 吗
+          this.diffDelta.add.links.push(delta[key][0]); //???? 是 0 吗
           this.links[key]._color = "blue";
         }
       });
@@ -666,9 +696,6 @@ export default {
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
-
-          this.eventList = response.data.eventList;
-
           this.allTimeStamps = response.data.timeList;
           this.lastTimeStamp = this.allTimeStamps[
             this.allTimeStamps.length - 1
@@ -694,9 +721,13 @@ export default {
 
           this.nodes = this.normalNodes.concat(this.propertyNodes);
 
+          // 在 links 和 nodes 都有数据之后
+          this.eventList = response.data.eventList;
+
           this.showTimeline = true;
           this.propertyNodeSwitch = true;
           this.diffSwitch = false;
+          this.diffDelta = {}
 
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
@@ -720,7 +751,7 @@ export default {
 
       console.log("currentTimeStamp: " + currentTimeStamp);
       if (currentTimeStamp === "now") {
-         this.getData()
+        this.getData();
       } else {
         axios
           .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
@@ -753,6 +784,7 @@ export default {
             console.log("可显示");
             this.propertyNodeSwitch = true;
             this.diffSwitch = false;
+            this.diffDelta = {}
           })
           .catch(error => {
             console.error(error);
