@@ -18,6 +18,7 @@ import com.csvreader.CsvWriter;
 import org.terracotta.statistics.Time;
 
 import static neo4j.Neo4jDriver.*;
+import static neo4j.Neo4jDriver.causationData;
 
 @Component
 public class prometheusDriver {
@@ -145,6 +146,9 @@ public class prometheusDriver {
         try {
             Map map = csvPost("Fci", name);
             System.out.println(map.toString());
+            String[] strings = ((String) map.get("txt")).split("\n");
+            HashMap<String,ArrayList<HashMap<String,Object>>> result = causationData(strings);
+            System.out.println(result.toString());
         }catch (Exception e){
             e.printStackTrace();
         }

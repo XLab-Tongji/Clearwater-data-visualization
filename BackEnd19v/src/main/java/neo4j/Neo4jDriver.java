@@ -1135,8 +1135,8 @@ public class Neo4jDriver {
 
                 map.put("source", string[1]);
                 map.put("target", string[3]);
-                source = AddCausationNode(string[1]);
-                target = AddCausationNode(string[3]);
+                //source = AddCausationNode(string[1]);
+                //target = AddCausationNode(string[3]);
                 if (source!=0 && target!=0) {
                     String relationship = "";
                     if (string[2].equals("-->") || string[2].equals("o->"))
@@ -1146,10 +1146,10 @@ public class Neo4jDriver {
                     if (string[2].equals("<->"))
                         relationship = "has_latent_variable";
                     if (relationship.equals("has_latent_variable")) {
-                        AddMetricRelation(source, target, "has_latent_variable");
-                        AddMetricRelation(target, source, "has_latent_variable");
+                        //AddMetricRelation(source, target, "has_latent_variable");
+                        //AddMetricRelation(target, source, "has_latent_variable");
                     } else {
-                        AddMetricRelation(source, target, relationship);
+                       // AddMetricRelation(source, target, relationship);
                     }
                     map.put("type", relationship);
                     if (!allrelations.contains(map))
@@ -1162,8 +1162,7 @@ public class Neo4jDriver {
                     line = strings[lineNum];
             }
 
-            resultgraph.put("Relationship", allrelations);
-            resultgraph.put("Nodes", allnodes);
+           
             return resultgraph;
         }catch (Exception e){
             e.printStackTrace();
@@ -2717,6 +2716,10 @@ public class Neo4jDriver {
             result.add(d.get("time").toString());
         }
         return result;
+    }
+
+    public static void inference(){
+
     }
 
     public static void main(String[] args) {
