@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.client.HttpClient;
+import org.apache.jena.base.Sys;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -17,6 +18,7 @@ import com.csvreader.CsvWriter;
 import org.terracotta.statistics.Time;
 
 import static neo4j.Neo4jDriver.*;
+import static neo4j.Neo4jDriver.causationData;
 
 @Component
 public class prometheusDriver {
@@ -24,6 +26,7 @@ public class prometheusDriver {
     public static ArrayList proTemp(String urlNode, String start, String end) {
 //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
         String url = "http://10.60.38.181:31003/api/v1/query_range?query="+urlNode+"&start="+start+"&end="+end+"&step=10";
+//        url = java.net.URLEncoder.encode(url);
         System.out.println(url);
         ArrayList arrayList = new ArrayList();
         InputStream is = null;
@@ -70,6 +73,7 @@ public class prometheusDriver {
     public static ArrayList getProTimeStamp(String urlNode, String start, String end) {
 //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
         String url = "http://10.60.38.181:31003/api/v1/query_range?query="+urlNode+"&start="+start+"&end="+end+"&step=10";
+//        url = java.net.URLEncoder.encode(url);
         System.out.println(url);
         ArrayList arrayList = new ArrayList();
         InputStream is = null;
@@ -120,27 +124,40 @@ public class prometheusDriver {
         return storePrometheus(pUrl, nameSpace, serviceName);
     }
 
-    public static boolean DealPrometheusRequest(String startTime,String endTime,ArrayList<HashMap> requestList){
+    public static boolean DealPrometheusRequest(String startTime,String endTime,ArrayList<HashMap> requestList,String savePath){
         HashMap<String,ArrayList> hashMap = new HashMap<>();
         ArrayList arrayList = new ArrayList();
-        arrayList = getProTimeStamp((String)requestList.get(0).get("sql"), startTime, endTime);
+        arrayList = getProTimeStamp(((String)requestList.get(0).get("sql")).replace(" ","").replace("(","%28").replace(")","%29"), startTime, endTime);
         hashMap.put("TimeStamp",arrayList);
 
         for (int i=0;i<requestList.size();i++){
             ArrayList list = new ArrayList();
             String query = (String)requestList.get(i).get("sql");
+            query = query.replace(" ","");
+            query = query.replace("(","%28").replace(")","%29");
             String name = (String)requestList.get(i).get("type");
             System.out.println(name);
             list = proTemp(query, startTime, endTime);
             hashMap.put(name,list);
         }
         System.out.println(hashMap);
-        csvCreate(hashMap);
+        String name = csvCreate(hashMap,savePath);
+        System.out.println(name);
+        try {
+            Map map = csvPost("Fci", name);
+            System.out.println(map.toString());
+            String[] strings = ((String) map.get("txt")).split("\n");
+            HashMap<String,ArrayList<HashMap<String,Object>>> result = causationData(strings);
+            System.out.println("\n---------- result -----------");
+            System.out.println(result.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return true;
     }
 
-    public static void csvCreate(HashMap<String,ArrayList> hashMap) {
-        String outPath = "/Users/logan/Desktop/csv/";
+    public static String csvCreate(HashMap<String,ArrayList> hashMap,String savePath) {
+        String outPath = savePath;
         File csvFile = null;
         BufferedWriter csvFileOutputStream = null;
         try {
@@ -150,7 +167,7 @@ public class prometheusDriver {
             }
             //定义文件名格式并创建  
             csvFile = File.createTempFile(Long.toString(Time.time()), ".csv", new File(outPath));
-            System.out.println("csvFile：" + csvFile);
+            System.out.println("csvFile：" + csvFile.getName());
 
             for (HashMap.Entry<String, ArrayList> entry : hashMap.entrySet()) {
                 System.out.println(entry.getKey() + ":" + entry.getValue());
@@ -183,26 +200,32 @@ public class prometheusDriver {
 
             csvFileOutputStream.flush();
 
+            return csvFile.getPath();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 
      public static void main(String[] args) throws IOException {
-        String startTime = "1561845600";
-        String endTime = "1561849200";
-         ArrayList<HashMap> arrayList = new ArrayList<>();
-         HashMap hashMap = new HashMap<String,String>();
-         hashMap.put("type","container/catalogue-db/container_network_receive_packets");
-         hashMap.put("sql","sum(rate(container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=\"catalogue-db-99cbcbb88-mw7q6\"}[5m]))");
-         HashMap hashMap1 = new HashMap<String,String>();
-         hashMap1.put("type","ss");
-         hashMap1.put("sql","sca");
+//        String startTime = "1561845600";
+//        String endTime = "1561849200";
+//         ArrayList<HashMap> arrayList = new ArrayList<>();
+//         HashMap hashMap = new HashMap<String,String>();
+//         hashMap.put("type","container/catalogue-db/container_network_receive_packets");
+//         hashMap.put("sql","sum(rate(container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=\"catalogue-db-99cbcbb88-mw7q6\"}[5m]))");
+//         HashMap hashMap1 = new HashMap<String,String>();
+//         hashMap1.put("type","ss");
+//         hashMap1.put("sql","sca");
+//
+//         arrayList.add(hashMap);
+//         arrayList.add(hashMap1);
+//         DealPrometheusRequest(startTime,endTime,arrayList);
 
-         arrayList.add(hashMap);
-         arrayList.add(hashMap1);
-         DealPrometheusRequest(startTime,endTime,arrayList);
+
+
 //        String query = "APIServiceOpenAPIAggregationControllerQueue1_adds{instance=\"192.168.199.191:6443\",job=\"kubernetes-apiservers\"}";
 //        String query = "avg(rate (container_cpu_usage_seconds_total{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\"%s-[0-9A-Za-z]{3,}.+\"}[5m]))";
 //        proTemp(query, startTime, endTime);
