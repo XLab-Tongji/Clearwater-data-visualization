@@ -1114,7 +1114,7 @@ public class Neo4jDriver {
             int source = 0;
             int target = 0;
 
-            String node[] = line.split(",");
+            String node[] = line.split(";");
             //System.out.println(line);
 
             for (int i = 1; i < node.length; i++) {
@@ -1131,12 +1131,15 @@ public class Neo4jDriver {
                 //System.out.println(line);
                 String string[] = line.split(" ");
                 HashMap<String, Object> map = new HashMap<>();
-                System.out.println(string[1]+" "+string[3]);
+//                System.out.println(string[1]+"|"+string[3]);
+//                System.out.println(string[2]);
 
                 map.put("source", string[1]);
                 map.put("target", string[3]);
                 //source = AddCausationNode(string[1]);
                 //target = AddCausationNode(string[3]);
+                source = 1;
+                target = 1;
                 if (source!=0 && target!=0) {
                     String relationship = "";
                     if (string[2].equals("-->") || string[2].equals("o->"))
@@ -1145,12 +1148,12 @@ public class Neo4jDriver {
                         relationship = "has_causation";
                     if (string[2].equals("<->"))
                         relationship = "has_latent_variable";
-                    if (relationship.equals("has_latent_variable")) {
-                        //AddMetricRelation(source, target, "has_latent_variable");
-                        //AddMetricRelation(target, source, "has_latent_variable");
-                    } else {
-                       // AddMetricRelation(source, target, relationship);
-                    }
+//                    if (relationship.equals("has_latent_variable")) {
+//                        AddMetricRelation(source, target, "has_latent_variable");
+//                        AddMetricRelation(target, source, "has_latent_variable");
+//                    } else {
+//                        AddMetricRelation(source, target, relationship);
+//                    }
                     map.put("type", relationship);
                     if (!allrelations.contains(map))
                         allrelations.add(map);
@@ -1161,8 +1164,8 @@ public class Neo4jDriver {
                 if (lineNum<strings.length)
                     line = strings[lineNum];
             }
-
-           
+            resultgraph.put("nodes", allnodes);
+            resultgraph.put("relations", allrelations);
             return resultgraph;
         }catch (Exception e){
             e.printStackTrace();

@@ -148,6 +148,7 @@ public class prometheusDriver {
             System.out.println(map.toString());
             String[] strings = ((String) map.get("txt")).split("\n");
             HashMap<String,ArrayList<HashMap<String,Object>>> result = causationData(strings);
+            System.out.println("\n---------- result -----------");
             System.out.println(result.toString());
         }catch (Exception e){
             e.printStackTrace();
