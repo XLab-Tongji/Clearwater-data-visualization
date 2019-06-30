@@ -1755,6 +1755,8 @@ public class Neo4jDriver {
         return true;
     }
 
+    private static MongoDriver mongoDriver = new MongoDriver();
+
     public static boolean storePodName(String podName){
         String httpUrl = "http://10.60.38.173:5530/tool/api/v1.0/get_pods/"+podName;
         try {
@@ -1793,10 +1795,12 @@ public class Neo4jDriver {
                     JSONArray jCont = jSpec.getJSONArray("containers");
                     JSONObject jContainer = jCont.getJSONObject(0);
                     JSONObject jContainerStatus = jsonArray.getJSONObject(i).getJSONObject("status").getJSONArray("containerStatuses").getJSONObject(0);
+                    String container_node_name = (String)jContainer.get("name");
+
                     Model modelContainer = ModelFactory.createDefaultModel();
-                    names = "http://containers/" + address + "/"+podName+"/"+(String)jContainer.get("name");
+                    names = "http://containers/" + address + "/"+podName+"/"+ container_node_name;
                     Resource resourceContainer = modelContainer.createResource(names);
-                    resourceContainer.addProperty(modelContainer.createProperty("http://containers/" + address + "/"+podName+"/"+"name"),(String)jContainer.get("name"));
+                    resourceContainer.addProperty(modelContainer.createProperty("http://containers/" + address + "/"+podName+"/"+"name"), container_node_name);
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/image"),(String)jContainer.get("image"));
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/ports"),
                             modelContainer.createResource().addProperty(modelContainer.createProperty(names,"/ports/containerPort"),(String)jContainer.getJSONArray("ports").getJSONObject(0).get("containerPort").toString())
@@ -1805,46 +1809,55 @@ public class Neo4jDriver {
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/imageID"),(String)jContainerStatus.get("imageID"));
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/ready"),(String) jContainerStatus.get("ready").toString());
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/restartCount"),(String)jContainerStatus.get("restartCount").toString());
-//                    JSONObject jsonObject1 = jContainerStatus.getJSONObject("lastState");
-//                    if (jsonObject1.isEmpty())
-//                        resourceContainer.addProperty(modelContainer.createProperty(names+"lastState"),"null");
-//                    else{
-//                        resourceContainer.addProperty(modelContainer.createProperty(names+"lastState"),(String)jContainerStatus.getJSONObject("lastState").get(0));
-//                    }
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/ports"),
                             modelContainer.createResource().addProperty(modelContainer.createProperty(names,"/ports/curstate"),(String)jContainerStatus.getJSONObject("state").keySet().toArray()[0])
                                     .addProperty(modelContainer.createProperty(names,"/ports/startedAt"),(String)jContainerStatus.getJSONObject("state").getJSONObject((String)jContainerStatus.getJSONObject("state").keySet().toArray()[0]).get("startedAt")));
                     resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
 
+                    String[] query = {"avg(rate (container_cpu_usage_seconds_total{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
+                            "avg(container_memory_usage_bytes{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\"\"+container_node_name+\"-[0-9A-Za-z]{3,}.*\"})",
+                            "sum (rate (container_network_receive_bytes_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
+                            "sum (rate (container_network_transmit_bytes_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
+                            "sum (rate (container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
+                            "sum (rate (container_network_transmit_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))"};
+                    String[] name = {"CPU_Usage", "MEM_Usage", "Network_Input_Bytes", "Network_Output_Bytes", "Network_Input_Packets", "Network_Output_Packets"};
+
+                    // save query statements to mongo
+                    for (int j = 0; j < 6; j++) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("type", "container/"+container_node_name+"/"+name[j]);
+                        map.put("sql", query[j]);
+                        mongoDriver.save_data(map);
+                    }
+
                     Model modelContainerStorage = ModelFactory.createDefaultModel();
 //                    String nameStorage = names+"/containerStorage";
-                    String nameStorage1 = names+"/container_fs_io_current";
-                    String nameStorage2 = names+"/container_fs_usage_bytes";
-                    String nameStorage3 = names+"/container_fs_reads_bytes_total";
-                    String nameStorage4 = names+"/container_fs_writes_bytes_total";
+                    String nameStorage1 = names+"/CPU_Usage";
+                    String nameStorage2 = names+"/MEM_Usage";
                     Resource resourceStorage1 = modelContainerStorage.createResource(nameStorage1);
-                    resourceStorage1.addProperty(modelContainerStorage.createProperty(nameStorage1,"/value"),"");
+                    resourceStorage1.addProperty(modelContainerStorage.createProperty(nameStorage1,"/query"), query[0]);
                     Resource resourceStorage2 = modelContainerStorage.createResource(nameStorage2);
-                    resourceStorage2.addProperty(modelContainerStorage.createProperty(nameStorage2,"/value"),"");
-                    Resource resourceStorage3 = modelContainerStorage.createResource(nameStorage3);
-                    resourceStorage3.addProperty(modelContainerStorage.createProperty(nameStorage3,"/value"),"");
-                    Resource resourceStorage4 = modelContainerStorage.createResource(nameStorage4);
-                    resourceStorage4.addProperty(modelContainerStorage.createProperty(nameStorage4,"/value"),"");
+                    resourceStorage2.addProperty(modelContainerStorage.createProperty(nameStorage2,"/query"), query[1]);
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceStorage1);
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceStorage2);
-                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceStorage3);
-                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceStorage4);
 
                     Model modelContainerNetwork = ModelFactory.createDefaultModel();
-//                    String nameNetwork = names+"/containerNetwork";
-                    String nameNetwork1 = names+"/network_receive_bytes";
-                    String nameNetwork2 = names+"/network_transmit_bytes";
+                    String nameNetwork1 = names+"/Network_Input_Bytes";
+                    String nameNetwork2 = names+"/Network_Output_Bytes";
+                    String nameNetwork3 = names+"/Network_Input_Packets";
+                    String nameNetwork4 = names+"/Network_Output_Packets";
                     Resource resourceNetwork1 = modelContainerNetwork.createResource(nameNetwork1);
                     Resource resourceNetwork2 = modelContainerNetwork.createResource(nameNetwork2);
-                    resourceNetwork1.addProperty(modelContainerNetwork.createProperty(nameNetwork1,"/value"),"");
-                    resourceNetwork2.addProperty(modelContainerNetwork.createProperty(nameNetwork2,"/value"),"");
+                    Resource resourceNetwork3 = modelContainerNetwork.createResource(nameNetwork3);
+                    Resource resourceNetwork4 = modelContainerNetwork.createResource(nameNetwork4);
+                    resourceNetwork1.addProperty(modelContainerNetwork.createProperty(nameNetwork1,"/query"), query[2]);
+                    resourceNetwork2.addProperty(modelContainerNetwork.createProperty(nameNetwork2,"/query"), query[3]);
+                    resourceNetwork3.addProperty(modelContainerNetwork.createProperty(nameNetwork3,"/query"), query[4]);
+                    resourceNetwork4.addProperty(modelContainerNetwork.createProperty(nameNetwork4,"/query"), query[5]);
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceNetwork1);
                     resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceNetwork2);
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceNetwork3);
+                    resourceContainer.addProperty(modelContainer.createProperty(names,"/profile"),resourceNetwork4);
 
                     //以上CONTAINER信息完整
                     //以下添加关系
@@ -1881,11 +1894,12 @@ public class Neo4jDriver {
                     JSONObject jMetaData = jsonArray.getJSONObject(i).getJSONObject("metadata");
                     JSONObject jSpec = jsonArray.getJSONObject(i).getJSONObject("spec");
                     JSONObject jStatus = jsonArray.getJSONObject(i).getJSONObject("status");
+                    String service_node_name = (String) jMetaData.get("name");
 
                     Model model = ModelFactory.createDefaultModel();
-                    String names = "http://services/" + address + "/" + serviceName + "/" + (String) jMetaData.get("name");
+                    String names = "http://services/" + address + "/" + serviceName + "/" + service_node_name;
                     Resource resource = model.createResource(names);
-                    resource.addProperty(model.createProperty("http://services/" + address + "/" + serviceName+"/name"),(String) jMetaData.get("name"));
+                    resource.addProperty(model.createProperty("http://services/" + address + "/" + serviceName+"/name"),service_node_name);
                     resource.addProperty(model.createProperty(names ,"/annotations"),model.createResource()
                             .addProperty(model.createProperty(names,"/annotations/kubectl.kubernetes.io/last-applied-configuration"),
                                     (String) jMetaData.getJSONObject("annotations").get("kubectl.kubernetes.io/last-applied-configuration")));
@@ -1908,24 +1922,41 @@ public class Neo4jDriver {
                     Model modelService = ModelFactory.createDefaultModel();
                     Model modelDatabase = ModelFactory.createDefaultModel();
                     if (!((String) jMetaData.get("name")).contains("db")){
+                        String[] name = {"latency", "success_rate"};
+                        String[] query = {"sum(rate(request_duration_seconds_sum{service=\""+service_node_name+"\"}[1m])) / sum(rate(request_duration_seconds_count{service=\""+service_node_name+"\"}[1m]))", "sum(rate(request_duration_seconds_count{service=\""+service_node_name+"\",status_code=~\"2..\",route!=\"metrics\"}[1m]))"};
 //                        String nameService = names+"/serviceProfile";
-                        String nameService1 = names+"/response_time";
+                        String nameService1 = names+"/latency";
                         String nameService2 = names+"/success_rate";
                         Resource resourceService1 = modelService.createResource(nameService1);
                         Resource resourceService2 = modelService.createResource(nameService2);
-                        resourceService1.addProperty(modelService.createProperty(nameService1,"/value"),"");
-                        resourceService2.addProperty(modelService.createProperty(nameService2,"/value"),"");
+                        resourceService1.addProperty(modelService.createProperty(nameService1,"/query"), query[0]);
+                        resourceService2.addProperty(modelService.createProperty(nameService2,"/query"),query[2]);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService1);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService2);
+                        // save query statements to mongo
+                        for (int j = 0; j < 2; j++) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("type", "service/"+service_node_name+"/"+name[j]);
+                            map.put("sql", query[j]);
+                            mongoDriver.save_data(map);
+                        }
                     }else{
+                        String[] name = {"throughput", "latency"};
+                        String[] query = {"sum(rate(request_duration_seconds_sum{service=\""+service_node_name+"\"}[1m])) / sum(rate(request_duration_seconds_count{service=\""+service_node_name+"\"}[1m]))", "sum(rate(request_duration_seconds_count{service=\""+service_node_name+"\",status_code=~\"2..\",route!=\"metrics\"}[1m]))"};
                         String nameDatabase1 = names+"/throughput";
-                        String nameDatabase2 = names+"/response_time";
+                        String nameDatabase2 = names+"/latency";
                         Resource resourceDatabase1 = modelDatabase.createResource(nameDatabase1);
                         Resource resourceDatabase2 = modelDatabase.createResource(nameDatabase2);
-                        resourceDatabase1.addProperty(modelDatabase.createProperty(nameDatabase1,"/value"),"");
-                        resourceDatabase2.addProperty(modelDatabase.createProperty(nameDatabase2,"/value"),"");
+                        resourceDatabase1.addProperty(modelDatabase.createProperty(nameDatabase1,"/query"), query[0]);
+                        resourceDatabase2.addProperty(modelDatabase.createProperty(nameDatabase2,"/query"), query[1]);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase1);
-                        resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase2);
+                        resource.addProperty(model.createProperty(names,"/profile"),resourceDatabase2);// save query statements to mongo
+                        for (int j = 0; j < 2; j++) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("type", "service/"+service_node_name+"/"+name[j]);
+                            map.put("sql", query[j]);
+                            mongoDriver.save_data(map);
+                        }
                     }
 
                     model.write(System.out, "RDF/XML-ABBREV");
