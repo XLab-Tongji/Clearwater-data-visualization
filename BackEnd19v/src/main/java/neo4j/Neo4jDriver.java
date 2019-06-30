@@ -1557,8 +1557,8 @@ public class Neo4jDriver {
                     resource.addProperty(model.createProperty(names, "/labels"),model.createResource()
                             .addProperty(model.createProperty(names,"/labels/beta.kubernetes.io/arch"),
                                     (String) jMetaData.getJSONObject("labels").get("beta.kubernetes.io/arch"))
-                            .addProperty(model.createProperty(names,"/labels/beta.kubernetes.io/fluentd-ds-ready"),
-                                    (String) jMetaData.getJSONObject("labels").get("beta.kubernetes.io/fluentd-ds-ready"))
+//                            .addProperty(model.createProperty(names,"/labels/beta.kubernetes.io/fluentd-ds-ready"),
+//                                    (String) jMetaData.getJSONObject("labels").get("beta.kubernetes.io/fluentd-ds-ready"))
                             .addProperty(model.createProperty(names,"/labels/beta.kubernetes.io/os"),
                                     (String) jMetaData.getJSONObject("labels").get("beta.kubernetes.io/os"))
                             .addProperty(model.createProperty(names,"/labels/kubernetes.io/hostname"),
@@ -1815,7 +1815,7 @@ public class Neo4jDriver {
                     resource.addProperty(model.createProperty(namePod,"/contains"),resourceContainer);
 
                     String[] query = {"avg(rate (container_cpu_usage_seconds_total{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
-                            "avg(container_memory_usage_bytes{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\"\"+container_node_name+\"-[0-9A-Za-z]{3,}.*\"})",
+                            "avg(container_memory_usage_bytes{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"})",
                             "sum (rate (container_network_receive_bytes_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
                             "sum (rate (container_network_transmit_bytes_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
                             "sum (rate (container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=~\""+container_node_name+"-[0-9A-Za-z]{3,}.*\"}[5m]))",
@@ -1930,7 +1930,7 @@ public class Neo4jDriver {
                         Resource resourceService1 = modelService.createResource(nameService1);
                         Resource resourceService2 = modelService.createResource(nameService2);
                         resourceService1.addProperty(modelService.createProperty(nameService1,"/query"), query[0]);
-                        resourceService2.addProperty(modelService.createProperty(nameService2,"/query"),query[2]);
+                        resourceService2.addProperty(modelService.createProperty(nameService2,"/query"),query[1]);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService1);
                         resource.addProperty(model.createProperty(names,"/profile"),resourceService2);
                         // save query statements to mongo
@@ -2679,6 +2679,25 @@ public class Neo4jDriver {
             if(result.size()==0) return null;
             System.out.println(result.get(0));
             return result.get(0);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Map<String, Object>> getAllQuery(){
+        List<Map<String, Object>> result = new ArrayList<>();
+        try {
+            MongoDriver mongoDriver = new MongoDriver();
+            List<Document> data = mongoDriver.get_data();
+            for (Document d: data) {
+                Map<String, Object> map = new HashMap<>();
+                map.putAll(d);
+                result.add(map);
+            }
+            if(result.size()==0)
+                return null;
+            return result;
         } catch (Exception e){
             e.printStackTrace();
             return null;

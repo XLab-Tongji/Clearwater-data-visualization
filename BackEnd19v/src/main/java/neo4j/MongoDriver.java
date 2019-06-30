@@ -44,4 +44,14 @@ public class MongoDriver {
         return result;
     }
 
+    public boolean clear_db(){
+        try {
+            collection.deleteMany(new Document());
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 }

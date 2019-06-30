@@ -73,7 +73,7 @@ public class FusekiDriver {
                     }
                     else if(subject.contains("service")){
                         if(subject.contains("db")){
-                            if (subject.contains("response_time")||subject.contains("throughput"))
+                            if (subject.contains("latency")||subject.contains("throughput"))
                                 result.add(getPropertyNodes(subject, "serviceDatabase"));
                             else{
                                 result.add(getService(subject));
@@ -81,7 +81,7 @@ public class FusekiDriver {
                             }
                         }
                         else {
-                            if (subject.contains("success_rate")||subject.contains("response_time"))
+                            if (subject.contains("success_rate")||subject.contains("latency"))
                                 result.add(getPropertyNodes(subject, "serviceServer"));
                             else{
                                 result.add(getService(subject));
@@ -96,9 +96,9 @@ public class FusekiDriver {
                         linkList.addAll(getLink(subject, "provides"));
                     }
                     else if(subject.contains("containers")){
-                        if (subject.contains("container_fs_io_current")||subject.contains("container_fs_usage_bytes")||subject.contains("container_fs_reads_bytes_total")||subject.contains("container_fs_writes_bytes_total")){
+                        if (subject.contains("CPU_Usage")||subject.contains("MEM_Usage")){
                             result.add(getPropertyNodes(subject, "containerStorage"));
-                        }else if (subject.contains("network_receive_bytes")||subject.contains("network_transmit_bytes")){
+                        }else if (subject.contains("Network_Input_Bytes")||subject.contains("Network_Output_Bytes")||subject.contains("Network_Input_Packets")||subject.contains("Network_Output_Packets")){
                             result.add(getPropertyNodes(subject, "containerNetwork"));
                         }else {
                             result.add(getContainer(subject));

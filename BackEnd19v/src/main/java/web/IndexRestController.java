@@ -3,6 +3,7 @@ package web;
 import com.csvreader.CsvReader;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import neo4j.MongoDriver;
 import neo4j.Neo4jDriver;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -438,6 +439,8 @@ public class IndexRestController {
     @RequestMapping(value = "/api/storeEnvironment",method = RequestMethod.POST,produces = "application/json")
     public Boolean storeAll(@RequestParam("masterName") String masterName, @RequestParam("podName") String podName, @RequestParam("serviceName") String serviceName, @RequestParam("address") String address, @RequestParam("namespace") String namespace){
         boolean result = true;
+        MongoDriver mongoDriver = new MongoDriver();
+        result &= mongoDriver.clear_db();
         result &= storeNamespaceName();
         result &= storeServerName();
         result &= storeMasterNode(masterName);
