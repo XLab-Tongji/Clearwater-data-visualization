@@ -2685,8 +2685,8 @@ public class Neo4jDriver {
         }
     }
 
-    public static List<Map<String, Object>> getAllQuery(){
-        List<Map<String, Object>> result = new ArrayList<>();
+    public static ArrayList<Map<String, Object>> getAllQuery(){
+        ArrayList<Map<String, Object>> result = new ArrayList<>();
         try {
             MongoDriver mongoDriver = new MongoDriver();
             List<Document> data = mongoDriver.get_data();

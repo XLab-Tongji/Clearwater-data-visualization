@@ -540,4 +540,15 @@ public class IndexRestController {
         }
         return true;
     }
+
+    @RequestMapping(value = "/api/StartCausation", method = RequestMethod.POST, produces = "application/json")
+    public Boolean StartCausation(HttpServletRequest request,@RequestParam("Start") String start,@RequestParam("End") String end){
+        String savePath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/csv");
+        savePath = savePath.replace("file:", "");
+        ArrayList arrayList = getAllQuery();
+        DealPrometheusRequest(start,end,arrayList,savePath);
+        return true;
+    }
+
+
 }
