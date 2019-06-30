@@ -19,9 +19,11 @@ import org.apache.commons.codec.binary.Base64;
 
 import org.apache.jena.riot.web.HttpOp;
 import org.springframework.stereotype.Component;
+import org.terracotta.statistics.Time;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static neo4j.Neo4jDriver.*;
 
@@ -164,6 +166,7 @@ public class FusekiDriver {
     }
 
     public static boolean readJekins(HashMap data){
+
         String fullurl = ((HashMap)data.get("build")).get("full_url").toString();
         String name = data.get("name").toString();
         String number = String.valueOf((int)((HashMap)data.get("build")).get("number"));
@@ -352,9 +355,6 @@ public class FusekiDriver {
             e.printStackTrace();
             return false;
         }
-
-
-
         return true;
     }
 
