@@ -21,9 +21,10 @@ import static neo4j.Neo4jDriver.*;
 @Component
 public class prometheusDriver {
 
-    public static ArrayList proTemp(String urlNode, int start, int end) {
+    public static ArrayList proTemp(String urlNode, String start, String end) {
 //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
-        String url = "http://10.60.38.181:31003/api/v1/query?query="+urlNode+"&start="+String.valueOf(start)+"&end="+String.valueOf(end)+"&step=1s";
+        String url = "http://10.60.38.181:31003/api/v1/query_range?query="+urlNode+"&start="+start+"&end="+end+"&step=10";
+        System.out.println(url);
         ArrayList arrayList = new ArrayList();
         InputStream is = null;
         try {
@@ -40,13 +41,20 @@ public class prometheusDriver {
             }
             String jsonText = sb.toString();
 //            jsonText
-//            System.out.println(jsonText);
+            System.out.println(jsonText);
             JSONObject jsStr = JSONObject.parseObject(jsonText);
 //            System.out.println(jsStr);
             JSONArray result = jsStr.getJSONObject("data").getJSONArray("result");
 //            System.out.println(result);
-            JSONArray value = ((JSONObject)result.get(0)).getJSONArray("value");
-            arrayList.add(value.get(1));
+            try{
+                JSONArray value = ((JSONObject)result.get(0)).getJSONArray("values");
+                for (int i=0;i<value.size();i++){
+                    arrayList.add(((JSONArray)value.get(i)).get(1));
+                }
+
+            }catch (Exception e){
+                arrayList.add(null);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -57,7 +65,51 @@ public class prometheusDriver {
             }
         }
         return arrayList;
+    }
 
+    public static ArrayList getProTimeStamp(String urlNode, String start, String end) {
+//        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
+        String url = "http://10.60.38.181:31003/api/v1/query_range?query="+urlNode+"&start="+start+"&end="+end+"&step=10";
+        System.out.println(url);
+        ArrayList arrayList = new ArrayList();
+        InputStream is = null;
+        try {
+            is = new URL(url).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            StringBuilder sb = new StringBuilder();
+            int cp;
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+            String jsonText = sb.toString();
+//            jsonText
+            System.out.println(jsonText);
+            JSONObject jsStr = JSONObject.parseObject(jsonText);
+//            System.out.println(jsStr);
+            JSONArray result = jsStr.getJSONObject("data").getJSONArray("result");
+//            System.out.println(result);
+            try{
+                JSONArray value = ((JSONObject)result.get(0)).getJSONArray("values");
+                for (int i=0;i<value.size();i++){
+                    arrayList.add(((JSONArray)value.get(i)).get(0));
+                }
+            }catch (Exception e){
+                arrayList.add(null);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return arrayList;
     }
 
     public static boolean newPrometheus(HashMap data){
@@ -68,22 +120,19 @@ public class prometheusDriver {
         return storePrometheus(pUrl, nameSpace, serviceName);
     }
 
-    public static boolean DealPrometheusRequest(int startTime,int endTime,ArrayList<HashMap> requestList){
+    public static boolean DealPrometheusRequest(String startTime,String endTime,ArrayList<HashMap> requestList){
         HashMap<String,ArrayList> hashMap = new HashMap<>();
         ArrayList arrayList = new ArrayList();
-        for (int i=startTime;i<endTime;i++){
-            arrayList.add(i);
-        }
-        hashMap.put("timestamp",arrayList);
-        System.out.println(requestList.size());
+        arrayList = getProTimeStamp((String)requestList.get(0).get("sql"), startTime, endTime);
+        hashMap.put("TimeStamp",arrayList);
+
         for (int i=0;i<requestList.size();i++){
+            ArrayList list = new ArrayList();
             String query = (String)requestList.get(i).get("sql");
-            String attribute = (String)requestList.get(i).get("type");
-            String serviceName = query.split("\"")[1];
-            String name = "service/"+serviceName+"/"+attribute;
+            String name = (String)requestList.get(i).get("type");
             System.out.println(name);
-            arrayList = proTemp(query, startTime, endTime);
-            hashMap.put(name,arrayList);
+            list = proTemp(query, startTime, endTime);
+            hashMap.put(name,list);
         }
         System.out.println(hashMap);
         csvCreate(hashMap);
@@ -115,13 +164,16 @@ public class prometheusDriver {
                 }
             }
             csvFileOutputStream.newLine();
-            ArrayList timeStamp = hashMap.get("timestamp");
+            ArrayList timeStamp = hashMap.get("TimeStamp");
             for (int i=0;i<timeStamp.size();i++){
                 for (Iterator propertyIterator = hashMap.entrySet().iterator(); propertyIterator.hasNext();) {
                     java.util.Map.Entry propertyEntry = (java.util.Map.Entry) propertyIterator.next();
-                    System.out.println(((ArrayList)propertyEntry.getValue()));
-
-                    csvFileOutputStream.write((String) ((ArrayList)propertyEntry.getValue()).get(i).toString());
+                    //System.out.println(((ArrayList)propertyEntry.getValue()));
+                    try {
+                        csvFileOutputStream.write((String) ((ArrayList) propertyEntry.getValue()).get(i).toString());
+                    }catch (Exception e){
+                        csvFileOutputStream.write("null");
+                    }
                     if (propertyIterator.hasNext()) {
                         csvFileOutputStream.write(",");
                     }
@@ -138,29 +190,38 @@ public class prometheusDriver {
 
 
      public static void main(String[] args) throws IOException {
-        int startTime = 0;
-        int endTime = 1;
+        String startTime = "1561845600";
+        String endTime = "1561849200";
+         ArrayList<HashMap> arrayList = new ArrayList<>();
+         HashMap hashMap = new HashMap<String,String>();
+         hashMap.put("type","container/catalogue-db/container_network_receive_packets");
+         hashMap.put("sql","sum(rate(container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=\"catalogue-db-99cbcbb88-mw7q6\"}[5m]))");
+         HashMap hashMap1 = new HashMap<String,String>();
+         hashMap1.put("type","ss");
+         hashMap1.put("sql","sca");
+
+         arrayList.add(hashMap);
+         arrayList.add(hashMap1);
+         DealPrometheusRequest(startTime,endTime,arrayList);
 //        String query = "APIServiceOpenAPIAggregationControllerQueue1_adds{instance=\"192.168.199.191:6443\",job=\"kubernetes-apiservers\"}";
-        String query = "sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))";
-        proTemp(query, startTime, endTime);
-        ArrayList<HashMap> arrayList = new ArrayList<>();
-        HashMap hashMap = new HashMap<String,String>();
-        hashMap.put("type","response_time");
-        hashMap.put("sql","sum(rate(request_duration_seconds_sum{service=\"catalogue\"}[1m]))");
-        arrayList.add(hashMap);
-        hashMap = new HashMap<String,String>();
-        hashMap.put("type","response_time1");
-        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"catalogue\"}[1m]))");
-        arrayList.add(hashMap);
-        hashMap = new HashMap<String,String>();
-        hashMap.put("type","success_rate");
-        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\",status_code=~\"2..\",route!=\"metrics\"}[1m]))");
-        arrayList.add(hashMap);
-        hashMap = new HashMap<String,String>();
-        hashMap.put("type","success_rate1");
-        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))");
-        arrayList.add(hashMap);
-        DealPrometheusRequest(startTime,endTime,arrayList);
+//        String query = "avg(rate (container_cpu_usage_seconds_total{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\"%s-[0-9A-Za-z]{3,}.+\"}[5m]))";
+//        proTemp(query, startTime, endTime);
+
+//        hashMap.put("type","response_time");
+//        hashMap.put("sql","sum(rate(request_duration_seconds_sum{service=\"catalogue\"}[1m]))");
+//        arrayList.add(hashMap);
+//        hashMap = new HashMap<String,String>();
+//        hashMap.put("type","response_time1");
+//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"catalogue\"}[1m]))");
+//        arrayList.add(hashMap);
+//        hashMap = new HashMap<String,String>();
+//        hashMap.put("type","success_rate");
+//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\",status_code=~\"2..\",route!=\"metrics\"}[1m]))");
+//        arrayList.add(hashMap);
+//        hashMap = new HashMap<String,String>();
+//        hashMap.put("type","success_rate1");
+//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))");
+
     }
 
 }
@@ -168,4 +229,11 @@ public class prometheusDriver {
 //sum(rate(request_duration_seconds_count{service="catalogue"}[1m]))
 //sum(rate(request_duration_seconds_count{service="front-end",status_code=~"2..",route!="metrics"}[1m]))
 //sum(rate(request_duration_seconds_count{service="front-end"}[1m]))
+
+//http://10.60.38.181:31003/api/v1/query?query=sum(rate(request_duration_seconds_count{service="front-end"}[1m]))&start=0&end=1500&step=1s
 //{service/catalogue/response_time=[0.00008038849999999856], service/front-end/success_rate=[3.333311111851827], service/catalogue/response_time1=[0.03333333333333333], timestamp=[0]}
+
+//http://10.60.38.181:31003/api/v1/query_range?query=sum(rate(container_network_receive_packets_total{image!="",namespace=~"sock-shop",pod_name="catalogue-db-99cbcbb88-mw7q6"}[5m]))&start=1561845600&end=1561849200&step=10
+
+
+

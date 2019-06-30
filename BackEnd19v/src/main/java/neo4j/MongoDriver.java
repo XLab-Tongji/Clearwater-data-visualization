@@ -16,7 +16,7 @@ public class MongoDriver {
     private MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
     //连接到数据库
     private MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
-    private MongoCollection<Document> collection = mongoDatabase.getCollection("prometheus");
+    private MongoCollection<Document> collection = mongoDatabase.getCollection("query_statements");
 
     public boolean save_data(Map<String, Object> data){
         try {
@@ -42,6 +42,16 @@ public class MongoDriver {
             result.add(d);
         }
         return result;
+    }
+
+    public boolean clear_db(){
+        try {
+            collection.deleteMany(new Document());
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }
