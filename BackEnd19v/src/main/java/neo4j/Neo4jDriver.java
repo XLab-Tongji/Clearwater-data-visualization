@@ -2357,8 +2357,8 @@ public class Neo4jDriver {
                 String[] plist = q.get("p").toString().split("/");
                 String p = plist[plist.length-1];
                 String o = q.get("o").toString();
-                if(p.equals("value")){
-                    pro.put("value", o);
+                if(p.equals("query")){
+                    pro.put("query", o);
                 }
             }
             qE.close();
