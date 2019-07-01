@@ -247,7 +247,7 @@ public class FusekiDriver {
         return serviceUrl;
     }
 
-    public static boolean addLink(HashMap data){
+    public static boolean addLink2(HashMap data, boolean flag, String time){
         String fromUrl = (String)data.get("sid");
         String toUrl = (String)data.get("tid");
         String type = (String)data.get("type");
@@ -275,12 +275,53 @@ public class FusekiDriver {
         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
             connAddRelation.update(addRelation);
             Map<String, Object> result = getAllNodesAndLinks();
-            if(!save2Mongo(result)) return false;
+            if (flag){
+                return save2MongoByTime(result, time);
+            }
+            else {
+                return save2Mongo(result);
+            }
         }catch (Exception e){
             e.printStackTrace();
             return false;
         }
-        return true;
+    }
+
+    public static boolean addLink(HashMap data){
+        return addLink2(data, false, "");
+//        String fromUrl = (String)data.get("sid");
+//        String toUrl = (String)data.get("tid");
+//        String type = (String)data.get("type");
+//        System.out.println(fromUrl);
+//        System.out.println(toUrl);
+//        System.out.println(type);
+//        String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
+//                "INSERT DATA{\n" +
+//                "<"+fromUrl+"> j0:"+type +" <"+toUrl+">\n" +
+//                "}";
+//        System.out.println(addRelation);
+//
+//        RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+//                .destination("http://10.60.38.173:3030/DevKGData/update");
+//
+//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+//        credsProvider.setCredentials(AuthScope.ANY, credentials);
+//        HttpClient httpclient = HttpClients.custom()
+//                .setDefaultCredentialsProvider(credsProvider)
+//                .build();
+//        HttpOp.setDefaultHttpClient(httpclient);
+//        builderAddRelation.httpClient(httpclient);
+//
+//        try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+//            connAddRelation.update(addRelation);
+//            Map<String, Object> result = getAllNodesAndLinks();
+//            if(!save2Mongo(result)) return false;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return false;
+//        }
+//        return true;
 
     }
 
