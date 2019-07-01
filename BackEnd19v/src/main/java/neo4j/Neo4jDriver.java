@@ -2762,12 +2762,17 @@ public class Neo4jDriver {
 //        storePodName("sock-shop");
 //        podToService("10.60.38.173","sock-shop");
 //        podToServer("10.60.38.173","sock-shop");
-        Map<String, Object> result = getAllNodesAndLinks();
+//        Map<String, Object> result = getAllNodesAndLinks();
 //        System.out.println(result);
 //        System.out.println(result);
 //        deleteOneNode("http://containers/10.60.38.173/sock-shop/carts");
-        save2Mongo(result);
-        getOneFromMongo("2019-05-13 00:32:42");
-        getTimesFromMongo();
+//        save2Mongo(result);
+//        getOneFromMongo("2019-05-13 00:32:42");
+//        getTimesFromMongo();
+
+        String str = "http://containers/10.60.38.173/sock-shop/carts/";
+        String[] list = str.split("/");
+        System.out.println(list[list.length-1]);
+        System.out.println(list[list.length-2]);
     }
 }
