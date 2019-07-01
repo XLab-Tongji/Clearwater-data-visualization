@@ -2650,8 +2650,29 @@ public class Neo4jDriver {
                     append("time", time);
             collection.insertOne(document);
             System.out.println("文档插入成功");
-            if(storeTimestamp(time)==null)
-                return false;
+//            if(storeTimestamp(time)==null)
+//                return false;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean save2MongoByTime(Map<String, Object> data, String time){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("info");
+            //插入文档
+            Document document = new Document(data).
+                    append("time", time);
+            collection.insertOne(document);
+            System.out.println("文档插入成功");
+//            if(storeTimestamp(time)==null)
+//                return false;
         } catch (Exception e){
             e.printStackTrace();
             return false;
