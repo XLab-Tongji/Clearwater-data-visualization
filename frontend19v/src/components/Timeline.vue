@@ -71,7 +71,11 @@ export default {
         this.orderedTimeStamps[lastVal]
       );
     }
-  }
+  },
+  mounted() {
+    // 让滚动条在最右边
+    document.getElementById('timeline-container').scrollLeft = document.getElementById('timeline-container').scrollWidth
+  },
 };
 </script>
 

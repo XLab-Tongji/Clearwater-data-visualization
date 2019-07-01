@@ -2,6 +2,7 @@
   <div id="new-graph">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
+    <diff-pattern v-if="diffSwitch"></diff-pattern>
     <!-- 是否显示属性节点切换按钮 -->
     <div id="switch-p-node">
       <el-switch
@@ -193,6 +194,7 @@ import Timeline from "../components/Timeline";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import jsondiffpatch from "@/lib/diff.js";
+import DiffPattern from "@/components/DiffPattern.vue"
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -241,7 +243,8 @@ export default {
   components: {
     D3Network,
     SearchTree,
-    Timeline
+    Timeline,
+    DiffPattern
   },
   data() {
     return {
@@ -506,23 +509,21 @@ export default {
       return this.eventList.map(event => {
         this.links.forEach(link => {
           if (link.tid === event.id) {
-            let arr = link.sid.slice(
-              link.sid.length - 1 - 18,
-              link.sid.length
-            ).split("");
-            arr[10] = " "
+            let arr = link.sid
+              .slice(link.sid.length - 1 - 18, link.sid.length)
+              .split("");
+            arr[10] = " ";
             event[link.name] = arr.join("");
           }
           if (link.sid === event.id) {
-            let arr = link.tid.slice(
-              link.tid.length - 1 - 18,
-              link.tid.length
-            ).split("");
-            arr[10] = " "
+            let arr = link.tid
+              .slice(link.tid.length - 1 - 18, link.tid.length)
+              .split("");
+            arr[10] = " ";
             event[link.name] = arr.join("");
           }
         });
-        console.log(event)
+        console.log(event);
         return event;
       });
     },
@@ -595,7 +596,7 @@ export default {
           .then(res => {
             this.diffNodes(res);
             this.diffLinks(res);
-            console.log(JSON.stringify(this.diffDelta))
+            // console.log(JSON.stringify(this.diffDelta));
           });
       } else {
         this.nodes = this.getDatabyTimeStamp(
@@ -727,7 +728,10 @@ export default {
           this.showTimeline = true;
           this.propertyNodeSwitch = true;
           this.diffSwitch = false;
-          this.diffDelta = {}
+          this.diffDelta = {
+            add: { nodes: [], links: [] },
+            delete: { nodes: [], links: [] }
+          };
 
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
@@ -784,7 +788,10 @@ export default {
             console.log("可显示");
             this.propertyNodeSwitch = true;
             this.diffSwitch = false;
-            this.diffDelta = {}
+            this.diffDelta = {
+              add: { nodes: [], links: [] },
+              delete: { nodes: [], links: [] }
+            };
           })
           .catch(error => {
             console.error(error);
@@ -1608,22 +1615,22 @@ export default {
 }
 
 #new-graph .nodesAddedNode {
-  stroke: blue;
+  stroke: #409EFF;
   stroke-width: 50px;
 }
 
 #new-graph .nodesDeletedNode {
-  stroke: red;
+  stroke: #F56C6C;
   stroke-width: 50px;
 }
 
 #new-graph .nodesDeletedPropertyNode {
-  stroke: red;
+  stroke: #F56C6C;
   r: 12;
 }
 
 #new-graph .nodesAddedPropertyNode {
-  stroke: blue;
+  stroke: #409EFF;
   r: 12;
 }
 </style>
