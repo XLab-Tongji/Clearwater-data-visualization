@@ -168,7 +168,11 @@ public class FusekiDriver {
     public static boolean readJekins(HashMap data){
 
         String fullurl = ((HashMap)data.get("build")).get("full_url").toString();
+        String[] list = fullurl.split("/");
         String name = data.get("name").toString();
+        name += "_";
+        name += list[list.length-1];
+        System.out.println(name);
         String number = String.valueOf((int)((HashMap)data.get("build")).get("number"));
         String status = ((HashMap)data.get("build")).get("status").toString();
         String phase= ((HashMap)data.get("build")).get("phase").toString();
@@ -192,7 +196,7 @@ public class FusekiDriver {
             hashMap.put("sid",eventID);
             hashMap.put("tid",timeID);
             hashMap.put("type","ends_at");
-            addLink(hashMap);
+            addLink2(hashMap, true, time);
         }else{
             Date day=new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -210,7 +214,7 @@ public class FusekiDriver {
             hashMap.put("sid",eventID);
             hashMap.put("tid",timeID);
             hashMap.put("type","starts_at");
-            addLink(hashMap);
+            addLink2(hashMap, true, time);
 
         }
         return true;
@@ -222,11 +226,7 @@ public class FusekiDriver {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
         String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
         String full_url = data.get("full_url").toString();
-        String[] list = full_url.split("/");
         String name = data.get("name").toString();
-        name += "_";
-        name += list[list.length-2];
-        System.out.println(name);
         String number = data.get("number").toString();
         String status = data.get("status").toString();
         String serviceUrl = "http://event/"+address+"/"+name;
