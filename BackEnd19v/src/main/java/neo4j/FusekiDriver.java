@@ -222,7 +222,11 @@ public class FusekiDriver {
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
         String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
         String full_url = data.get("full_url").toString();
+        String[] list = full_url.split("/");
         String name = data.get("name").toString();
+        name += "_";
+        name += list[list.length-2];
+        System.out.println(name);
         String number = data.get("number").toString();
         String status = data.get("status").toString();
         String serviceUrl = "http://event/"+address+"/"+name;
