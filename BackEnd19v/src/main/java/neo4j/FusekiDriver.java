@@ -232,7 +232,7 @@ public class FusekiDriver {
         String serviceUrl = "http://event/"+address+"/"+name;
         try {
             Model model = ModelFactory.createDefaultModel();
-            Resource resource = model.createResource(serviceUrl+"/"+name);
+            Resource resource = model.createResource(serviceUrl);
             System.out.println(serviceUrl);
             System.out.println("-------");
             resource.addProperty(model.createProperty(serviceUrl, "/full_url"), full_url);
