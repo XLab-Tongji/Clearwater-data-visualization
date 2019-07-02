@@ -535,8 +535,8 @@ export default {
       return {
         force: this.force,
         size: {
-          h: 800
-          // w: 1240
+          h: window.innerHeight,
+          w: window.innerWidth
         },
         offset: {
           x: this.offset_X,

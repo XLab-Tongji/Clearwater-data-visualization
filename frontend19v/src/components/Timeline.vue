@@ -6,7 +6,7 @@
       <div class="time">
         <div class="line">-------------------------</div>
         <!-- radio 有用 name 来区分多个表单，没有 name 默认是一个 -->
-        <input type="radio" :value="index" v-model="pickedTimeStamp" class="timePoint">
+        <input type="radio" :value="index" v-model="pickedTimeStamp" class="timePoint" />
         <div class="timeText">{{timeStamp.slice(0,10)}}</div>
         <div class="timeText">{{timeStamp.slice(11)}}</div>
       </div>
@@ -14,7 +14,7 @@
     <div class="timeline">
       <div class="time">
         <div class="line">-------------------------</div>
-        <input type="radio" value="now" v-model="pickedTimeStamp" class="timePoint">
+        <input type="radio" value="now" v-model="pickedTimeStamp" class="timePoint" />
         <div class="timeText">now</div>
         <div class="timeText">&emsp;</div>
       </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import EventLabel from '@/components/EventLabel'
+import EventLabel from "@/components/EventLabel";
 export default {
   props: {
     allTimeStamps: Array,
@@ -67,15 +67,17 @@ export default {
       }
       this.$emit(
         "click",
-        newVal === "now"? "now":this.orderedTimeStamps[newVal],
+        newVal === "now" ? "now" : this.orderedTimeStamps[newVal],
         this.orderedTimeStamps[lastVal]
       );
     }
   },
   mounted() {
     // 让滚动条在最右边
-    document.getElementById('timeline-container').scrollLeft = document.getElementById('timeline-container').scrollWidth
-  },
+    document.getElementById(
+      "timeline-container"
+    ).scrollLeft = document.getElementById("timeline-container").scrollWidth;
+  }
 };
 </script>
 
@@ -95,7 +97,9 @@ export default {
   padding-bottom: 20px;
   transition: bottom 0.3s;
 }
-
+#timeline-container::-webkit-scrollbar {
+  display: none;
+}
 #timeline-container:hover {
   bottom: 0px;
 }

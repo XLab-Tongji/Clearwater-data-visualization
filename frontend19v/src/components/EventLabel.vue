@@ -1,26 +1,26 @@
 <template>
   <div class="event-label bubble bottom" v-if="itsTime" :style="{border: '1px solid ' + color}">
-    <div :style="{overflow: 'auto'}">
-    {{eventName}}
-     <br />
-    {{startOrEnd}}
+    <div class="scroll-container">
+      {{eventName}}
+      <br />
+      {{startOrEnd}}
     </div>
   </div>
 </template>
 
 <script>
-import {getColor} from '@/lib/colors.js'
+import { getColor } from "@/lib/colors.js";
 export default {
   name: "event-label",
   props: {
     eventList: Array,
-    timeStamp: String,
+    timeStamp: String
   },
   data() {
     return {
       eventName: "",
       startOrEnd: "",
-      color: "",
+      color: ""
     };
   },
   computed: {
@@ -44,26 +44,21 @@ export default {
       return flag;
     }
   },
-  methods: {
-   
-  }
+  methods: {}
 };
 </script>
 
 <style lang="less" scoped>
 .bubble {
   background: #fff;
-  // float: left;
   border: 1px solid #d0cfd2;
   padding: 5px;
   box-shadow: 0px 0px 2px #000;
   border-radius: 4px;
   height: 50px;
   width: 110px;
-  // margin: 10px;
   position: relative;
   top: 30px;
-  // overflow: hidden;
 
   &:after {
     content: "";
@@ -88,6 +83,13 @@ export default {
     border-width: 11px 13px 0 13px;
     bottom: -13px;
     left: 45%;
+  }
+}
+
+.scroll-container {
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>
