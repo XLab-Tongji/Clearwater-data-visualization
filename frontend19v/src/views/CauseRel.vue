@@ -359,6 +359,28 @@ export default {
                 })
                 .call(d3.zoom().scaleExtent([-5, 2]));
 
+              var line_Text = svg
+                  .selectAll('.linetext')
+                  .data(lines)
+                  .enter()
+                  .append('text')
+                  .attr('class', 'linetext')
+                  .text((d) => {
+                  //设置关系文本
+                    d.relation = (Math.floor(Math.random()*3))/2
+                    return d.relation
+              })
+
+              var link_Text = svg
+                  .selectAll('.linktext')
+                  .data(links)
+                  .enter()
+                  .append('text')
+                  .attr('class', 'linktext')
+                  .text((d) => {
+                    d.relation = (Math.floor(Math.random()*3))/2
+                    return d.relation
+                  })
               //绘制节点
               var svg_nodes = svg
                 .selectAll("circle")
@@ -440,6 +462,18 @@ export default {
               }
 
               function ticked() {
+
+                //更新连接线上文字的位置
+                link_Text.attr('x', function (d) {
+                    return (d.source.x + d.target.x) / 2
+                })
+                link_Text.attr('y', function (d) { return (d.source.y + d.target.y) / 2 })
+
+                line_Text.attr('x', function (d) {
+                    return (d.source.x + d.target.x) / 2
+                })
+                line_Text.attr('y', function (d) { return (d.source.y + d.target.y) / 2 })
+
                 svg_links.attr("d", function(d) {
                   return drawLineArrow(
                     d.source.x,
@@ -828,6 +862,22 @@ export default {
                   .attr("y", o.y);
               }
 
+              function getEdgeBySourceTarget(source, target) {
+                  for(var i = 0; i < lines.length; i++) {
+                      if(lines[i].source.name == source && lines[i].target.name == target) {
+                          return lines[i]
+                      }
+                      if(lines[i].source.name == target && lines[i].target.name == source) {
+                          return lines[i]
+                      }
+                  }
+                  for(var i = 0; i < links.length; i++) {
+                      if(links[i].source.name == source && links[i].target.name == target) {
+                          return links[i]
+                      }
+                  }
+              }
+
               function show_paths_string() {
                 build_paths_string();
                 d3.select("div.sub_paths_string_div").remove();
@@ -837,14 +887,29 @@ export default {
                   .attr("class", "sub_paths_string_div");
                 // sub_paths_string_div.append('br');
                 // sub_paths_string_div.append('br');
+                var paths_objects = []
                 for (var i = 0; i < paths_string.length; i++) {
                   var _path_string = paths_string[i]
                     .split(",")
                     .reverse()
                     .join(" --> ");
+                  console.log(_path_string)
+                  var path_value = 0.0
+                  var path_nodes = paths_string[i].split(",").reverse()
+                  for(var j = 0; j < path_nodes.length - 1; j++) {
+                    path_value = path_value + getEdgeBySourceTarget(path_nodes[j],path_nodes[j + 1]).relation
+                  }
+                  paths_objects[i] = {"path":_path_string, "path_value": path_value}
+                }
+                paths_objects.sort(
+                    function (a, b) {
+                        return a.path_value - b.path_value
+                    }
+                )
+                for(var i = 0; i < paths_objects.length; i++){
                   sub_paths_string_div
                     .append("p")
-                    .text("根因路径" + (i + 1) + ":  " + _path_string)
+                    .text("根因路径" + (i + 1) + "(权重分："+ paths_objects[i].path_value + ")" + ":  " + paths_objects[i].path)
                     .attr("class", "paths_string");
                 }
               }
