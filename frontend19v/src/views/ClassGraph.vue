@@ -48,14 +48,16 @@
                     .get("/data2.txt")
                     .then(response => {
 
+                        var isShowLinks = false;
+
                         function pack(){
                             var _chart = {};
 
                             var _width = 1024, _height = 1024,  //1280
                                 _svg,
                                 _r = 800,  // 720
-                                _x = d3.scaleLinear().range([0, _r]),
-                                _y = d3.scaleLinear().range([0, _r]),
+                                _x = d3.scale.linear().range([0, _r]),
+                                _y = d3.scale.linear().range([0, _r]),
                                 _nodes,   // original nodes info
                                 _bodyG,
                                 _switch;
@@ -66,7 +68,8 @@
                                 if (!_svg) {
                                     _svg = d3.select("div#class-graph").append("svg")
                                         .attr("height", _height)
-                                        .attr("width", _width);
+                                        .attr("width", _width)
+                                        .attr("id", "class-graph-svg");
                                 }
                                 if(!_switch){
                                     _switch = d3.select("div#class-graph").append("div")
@@ -91,20 +94,20 @@
                                         });
                                 }
 
-                                var pack = d3.pack()
-                                    .size([_r, _r]);
-                                //     .value(function (d) {
-                                //     return d.size;
-                                // }).padding(4);
-                                console.log(pack.nodes(_nodes));
+                                var pack = d3.layout.pack()
+                                    .size([_r, _r])
+                                    .value(function (d) {
+                                    return d.size;
+                                }).padding(4);
+                                // console.log(pack.nodes(_nodes));
 
-                                // var nodes = pack.nodes(_nodes);
-                                //
-                                // renderCircles(nodes);
-                                //
-                                // renderLabels(nodes);
-                                //
-                                // bindEvents(nodes);
+                                var nodes = pack.nodes(_nodes);
+
+                                renderCircles(nodes);
+
+                                renderLabels(nodes);
+
+                                bindEvents(nodes);
                             }
 
                             function renderCircles(nodes) {
@@ -171,25 +174,6 @@
                                         }
                                         return d.r;
                                     })
-                                    .style("fill", function(d){
-                                        // return fillColor[d.depth%fillColor.length];
-                                        if(d.type == "package")
-                                        {
-                                            return this.packageColor;
-                                        }
-                                        if(d.type == "class")
-                                        {
-                                            return this.classColor;
-                                        }
-                                        if(d.type == "method")
-                                        {
-                                            return this.methodColor;
-                                        }
-                                    })
-                                    // .style("stroke", function(d){
-                                    //     // return fillColor[d.depth%fillColor.length];
-                                    //     return "#333";
-                                    // })
                                     .style("opacity", function(d){
                                         if(d.type == "method")
                                         {
@@ -428,6 +412,7 @@
                                 switchButton.addEventListener("change", function(d){
                                     // console.log(d);
                                     isShowLinks = !isShowLinks;
+                                    // console.log(this.isShowLinks);
                                     renderLinks(nodes);
                                 })
                             }
@@ -556,7 +541,7 @@
     /*body{*/
     /*text-align: center;*/
     /*}*/
-    svg
+    svg#class-graph-svg
     {
         float:right;
     }
@@ -633,12 +618,27 @@
         display:none;
     }
 
-    svg line
+    circle.package
+    {
+        fill:#feee7d;
+    }
+
+    circle.class
+    {
+        fill:#99f19e;
+    }
+
+    circle.method
+    {
+        fill:#9055a2;
+    }
+
+    svg#class-graph-svg line
     {
         cursor: pointer;
     }
 
-    svg line:hover
+    svg#class-graph-svg line:hover
     {
         stroke: red;
         stroke-width: 4px;
