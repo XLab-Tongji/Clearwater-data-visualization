@@ -1,6 +1,0 @@
-45,0002-sprout-fails-before-receiving-request,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0002-sprout-fails-before-receiving-request.md
-46,0003-sprout-fails-after-dialog-established,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0003-sprout-fails-after-dialog-established.md
-47,0004-sprout-fails-when-transaction-in-progress,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0004-sprout-fails-when-transaction-in-progress.md
-48,0005-homestead-dime-fails,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0005-homestead-dime-fails.md
-49,0006-vellum-node-fails,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0006-vellum-node-fails.md
-50,0007-vellum-fails-whilist-a-request-is-outstanding,ADR,0,https://github.com/XLab-Tongji/PerformanceTestDocs/blob/master/failures-adr/0007-vellum-fails-whilist-a-request-is-outstanding.md

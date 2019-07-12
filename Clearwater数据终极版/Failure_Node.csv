@@ -1,6 +1,0 @@
-59,sprout-fails-before-receiving-request,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
-60,sprout-fails-after-dialog-established,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
-61,sprout-fails-when-transaction-in-progress,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
-62,homestead-dime-fails,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
-63,vellum-node-fails,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
-64,vellum-fails-whilist-a-request-is-outstanding,Fail-stop,0,http://www.projectclearwater.org/technical/call-flows/
