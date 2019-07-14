@@ -45,5 +45,7 @@ docker run -d -p 8080:8080 leonnnop/operation_knowledgegraph_tj18:frontendV0.2.2
 
 ## MongoDB数据库部署情况
 
+服务器：部署在了服务器的docker上，端口为27020，访问地址为http://10.60.38.173:27020。
 
+​	数据库名为knowledgegraph。
 
