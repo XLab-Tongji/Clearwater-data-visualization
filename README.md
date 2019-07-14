@@ -35,5 +35,15 @@ docker run -d -p 8080:8080 leonnnop/operation_knowledgegraph_tj18:frontendV0.2.2
 
 ## 关于Fuseki
 
+服务器：部署在了服务器的docker上，端口为3030，访问地址为http://10.60.38.173:3030。
+
+​	帐号为：admin
+
+​	密码为：D0rlghQl5IAgYOm
+
+
+
+## MongoDB数据库部署情况
+
 
 
