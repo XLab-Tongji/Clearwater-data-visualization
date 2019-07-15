@@ -100,8 +100,6 @@
                                     return d.size;
                                 }).padding(4);
 
-                                console.log(_nodes)
-
                                 const root = d3.hierarchy(_nodes)
 
                                 var nodes = pack(root);
@@ -111,12 +109,6 @@
                                 renderLabels(nodes.descendants());
 
                                 bindEvents(nodes.descendants());
-                            }
-
-                            function hovered(hover) {
-                                return function(d) {
-                                    d3.selectAll(d.ancestors().map(function(d) { return d.node; })).classed("node--hover", hover);
-                                };
                             }
 
                             function renderCircles(nodes) {
