@@ -56,8 +56,8 @@
                             var _width = 1024, _height = 1024,  //1280
                                 _svg,
                                 _r = 800,  // 720
-                                _x = d3.scale.linear().range([0, _r]),
-                                _y = d3.scale.linear().range([0, _r]),
+                                _x = d3.scaleLinear().range([0, _r]),
+                                _y = d3.scaleLinear().range([0, _r]),
                                 _nodes,   // original nodes info
                                 _bodyG,
                                 _switch;
@@ -94,20 +94,21 @@
                                         });
                                 }
 
-                                var pack = d3.layout.pack()
+                                var pack = d3.pack()
                                     .size([_r, _r])
-                                    .value(function (d) {
+                                    .radius(function (d) {
                                     return d.size;
                                 }).padding(4);
-                                // console.log(pack.nodes(_nodes));
 
-                                var nodes = pack.nodes(_nodes);
+                                const root = d3.hierarchy(_nodes)
 
-                                renderCircles(nodes);
+                                var nodes = pack(root);
 
-                                renderLabels(nodes);
+                                renderCircles(nodes.descendants());
 
-                                bindEvents(nodes);
+                                renderLabels(nodes.descendants());
+
+                                bindEvents(nodes.descendants());
                             }
 
                             function renderCircles(nodes) {
@@ -116,19 +117,19 @@
                                 var circles = _bodyG.selectAll("circle")
                                     .data(nodes);
 
-                                circles.enter().append("svg:circle");
+                                circles = circles.enter().append("circle");
 
                                 circles.transition()
                                     .attr("id", function(d){
-                                        if(d.type == "method")   //有的id重复了
+                                        if(d.data.type == "method")   //有的id重复了
                                         {
-                                            return d.type+":"+d.parent.name+":"+d.name.split(":").splice(-1,1);
+                                            return d.data.type+":"+d.parent.name+":"+d.data.name.split(":").splice(-1,1);
                                         }
-                                        return d.type+":"+d.name;
+                                        return d.data.type+":"+d.data.name;
                                     })
                                     .attr("class", function (d, i) {
-                                        var classList = d.type;   // rootElement, package, class, method;
-                                        if(d.type == "method")
+                                        var classList = d.data.type;   // rootElement, package, class, method;
+                                        if(d.data.type == "method")
                                         {
                                             classList = classList + " hidden";
                                         }
@@ -145,26 +146,26 @@
                                         //     return d.r * 0.65;
                                         // }
                                         // return d.r * 0.95;
-                                        if(d.type == "package" && d.children)
+                                        if(d.data.type == "package" && d.children)
                                         {
                                             for(let j=0;j<d.children.length;j++)
                                             {
                                                 // console.log(d.children[j]);
-                                                if(d.children[j].type == "class")
+                                                if(d.children[j].data.type == "class")
                                                 {
                                                     return d.r;
                                                 }
                                             }
                                             return d.r+(60-d.depth*10);
                                         }
-                                        if(d.type == "class" && d.parent)
+                                        if(d.data.type == "class" && d.parent)
                                         {
                                             if(d.r == d.parent.r)
                                             {
                                                 return d.r - 4;
                                             }
                                         }
-                                        if(d.type == "method")
+                                        if(d.data.type == "method")
                                         {
                                             if(d.parent.children.length == 1)
                                             {
@@ -175,7 +176,7 @@
                                         return d.r;
                                     })
                                     .style("opacity", function(d){
-                                        if(d.type == "method")
+                                        if(d.data.type == "method")
                                         {
                                             return .7;
                                         }
@@ -194,15 +195,15 @@
                                 var labels = _bodyG.selectAll("text")
                                     .data(nodes);
 
-                                labels.enter().append("svg:text")
+                                labels = labels.enter().append("svg:text")
                                     .attr("dy", ".35em")
                                     .attr("text-anchor", "middle")  // start, middle, end
                                     .style("opacity", 0);
 
                                 labels.transition()
                                     .attr("class", function (d, i) {
-                                        var classList = d.type;   // rootElement, package, class, method;
-                                        if(d.type == "method")
+                                        var classList = d.data.type;   // rootElement, package, class, method;
+                                        if(d.data.type == "method")
                                         {
                                             classList = classList + " hidden";
                                         }
@@ -210,11 +211,11 @@
                                     })
                                     .attr("x", function (d) {return d.x;})
                                     .attr("y", function (d) {
-                                        if(d.type == "package" && d.children)
+                                        if(d.data.type == "package" && d.children)
                                         {
                                             for(let j=0;j<d.children.length;j++)
                                             {
-                                                if(d.children[j].type == "class")
+                                                if(d.children[j].data.type == "class")
                                                 {
                                                     return d.y-d.r+4;
                                                 }
@@ -225,15 +226,15 @@
                                     })
                                     .text(function (d)
                                     {
-                                        var name = d.name;
+                                        var name = d.data.name;
                                         //处理方法名的展示
-                                        if(d.type == "method") //方法名才包括了包名、类名、方法名和：
+                                        if(d.data.type == "method") //方法名才包括了包名、类名、方法名和：
                                         {
                                             var array = name.split(":");
                                             return array[array.length-1];
                                         }
                                         //处理类名的展示
-                                        if(d.type == "class") // 类名包括了包名和类名
+                                        if(d.data.type == "class") // 类名包括了包名和类名
                                         {
                                             var array = name.split(".");
                                             return array[array.length-1];
@@ -257,7 +258,8 @@
                                 var links = dealLinkData(nodes);
 
                                 var lines = _bodyG.selectAll("line").data(links);
-                                lines.enter().append("svg:line")
+
+                                lines = lines.enter().append("svg:line")
                                     .attr("x1",function(d){return d.x1;})
                                     .attr("y1",function(d){return d.y1;})
                                     .attr("x2",function(d){return d.x2;})
@@ -272,7 +274,7 @@
                                 // 为svg增加 arrow marker
                                 // console.log(nodes);
                                 var links = [];
-                                var linkInfo = nodes[0].links;
+                                var linkInfo = nodes[0].data.links;
                                 linkInfo.forEach(function(currentLink){
                                     links.push({"x1":0,"y1":0,"x2":0,"y2":0});
                                     let sourceExist = false;
@@ -281,34 +283,34 @@
                                     let target = "";
                                     for(let i=1;i<nodes.length;i++)
                                     {
-                                        if(currentLink.source == nodes[i].name)
+                                        if(currentLink.source == nodes[i].data.name)
                                         {
                                             if(nodes[i].parent.isChildrenVisible) {
                                                 links[links.length - 1].x1 = nodes[i].x;
                                                 links[links.length - 1].y1 = nodes[i].y;
-                                                source = nodes[i].name;
+                                                source = nodes[i].data.name;
                                             }
                                             else
                                             {
                                                 links[links.length - 1].x1 = nodes[i].parent.x;
                                                 links[links.length - 1].y1 = nodes[i].parent.y;
-                                                source = nodes[i].parent.name;
+                                                source = nodes[i].parent.data.name;
                                             }
                                             sourceExist = true;
                                             continue;
                                         }
-                                        if(currentLink.target == nodes[i].name)
+                                        if(currentLink.target == nodes[i].data.name)
                                         {
                                             if(nodes[i].parent.isChildrenVisible) {
                                                 links[links.length - 1].x2 = nodes[i].x;
                                                 links[links.length - 1].y2 = nodes[i].y;
-                                                target = nodes[i].name;
+                                                target = nodes[i].data.name;
                                             }
                                             else
                                             {
                                                 links[links.length - 1].x2 = nodes[i].parent.x;
                                                 links[links.length - 1].y2 = nodes[i].parent.y;
-                                                target = nodes[i].parent.name;
+                                                target = nodes[i].parent.data.name;
                                             }
                                             targetExist = true;
                                             continue;
@@ -344,18 +346,18 @@
                             // 为circles绑定事件
                             function bindEvents(nodes) {
                                 var circles = _bodyG.selectAll("circle");
-                                var labels = _bodyG.selectAll("text")[0];
+                                var labels = _bodyG.selectAll("text")._groups[0];
                                 var lines = _bodyG.selectAll("line");
                                 var switchButton = document.querySelector("input#switch");
                                 // console.log(lines);
 
                                 //双击circle的时候，class circle会展示method circle，method circle会展示方法流程图
                                 circles.on("dblclick", function(d,i){
-                                    if(d.type == "class" && d.children)  //控制该class下的method的显示与否，通过classList来控制
+                                    if(d.data.type == "class" && d.children)  //控制该class下的method的显示与否，通过classList来控制
                                     {
                                         // 寻找class下的method：通过类名
                                         var circleElements = circles[0];
-                                        var className = d.name;
+                                        var className = d.data.name;
                                         for(let k=0;k<circleElements.length;k++)
                                         {
                                             let circleIdInfo = circleElements[k].getAttribute("id").split(":");
@@ -387,6 +389,7 @@
                                 // 鼠标悬浮在circle上的时候，label放大, circle和label的index是对应起来的
                                 circles.on("mouseenter", function(d,i){
                                     // 相应的label变大
+                                    console.log(labels[i])
                                     if(!labels[i].classList.contains("focus"))
                                     {
                                         labels[i].classList.add("focus");
@@ -446,7 +449,7 @@
 
                         // console.log(response);
                         var data=response.data;
-                        // console.log(data);
+                         console.log(data);
                         var nodesInfo = data.nodes;
                         var linksInfo = data.links;
                         var classesInfo = data.classes;
@@ -538,9 +541,9 @@
 </script>
 
 <style>
-    /*body{*/
-    /*text-align: center;*/
-    /*}*/
+    body{
+
+    }
     svg#class-graph-svg
     {
         float:right;
