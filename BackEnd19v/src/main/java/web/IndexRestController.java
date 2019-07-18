@@ -1,26 +1,14 @@
 package web;
 
-import com.csvreader.CsvReader;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import neo4j.MongoDriver;
 import neo4j.Neo4jDriver;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.sql.Time;
-import java.util.*;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.yaml.snakeyaml.Yaml;
@@ -28,10 +16,13 @@ import util.TimerUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.*;
 
 import static neo4j.FusekiDriver.*;
 import static neo4j.Neo4jDriver.*;
-import static neo4j.prometheusDriver.*;
+import static neo4j.prometheusDriver.DealPrometheusRequest;
+import static neo4j.prometheusDriver.newPrometheus;
 
 
 @RestController

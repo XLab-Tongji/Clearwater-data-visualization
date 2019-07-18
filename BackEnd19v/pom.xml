@@ -8,6 +8,8 @@
     <artifactId>project</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <file.encoding>UTF-8</file.encoding>
         <spring.version>4.3.9.RELEASE</spring.version>
         <mysql.version>5.1.29</mysql.version>
@@ -324,12 +326,32 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-api</artifactId>
+            <version>2.1.6</version>
+        </dependency>
 
     </dependencies>
 
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.5</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>MainClassName</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
             <!--main class-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -342,6 +364,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                                <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -395,7 +418,8 @@
             <artifactId>tomcat7-maven-plugin</artifactId>
             <version>2.2</version>
             <configuration>
-                <url>http://10.60.38.173:9990/manager/text</url>
+                <url>http://10.60.38.173:9898/manager/text</url>
+                <server>tomcat</server>
                 <username>admin</username>
                 <password>admin</password>
                 <path>/bbs</path>
