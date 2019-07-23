@@ -1,7 +1,10 @@
 <template>
-    <div id="class-graph">
+    <!--<div >-->
+        <div id="class-graph">
 
-    </div>
+        </div>
+
+    <!--</div>-->
 </template>
 
 <script>
@@ -17,6 +20,7 @@
         components: {},
         data() {
             return {
+                isFlowVisibel:false,
                 sizeValue:3900,
                 packageColor:"#feee7d",
                 classColor:"#99f19e",
@@ -53,35 +57,48 @@
                         function pack(){
                             var _chart = {};
 
-                            var _width = 1024, _height = 1024,  //1280
+                            var _width = 1280, _height = 1280,  //1280
                                 _svg,
-                                _r = 800,  // 720
+                                _r = 0.5,  // 720
                                 _x = d3.scaleLinear().range([0, _r]),
                                 _y = d3.scaleLinear().range([0, _r]),
                                 _nodes,   // original nodes info
                                 _bodyG,
-                                _switch;
+                                _switch,
+                                _circleInfoDiv;
+                            // console.log(_x);
 
                             // var newNodesInfo;  // a variable records the newest nodes info.
 
                             _chart.render = function () {
+                                if(!_switch){
+                                    _switch = d3.select("div#class-graph").append("div")
+                                        .attr("data-control", "BOX")
+                                        .attr("id", "Box_points_switch")
+                                        // .append("p").text("调用关系")
+                                        .append("label")
+                                        .append("input")
+                                        .attr("class", "mui-switch mui-switch-anim")
+                                        .attr("type", "checkbox")
+                                        .attr("id", "switch");
+                                    // d3.select("div#Box_points_switch").append("p").text("调用关系");
+                                }
                                 if (!_svg) {
                                     _svg = d3.select("div#class-graph").append("svg")
                                         .attr("height", _height)
                                         .attr("width", _width)
                                         .attr("id", "class-graph-svg");
                                 }
-                                if(!_switch){
-                                    _switch = d3.select("div#class-graph").append("div")
-                                        .attr("data-control", "BOX")
-                                        .attr("id", "Box_points_switch")
-                                        .append("p").text("调用关系：")
-                                        .append("label")
-                                        .append("input")
-                                        .attr("class", "mui-switch mui-switch-anim")
-                                        .attr("type", "checkbox")
-                                        .attr("id", "switch");
+                                if(!_circleInfoDiv){
+                                    _circleInfoDiv = d3.select("div#class-graph").append("div")
+                                        .attr("id","circle-info-div")
+                                        .attr("class","hidden");
+                                    _circleInfoDiv.append("p")
+                                        .attr("id", "circle-info-p1");
+                                    _circleInfoDiv.append("p")
+                                        .attr("id", "circle-info-p2");
                                 }
+
                                 renderBody(_svg);
                             };
 
@@ -89,8 +106,11 @@
                                 if (!_bodyG) {
                                     _bodyG = svg.append("g")
                                         .attr("class", "body")
+                                        .attr("width",_height)
+                                        .attr("height", _height)
                                         .attr("transform", function (d) {
                                             return "translate(" + (_width - _r) / 2 + "," + (_height - _r) / 2 + ")";
+                                            // return "translate(" + 0 + "," + 0 + ")";
                                         });
                                 }
 
@@ -98,9 +118,12 @@
                                     .size([_r, _r])
                                     .radius(function (d) {
                                     return d.size;
-                                }).padding(4);
+                                }).padding(15);
 
-                                const root = d3.hierarchy(_nodes)
+                                // console.log(_nodes);
+                                const root = d3.hierarchy(_nodes);
+                                // console.log(root);
+                                root.sum(function(d){return d.value});
 
                                 var nodes = pack(root);
 
@@ -123,7 +146,8 @@
                                     .attr("id", function(d){
                                         if(d.data.type == "method")   //有的id重复了
                                         {
-                                            return d.data.type+":"+d.parent.name+":"+d.data.name.split(":").splice(-1,1);
+                                            // console.log(d);
+                                            return d.data.type+":"+d.parent.data.name+":"+d.data.name.split(":").splice(-1,1);
                                         }
                                         return d.data.type+":"+d.data.name;
                                     })
@@ -140,7 +164,6 @@
                                     })
                                     .attr("cy", function (d) {return d.y;})
                                     .attr("r", function (d) {
-
                                         // if(!d.children)
                                         // {
                                         //     return d.r * 0.65;
@@ -148,6 +171,7 @@
                                         // return d.r * 0.95;
                                         if(d.data.type == "package" && d.children)
                                         {
+                                            // console.log(d);
                                             for(let j=0;j<d.children.length;j++)
                                             {
                                                 // console.log(d.children[j]);
@@ -156,7 +180,8 @@
                                                     return d.r;
                                                 }
                                             }
-                                            return d.r+(60-d.depth*10);
+                                            return d.r+(60-d.depth*5);
+                                            // return d.r+(60-d.depth*5);
                                         }
                                         if(d.data.type == "class" && d.parent)
                                         {
@@ -167,11 +192,16 @@
                                         }
                                         if(d.data.type == "method")
                                         {
-                                            if(d.parent.children.length == 1)
-                                            {
-                                                return d.r*0.5;
-                                            }
-                                            return d.r*0.65;
+                                            // if(d.parent.children.length == 1)
+                                            // {
+                                            //     console.log(d.parent.r);
+                                            //     return d.r*0.5;
+                                            //     // return d.parent.r*0.5;
+                                            // }
+                                            // return d.r*0.65;
+                                            // return d.parent.r/d.paren.children.length;
+                                            let r = d.parent.r/(d.parent.children.length==1?2:d.parent.children.length) ;
+                                            return r;
                                         }
                                         return d.r;
                                     })
@@ -209,7 +239,9 @@
                                         }
                                         return classList;
                                     })
-                                    .attr("x", function (d) {return d.x;})
+                                    .attr("x", function (d) {
+                                        return d.x;
+                                    })
                                     .attr("y", function (d) {
                                         if(d.data.type == "package" && d.children)
                                         {
@@ -217,7 +249,7 @@
                                             {
                                                 if(d.children[j].data.type == "class")
                                                 {
-                                                    return d.y-d.r+4;
+                                                    return d.y-d.r+3;
                                                 }
                                             }
                                             return d.y-d.r-(60-d.depth*12);
@@ -242,7 +274,8 @@
                                         return name;
                                     })
                                     .style("opacity", function (d) {
-                                        return d.r > 5 ? 1 : 0;
+                                        // return d.r > 3 ? 1 : 0;
+                                        return 1;
                                     });
 
                                 labels.exit().remove();
@@ -260,6 +293,7 @@
                                 var lines = _bodyG.selectAll("line").data(links);
 
                                 lines = lines.enter().append("svg:line")
+                                    .attr("class","call-link")
                                     .attr("x1",function(d){return d.x1;})
                                     .attr("y1",function(d){return d.y1;})
                                     .attr("x2",function(d){return d.x2;})
@@ -346,24 +380,30 @@
                             // 为circles绑定事件
                             function bindEvents(nodes) {
                                 var circles = _bodyG.selectAll("circle");
+                                // var circles = document.querySelectorAll("g.body circle");
                                 var labels = _bodyG.selectAll("text")._groups[0];
-                                var lines = _bodyG.selectAll("line");
+                                var lines = _bodyG.selectAll(".call-link");
                                 var switchButton = document.querySelector("input#switch");
-                                // console.log(lines);
+                                var circleElements = (circles._groups)[0];
 
                                 //双击circle的时候，class circle会展示method circle，method circle会展示方法流程图
                                 circles.on("dblclick", function(d,i){
                                     if(d.data.type == "class" && d.children)  //控制该class下的method的显示与否，通过classList来控制
                                     {
                                         // 寻找class下的method：通过类名
-                                        var circleElements = circles[0];
+                                        // var circleElements = document.querySelectorAll("g.body circle");
+                                        // var circleElements = (circles._groups)[0];
                                         var className = d.data.name;
                                         for(let k=0;k<circleElements.length;k++)
                                         {
                                             let circleIdInfo = circleElements[k].getAttribute("id").split(":");
                                             let cirCleType = circleIdInfo[0];
+                                            // if(cirCleType == "method"){
+                                            //     console.log(circleIdInfo);
+                                            // }
                                             if(cirCleType == "method" && circleIdInfo.length>2 &&circleIdInfo[1] == className)
                                             {
+                                                // console.log(k);
                                                 if(circleElements[k].classList.contains("hidden"))
                                                 {
                                                     circleElements[k].classList.remove("hidden");
@@ -379,7 +419,13 @@
                                             }
                                         }
                                         nodes[i].isChildrenVisible = !nodes[i].isChildrenVisible;
+                                        // ControlCirclesDisplayUnderClass(className,circleElements,labels,nodes,i);
                                         renderLinks(nodes);
+                                    }
+                                    if(d.data.type == "package" && d.children)  //package上的双击事件
+                                    {
+                                        var packageName = d.data.name;
+
                                     }
                                     // console.log(nodes);
                                     // console.log(isVisible("works.weave.socks.cart.cart.CartContentsResource:lambda$add$1", nodes));
@@ -389,11 +435,16 @@
                                 // 鼠标悬浮在circle上的时候，label放大, circle和label的index是对应起来的
                                 circles.on("mouseenter", function(d,i){
                                     // 相应的label变大
-                                    console.log(labels[i])
+                                    // console.log(labels[i])
                                     if(!labels[i].classList.contains("focus"))
                                     {
                                         labels[i].classList.add("focus");
+
                                     }
+                                    // console.log(d);
+                                    d3.select("div#circle-info-div").classed("hidden",false);
+                                    d3.select("p#circle-info-p1").text("type:  "+d.data.type);
+                                    d3.select("p#circle-info-p2").text("name: "+d.data.name.split(".")[d.data.name.split(".").length-1]);
 
                                     return false;
                                 });
@@ -404,20 +455,63 @@
                                     {
                                         labels[i].classList.remove("focus");
                                     }
-
+                                    d3.select("div#circle-info-div").classed("hidden",true);
                                     return false;
                                 });
 
                                 //鼠标悬浮在line上的时候，line的颜色改变，高亮
-                                // lines.on("mouseenter", function(d, i){
-                                //     console.log(this);
-                                // })
+                                // console.log(lines);
+                                lines.on("mouseenter", function(d, i){
+                                    console.log(d);
+                                })
+                                // d3.select("svg#class-graph-svg").selectAll("line")
+                                //     .on("mouseenter", function(d,i){
+                                //         d3.select("div#circle-info-div").classed("hidden",false);
+                                //         d3.select("p#circle-info-p1").text("type:  ");
+                                //         // d3.select("p#circle-info-p2").text("name: "+d.data.name.split(".")[d.data.name.split(".").length-1]);
+                                //     })
+                                    // .on("mouseout", function(d,i){
+                                    //     d3.select("div#circle-info-div").classed("hidden",true);
+                                    // });
+
+                                //控制调用关系箭头显示的有无
                                 switchButton.addEventListener("change", function(d){
                                     // console.log(d);
                                     isShowLinks = !isShowLinks;
                                     // console.log(this.isShowLinks);
                                     renderLinks(nodes);
                                 })
+
+                            }
+
+                            function ControlCirclesDisplayUnderClass(className, circleElements, labels, nodes, nodeIndex){
+                                for(let k=0;k<circleElements.length;k++)
+                                {
+                                    let circleIdInfo = circleElements[k].getAttribute("id").split(":");
+                                    let cirCleType = circleIdInfo[0];
+
+                                    if(cirCleType == "method"){
+                                        console.log(circleIdInfo);
+                                        console.log(className);
+                                    }
+                                    if(cirCleType == "method" && circleIdInfo.length>2 &&circleIdInfo[1] == className)
+                                    {
+                                        console.log(k);
+                                        if(circleElements[k].classList.contains("hidden"))
+                                        {
+                                            circleElements[k].classList.remove("hidden");
+                                            labels[k].classList.remove("hidden");
+                                            labels[nodeIndex].setAttribute("y",d.y-d.r+10);
+                                        }
+                                        else
+                                        {
+                                            circleElements[k].classList.add("hidden");
+                                            labels[k].classList.add("hidden");
+                                            labels[nodeIndex].setAttribute("y",d.y);
+                                        }
+                                    }
+                                }
+                                nodes[nodeIndex].isChildrenVisible = !nodes[nodeIndex].isChildrenVisible;
                             }
 
                             _chart.width = function (w) {
@@ -449,7 +543,7 @@
 
                         // console.log(response);
                         var data=response.data;
-                         console.log(data);
+                         // console.log(data);
                         var nodesInfo = data.nodes;
                         var linksInfo = data.links;
                         var classesInfo = data.classes;
@@ -500,6 +594,9 @@
                                     {
                                         curCA[curCA.length-1].isChildrenVisible = false; //设置class的method最初不可见
                                     }
+                                    // if(curCA[curCA.length-1].type == "package"){
+                                    //     curCA[curCA.length-1].isChildrenVisible = true; //设置package的子元素最初可见
+                                    // }
                                     curCA = curCA[curCA.length-1].children;
                                 }
                             }
@@ -541,13 +638,19 @@
 </script>
 
 <style>
-    body{
+    div#class-graph{
+        /*width:1024px;*/
+        /*height:1024px;*/
+        width:100%;
+        height:100%;
+        overflow: scroll;
+    }
 
+    g.body{
+        /*width:1000px;*/
+        /*height:1000px;*/
     }
-    svg#class-graph-svg
-    {
-        float:right;
-    }
+
 
     button.showLinksButton{
         height: 30px;
@@ -647,12 +750,20 @@
         stroke-width: 4px;
     }
 
+    svg#class-graph-svg
+    {
+        /*float:left;*/
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     /*switch开关*/
     div#Box_points_switch{
         float:left;
-        margin-top:10%;
-        margin-left:5%;
+        margin-top:10px;
+        margin-left:2%;
         vertical-align: top;
+        width:100%;
     }
     div#Box_points_switch p{
         font-family: "Songti SC", sans-serif;
@@ -683,7 +794,7 @@
         height: 3em;
         position: absolute;
         top: 0px;
-        left: 0;
+        left: 0px;
         border-radius: 3em;
         background-color: #fff;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -704,6 +815,35 @@
     }
     .mui-switch.mui-switch-anim:checked:before {
         transition: left 0.3s;
+    }
+
+    div#circle-info-div{
+        position:fixed;
+        background-color:lightblue;
+        text-align: left;
+        font-family: sans-serif;
+        font-size: 12px;
+        border:2px solid cornflowerblue;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        top:20px;
+        right:20px;
+        width:200px;
+        height:100px;
+    }
+    div#circle-info-div.hidden{
+        display:none;
+    }
+
+    div#circle-info-div p{
+        padding-left:4px;
+        padding-right:4px;
+        width:100%;
+        -ms-word-wrap: break-word;
+        word-wrap: break-word;
+        font-family: sans-serif,"Adobe Arabic";
+        font-size:14px;
     }
 
 </style>
