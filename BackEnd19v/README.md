@@ -2,7 +2,7 @@
 
 ## Build
 ```
-mvn clean package dockerfile:build -DskipTests=true
+mvn clean package -U -Dmaven.test.skip=true tomcat7:redeploy
 ```
 
 ## Run
