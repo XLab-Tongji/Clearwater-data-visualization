@@ -2,23 +2,18 @@ package neo4j;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.http.client.HttpClient;
-import org.apache.jena.base.Sys;
 import org.springframework.stereotype.Component;
+import org.terracotta.statistics.Time;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.*;
-
-import com.csvreader.CsvWriter;
-import org.terracotta.statistics.Time;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static neo4j.Neo4jDriver.*;
-import static neo4j.Neo4jDriver.causationData;
 
 @Component
 public class prometheusDriver {
