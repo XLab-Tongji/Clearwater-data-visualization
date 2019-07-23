@@ -177,24 +177,37 @@
         </div>
       </el-card>
     </transition>
-    <!-- 时间线 -->
     <timeline
-      v-if="showTimeline"
-      :allTimeStamps="allTimeStamps"
-      :eventList="perfEventList"
-      @click="getDatabyTimeStamp"
+            v-if="showTimeline"
+            :allTimeStamps="allTimeStamps"
+            :eventList="perfEventList"
+            @click="getDatabyTimeStamp"
     ></timeline>
+    <event-dygraph></event-dygraph>
+    <div id="rightSide" class="right-side">
+      <h4>
+        <i id="shrink-icon" class="funny el-icon-arrow-right" @click="shrink_open()" align="left" ></i>
+        Time range
+      </h4>
+      <!-- 时间线 -->
+      <div>
+        <time-period></time-period>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
 import SearchTree from "../components/SearchTree.vue";
-import Timeline from "../components/Timeline";
+import TimePeriod from "../components/TimePeriod";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import jsondiffpatch from "@/lib/diff.js";
 import DiffPattern from "@/components/DiffPattern.vue"
+import Timeline from "../components/Timeline";
+import EventDygraph from "../components/EventDygraph";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -241,13 +254,16 @@ var timer = null;
 
 export default {
   components: {
+    Timeline,
     D3Network,
     SearchTree,
-    Timeline,
+    TimePeriod,
+    EventDygraph,
     DiffPattern
   },
   data() {
     return {
+      toggle:true,
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -610,6 +626,23 @@ export default {
     this.nodes.push(this.initialNode);
   },
   methods: {
+    shrink_open(){
+      if (this.toggle) {
+        setTimeout(() => {
+          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-right");
+          document.getElementById("shrink-icon").classList.add("el-icon-arrow-left");
+          document.getElementById("rightSide").style.transform = "translate(100%, 0)";
+        }, 500);
+      }
+      else{
+        setTimeout(() => {
+          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-left");
+          document.getElementById("shrink-icon").classList.add("el-icon-arrow-right");
+        }, 500);
+        document.getElementById("rightSide").style.transform = "";
+      }
+      this.toggle = !this.toggle;
+    },
     diffNodes(res) {
       let { nodeList: nodeBefore } = res.data;
       let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
@@ -1435,6 +1468,26 @@ export default {
 </script>
 
 <style>
+
+.right-side{
+  position: absolute;
+  width: 400px;
+  transition: .5s ease;
+  background-color: white;
+  box-shadow: lightgrey 0px 0px 5px 5px;
+  top: 0;
+  right: 0;
+  padding: 15px 15px;
+  max-height: 150%;
+}
+.funny {
+  position: fixed;
+  margin-left: -33px;
+  background-color: white;
+  border-radius: 0 5px 5px 0;
+  box-shadow: lightgrey 5px 0px 5px 2px;
+  align-items: left;
+}
 #button-group {
   position: fixed;
   right: 60px;
