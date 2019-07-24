@@ -454,6 +454,11 @@ public class IndexRestController {
         return getAllByTime(time);
     }
 
+    @RequestMapping(value = "/api/getEventByTime", method = RequestMethod.POST, produces = "application/json")
+    public List<Map<String, Object>> getEventByTime(@RequestParam("startDate")String startDate, @RequestParam("endDate")String endDate,@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime){
+        return getEventMongByTime(startDate,startTime,endDate, endTime);
+    }
+
     @RequestMapping(value = "/api/addNewNode",method = RequestMethod.POST,produces = "application/json")
     public Boolean addNewNode(@RequestBody HashMap data){
         return addNode(data);

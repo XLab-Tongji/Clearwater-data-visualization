@@ -3,6 +3,7 @@ package neo4j;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -41,11 +42,13 @@ import org.neo4j.driver.v1.types.Path;
 import org.neo4j.driver.v1.types.Relationship;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.NodeList;
 import util.CommonUtil;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -2683,6 +2686,42 @@ public class Neo4jDriver {
             if(result.size()==0) return null;
             System.out.println(result.get(0));
             return result.get(0);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Map<String, Object>> getEventMongByTime(String startDate,String startTime, String endDate,String endTime){
+        String start=startDate+' '+startTime;
+        String end=endDate+' '+endTime;
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("info");
+            //多条件查询
+            FindIterable<Document> findIterable = collection.find(Filters.and(Filters.gte("time", start), Filters.lte("time", end)));
+            MongoCursor<Document> mongoCursor = findIterable.iterator();
+            List<Map<String, Object>> result = new ArrayList<>();
+            while(mongoCursor.hasNext()){
+                Document d=mongoCursor.next();
+                System.out.println(d.get("linkList"));
+                System.out.println(d.get("nodeList"));
+                JSONObject json=JSONObject.parseObject(d.toJson());
+                JSONArray eventList=json.getJSONArray("eventList");
+                String eventType=eventList.getJSONObject(0).getString("type");
+                Map<String, Object> map = new HashMap<>();
+                //map.putAll(d);
+                String time =d.get("time").toString();
+                map.put("time",time);
+                map.put("eventType",eventType);
+                result.add(map);
+            }
+            if(result.size()==0) return null;
+            System.out.println(result);
+            return result;
         } catch (Exception e){
             e.printStackTrace();
             return null;
