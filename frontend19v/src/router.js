@@ -15,7 +15,7 @@ export default new Router({
         // },
         {
             path: '/',
-            redirect: '/graph',
+            redirect: '/overview',
             name: 'mainpage',
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
