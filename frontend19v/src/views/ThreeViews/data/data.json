@@ -1,0 +1,28 @@
+{
+    "linkList": [
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/front-end",
+            "tid": "http://services/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/front-end",
+            "tid": "http://services/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/front-end",
+            "tid": "http://services/10.60.38.181/sock-shop/user"
+        },
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/front-end",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/front-end",
+            "tid": "http://services/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "sid": "http://services/10.60.38.181/sock-shop/orders",
+            "tid": "http://services/10.60.38.181/sock-shop/shipping"
+        }
+    ]
+}
