@@ -1,0 +1,32 @@
+digraph "" {
+  graph [bgcolor="#F6F6F6", label="", fontsize="8", fontname="Arial"];
+  node [label="", fillcolor="white", fontsize="8", style="filled", fontname="Arial", labeljust="centered", shape="box", color="blue"];
+  edge [label="", fontsize="8", fontname="Arial", style="solid", color="black"];
+  graph [bgcolor="#F6F6F6"];
+  __N1 [label="start\n", shape="Msquare", color="darkgreen"];
+  __N2 [label="StringBuilder stringBuilder = new StringBuilder(\"\");"];
+  __N3 [label="(src == null || src.length ", shape="diamond"];
+  __N4 [label="return null;"];
+  __N5 [label="(int i = 0; i ", shape="oval"];
+  __N6 [label="int v = src[i] & 0xFF;"];
+  __N7 [label="String hv = Integer.toHexString(v);"];
+  __N8 [label="(hv.length() ", shape="diamond"];
+  __N9 [label="stringBuilder.append(0);"];
+  __N10 [label="stringBuilder.append(hv);"];
+  __N11 [label="return stringBuilder.toString();"];
+  __N12 [label="end\n", shape="Msquare", color="brown"];
+  __N1 -> __N2;
+  __N2 -> __N3;
+  __N3 -> __N4 [label="yes", color="green"];
+  __N3 -> __N5 [label="no", color="red"];
+  __N4 -> __N12;
+  __N5 -> __N6 [label="yes", color="green"];
+  __N5 -> __N11 [label="no", color="red"];
+  __N6 -> __N7;
+  __N7 -> __N8;
+  __N8 -> __N9 [label="yes", color="green"];
+  __N8 -> __N10 [label="no", color="red"];
+  __N9 -> __N10;
+  __N10 -> __N5;
+  __N11 -> __N12;
+}

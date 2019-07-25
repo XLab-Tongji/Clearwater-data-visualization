@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>检查医生</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <link th:href="@{https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}"
+          href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <script th:src="@{https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js}"
+            src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script th:src="@{https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js}"
+            src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script th:src="@{https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js}"
+            src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script th:src="@{https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js}"
+            src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/bbs/static/exam.js"></script>
+    <script src="/bbs/static/exam.shell.js"></script>
+    <script src="/bbs/static/ajaxPost.js"></script>
+    <script>
+        $(document).ready(function () {
+            exam.init($('body'));
+        })
+    </script>
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <form method="get" action="/examindex">
+                <button type="submit" class="btn btn-link btn-lg" >检查医生</button>
+            </form>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right" id="myaccount">
+                <li>
+                    <form method="get" action="/examaccount">
+                        <button type="submit" class="btn btn-link btn-lg">我的账号</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="functions">
+                <li><a>待查病人</a></li>
+                <li><a>我的病人</a></li>
+                <li><a>检查结果</a></li>
+                <li><a>检查报告</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="welcome">
+            <div class="container" id="logIn">
+                <div class="jumbotron">
+                    <center><h1>欢迎登陆</h1></center>
+                    <center><p id="checkItem"></p></center>
+                    <center><p><a class="btn btn-primary btn-lg" role="button" id="test"></a></p></center>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="waitforexam" hidden="hidden">
+            <h1 class="page-header"><center>待查病人</center></h1>
+            <div class="table-responsive">
+                <table class="table table-striped" id="patientList">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>主治医生ID</th>
+                        <th>检查项目</th>
+                        <th>科室</th>
+                        <th>就诊时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="waitPatients">
+
+                    </tbody>
+                </table>
+            </div>
+            <center>
+                <ul class="pagination" id="dividePage"></ul>
+            </center>
+            <center>
+                <button type="button" class="btn btn-default btn-lg" id="refreshWaitPatient">刷新</button>
+            </center>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="mypatient" hidden="didden">
+            <h1 class="page-header"><center>我的病人</center></h1>
+            <div class="table-responsive">
+                <table class="table table-striped" id="myPatientTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>主治医生ID</th>
+                        <th>检查项目</th>
+                        <th>科室</th>
+                        <th>就诊时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="mytbody">
+
+                    </tbody>
+                </table>
+            </div>
+            <center>
+                <ul class="pagination" id="dividePagemy"></ul>
+            </center>
+            <center>
+                <button type="button" class="btn btn-default btn-lg" id="refreshMyPatient">刷新</button>
+            </center>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="examresult" hidden="hidden">
+            <h1 class="page-header"><center>检查结果</center></h1>
+            <div class="table-responsive">
+                <table class="table table-striped" id="examresultdata">
+                    <thead>
+                    <tr>
+                        <th><center>检查项目</center></th>
+                        <th><center>数据结果</center></th>
+                        <th><center>检查项目</center></th>
+                        <th><center>数据结果</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <center>
+                <button type="button" class="btn btn-default btn-lg" id="examresultConfirm">确认</button>
+                <button type="button" class="btn btn-default btn-lg" id="examresultRefresh">刷新</button>
+            </center>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="examreport" hidden="hidden">
+            <h2 class="page-header" align="center">检查报告单</h2>
+            <div id="report">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>姓名：</td>
+                        <td id="name"></td>
+                        <td>临床诊断：</td>
+                        <td id="diagnose"></td>
+                        <td>申请医生：</td>
+                        <td id="doctor"></td>
+                        <td>检查种类：</td>
+                        <td id="examtype"></td>
+                    </tr>
+                    <tr>
+                        <td>性别：</td>
+                        <td id="gender"></td>
+                        <td>科室：</td>
+                        <td id="department"></td>
+                        <td>检查医生：</td>
+                        <td id="examdoctor"></td>
+                        <td>打印时间：</td>
+                        <td id="printtime"></td>
+                    </tr>
+                    <tr>
+                        <td>年龄：</td>
+                        <td id="age"></td>
+                        <td>病号：</td>
+                        <td id="number"></td>
+                        <td>检查时间：</td>
+                        <td id="examtime"></td>
+                        <td>备注：</td>
+                        <td id="tip"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table" id="examReporttable">
+                    <thead>
+                    <tr>
+                        <th>项目</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                        <th>项目</th>
+                        <th>结果</th>
+                        <th>参考值</th>
+                    </tr>
+                    </thead>
+                    <tbody id="row">
+
+                    </tbody>
+                </table>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>本报告仅对所检测的标本负责！</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <center>
+                <button type="button" class="btn btn-default btn-lg" id="SubmitReport">发送</button>
+            </center>
+        </div>
+    </div>
+</div>
+</body>
+</html>

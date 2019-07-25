@@ -1,0 +1,2642 @@
+{
+    "timeList": [
+        "2019-06-02 22:04:08",
+        "2019-06-02 22:06:26",
+        "2019-06-02 22:06:40",
+        "2019-06-02 22:06:41"
+    ],
+    "eventList": [
+        {
+            "name": "testevent1",
+            "property": {
+                "start": "2019-06-02 22:04:08",
+                "end": "2019-06-02 22:06:40"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/event1"
+        },
+        {
+            "name": "testevent2",
+            "property": {
+                "start": "2019-06-02 22:06:26",
+                "end": "2019-06-02 22:06:41"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/event2"
+        }
+    ],
+    "linkList": [
+        {
+            "name": "supervises",
+            "type": "supervises",
+            "tid": "http://namespace/10.60.38.181/sock-shop",
+            "sid": "http://namespace/10.60.38.181/monitoring"
+        },
+        {
+            "name": "manage",
+            "type": "manage",
+            "tid": "http://server/10.60.38.181/192.168.199.133",
+            "sid": "http://server/10.60.38.181/192.168.199.191"
+        },
+        {
+            "name": "manage",
+            "type": "manage",
+            "tid": "http://server/10.60.38.181/192.168.199.188",
+            "sid": "http://server/10.60.38.181/192.168.199.191"
+        },
+        {
+            "name": "manage",
+            "type": "manage",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://server/10.60.38.181/192.168.199.191"
+        },
+        {
+            "name": "manage",
+            "type": "manage",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://server/10.60.38.181/192.168.199.191"
+        },
+        {
+            "name": "has",
+            "type": "has",
+            "tid": "http://server/10.60.38.181/192.168.199.133",
+            "sid": "http://environment/10.60.38.181"
+        },
+        {
+            "name": "has",
+            "type": "has",
+            "tid": "http://server/10.60.38.181/192.168.199.188",
+            "sid": "http://environment/10.60.38.181"
+        },
+        {
+            "name": "has",
+            "type": "has",
+            "tid": "http://server/10.60.38.181/192.168.199.191",
+            "sid": "http://environment/10.60.38.181"
+        },
+        {
+            "name": "has",
+            "type": "has",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://environment/10.60.38.181"
+        },
+        {
+            "name": "has",
+            "type": "has",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://environment/10.60.38.181"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://server/unset-base/TestID",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://server/unset-base/Test1234",
+            "sid": "http://containers/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_io_current",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/network_receive_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_usage_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_reads_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/network_transmit_bytes",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_writes_bytes_total",
+            "sid": "http://containers/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-vh86c"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-vh86c"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/user-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-vh86c"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/carts/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/carts/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/carts"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/carts-db/throughput",
+            "sid": "http://services/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/carts-db/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/carts-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/catalogue"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue-db/throughput",
+            "sid": "http://services/10.60.38.181/sock-shop/catalogue-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/front-end"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/orders/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/orders/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/orders"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/orders-db/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/orders-db/throughput",
+            "sid": "http://services/10.60.38.181/sock-shop/orders-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/payment/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/payment"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/queue-master/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/queue-master/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/queue-master"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/rabbitmq/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/rabbitmq/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/rabbitmq"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/shipping/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/shipping/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/shipping"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/user/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/user/success_rate",
+            "sid": "http://services/10.60.38.181/sock-shop/user"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/user-db/throughput",
+            "sid": "http://services/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "profile",
+            "type": "profile",
+            "tid": "http://services/10.60.38.181/sock-shop/user-db/response_time",
+            "sid": "http://services/10.60.38.181/sock-shop/user-db"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-648d5f498d-l27fq"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-648d5f498d-l27fq"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/carts",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-648d5f498d-l27fq"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-db-64b6cc584f-lffsh"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/carts-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-db-64b6cc584f-lffsh"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/carts-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-db-64b6cc584f-lffsh"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://server/unset-base/TestService",
+            "sid": "http://pods/10.60.38.181/sock-shop/carts-db-64b6cc584f-lffsh"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://server/unset-base/TestService2",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.188",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/catalogue-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/catalogue-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-6ks2s"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-6ks2s"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-6ks2s"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-9nzhf"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-9nzhf"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://server/unset-base/c1",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-9nzhf"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-9nzhf"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-kg4bg"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-kg4bg"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-kg4bg"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-v5h2m"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-v5h2m"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-v5h2m"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.188",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-zgxl4"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-zgxl4"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/front-end",
+            "sid": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-zgxl4"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.188",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-bh85p"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-bh85p"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-bh85p"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-wpz28"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-wpz28"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-wpz28"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-x7vfb"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-x7vfb"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/orders",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-x7vfb"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-db-86f5c494b9-tfmzc"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/orders-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-db-86f5c494b9-tfmzc"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/orders-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/orders-db-86f5c494b9-tfmzc"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/payment-7779bc549c-z2px4"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/payment",
+            "sid": "http://pods/10.60.38.181/sock-shop/payment-7779bc549c-z2px4"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/payment",
+            "sid": "http://pods/10.60.38.181/sock-shop/payment-7779bc549c-z2px4"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/queue-master-6bb75d8867-6dbn7"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/queue-master",
+            "sid": "http://pods/10.60.38.181/sock-shop/queue-master-6bb75d8867-6dbn7"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/queue-master",
+            "sid": "http://pods/10.60.38.181/sock-shop/queue-master-6bb75d8867-6dbn7"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.133",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-4ptgd"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-4ptgd"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/rabbitmq",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-4ptgd"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-znfh2"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/rabbitmq",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-znfh2"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/rabbitmq",
+            "sid": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-znfh2"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/shipping-65769d99d7-glwdf"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/shipping",
+            "sid": "http://pods/10.60.38.181/sock-shop/shipping-65769d99d7-glwdf"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/shipping",
+            "sid": "http://pods/10.60.38.181/sock-shop/shipping-65769d99d7-glwdf"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.206",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-6b445f9b5b-qlwlk"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/user",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-6b445f9b5b-qlwlk"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/user",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-6b445f9b5b-qlwlk"
+        },
+        {
+            "name": "deployed_in",
+            "type": "deployed_in",
+            "tid": "http://server/10.60.38.181/192.168.199.205",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-slpkv"
+        },
+        {
+            "name": "contains",
+            "type": "contains",
+            "tid": "http://containers/10.60.38.181/sock-shop/user-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-slpkv"
+        },
+        {
+            "name": "provides",
+            "type": "provides",
+            "tid": "http://services/10.60.38.181/sock-shop/user-db",
+            "sid": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-slpkv"
+        }
+    ],
+    "nodeList": [
+        {
+            "name": "monitoring",
+            "property": {
+                "name": "monitoring"
+            },
+            "id": "http://namespace/10.60.38.181/monitoring",
+            "type": "event"
+        },
+        {
+            "name": "sock-shop",
+            "property": {
+                "name": "sock-shop"
+            },
+            "id": "http://namespace/10.60.38.181/sock-shop",
+            "type": "timestamp"
+        },
+        {
+            "name": "192.168.199.133",
+            "property": {
+                "creationTimestamp": "2019-04-03T07:29:31Z",
+                "podCIDR": "172.20.2.0/24"
+            },
+            "id": "http://server/10.60.38.181/192.168.199.133",
+            "type": "server"
+        },
+        {
+            "name": "192.168.199.188",
+            "property": {
+                "creationTimestamp": "2019-04-03T07:29:31Z",
+                "podCIDR": "172.20.4.0/24"
+            },
+            "id": "http://server/10.60.38.181/192.168.199.188",
+            "type": "server"
+        },
+        {
+            "name": "192.168.199.191",
+            "property": {
+                "creationTimestamp": "2019-04-03T07:28:55Z",
+                "podCIDR": "172.20.0.0/24"
+            },
+            "id": "http://server/10.60.38.181/192.168.199.191",
+            "type": "masterServer"
+        },
+        {
+            "name": "192.168.199.205",
+            "property": {
+                "creationTimestamp": "2019-04-03T07:29:31Z",
+                "podCIDR": "172.20.1.0/24"
+            },
+            "id": "http://server/10.60.38.181/192.168.199.205",
+            "type": "server"
+        },
+        {
+            "name": "192.168.199.206",
+            "property": {
+                "creationTimestamp": "2019-04-03T07:29:31Z",
+                "podCIDR": "172.20.3.0/24"
+            },
+            "id": "http://server/10.60.38.181/192.168.199.206",
+            "type": "server"
+        },
+        {
+            "name": "10.60.38.181",
+            "property": {
+                "name": "env"
+            },
+            "id": "http://environment/10.60.38.181",
+            "type": "environment"
+        },
+        {
+            "name": "carts",
+            "property": {
+                "image": "weaveworksdemos/carts:0.4.8",
+                "imageID": "docker-pullable://weaveworksdemos/carts@sha256:434d2f5a6e0e8beef1f253fe96f45b8437a703125fc003434c5282ecf8969a4f",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://aebb81afdfde854554b24e15065c3fd2970871c30ec3fa449a0f66cbf605b4ef"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "carts-db",
+            "property": {
+                "image": "mongo",
+                "imageID": "docker-pullable://mongo@sha256:93bd5412f16f3b9f7e12eb94813087f195dad950807a8ca74aa2db080c203990",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://a48e0730e26e6a968c443fb8a158c76938c958e68a1eafd3bb3c4e55a252fff0"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/carts-db/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "catalogue",
+            "property": {
+                "image": "weaveworksdemos/catalogue:0.3.5",
+                "imageID": "docker-pullable://weaveworksdemos/catalogue@sha256:0147a65b7116569439eefb1a6dbed455fe022464ef70e0c3cab75bc4a226b39b",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://a8e683ca634de663ee6e96cb071240c999788df0ed3a9f8bc102f1810ed33e61"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "catalogue-db",
+            "property": {
+                "image": "weaveworksdemos/catalogue-db:0.3.0",
+                "imageID": "docker-pullable://weaveworksdemos/catalogue-db@sha256:7ba74ec9adf88f6625b8d85d3323d1ee5232b39877e1590021ea485cf9457251",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://ae9bd0fca60f82d53fa498d3ed3d2bcbbe4fedb2337669c853bf10971ee4e2c1"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/catalogue-db/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "front-end",
+            "property": {
+                "image": "weaveworksdemos/front-end:0.3.12",
+                "imageID": "docker-pullable://weaveworksdemos/front-end@sha256:26a2d9b6b291dee2dca32fca3f5bff6c2fa07bb5954359afcbc8001cc70eac71",
+                "restartCount": "29",
+                "ready": "true",
+                "containerID": "docker://476179d8ad27f0c773e67c31208bede4cfc5e2ff6c86597521fe3e52f32ca13b"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/front-end/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "orders",
+            "property": {
+                "image": "weaveworksdemos/orders:0.4.7",
+                "imageID": "docker-pullable://weaveworksdemos/orders@sha256:b622e40e83433baf6374f15e076b53893f79958640fc6667dff597622eff03b9",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://c82f3a9a15e46df8b1b6818cc88f1420ecd6b2dd115ef2e79bdd30b4b1c61e0b"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "orders-db",
+            "property": {
+                "image": "mongo",
+                "imageID": "docker-pullable://mongo@sha256:93bd5412f16f3b9f7e12eb94813087f195dad950807a8ca74aa2db080c203990",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://3dbe2f852fec8a99f219339027443ceedfa8158bca9e0c3ff2de362c5de48c89"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/orders-db/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "payment",
+            "property": {
+                "image": "weaveworksdemos/payment:0.4.3",
+                "imageID": "docker-pullable://weaveworksdemos/payment@sha256:5ab1c9877480a018d4dda10d6dfa382776e6bca9fc1c60bacbb80903fde8cfe0",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://7d0e43107ac64cd27ad9377080ba7c9eac97f62a285f14734aa5b75f5c6572c5"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/payment/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "queue-master",
+            "property": {
+                "image": "weaveworksdemos/queue-master:0.3.1",
+                "imageID": "docker-pullable://weaveworksdemos/queue-master@sha256:6292d3095f4c7aeed8d863527f8ef6d7a75d3128f20fc61e57f398c100142712",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://081f05b2fafa1bf94f15075427ed02d40318391389ad0aec30b848c667f4248a"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/queue-master/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "rabbitmq",
+            "property": {
+                "image": "rabbitmq:3.6.8",
+                "imageID": "docker-pullable://rabbitmq@sha256:a9f4923559bbcd00b93b02e61615aef5eb6f1d1c98db51053bab0fa6b680db26",
+                "restartCount": "1",
+                "ready": "true",
+                "containerID": "docker://b602189d36f94e5302cc2c75617b8b799c46dcf68e6c14ea013a12ff76b791a8"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/rabbitmq/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "shipping",
+            "property": {
+                "image": "weaveworksdemos/shipping:0.4.8",
+                "imageID": "docker-pullable://weaveworksdemos/shipping@sha256:983305c948fded487f4a4acdeab5f898e89d577b4bc1ca3de7750076469ccad4",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://0be9a8efcd8d335691370797b0adad33324fc0ace3c2fbbaeacaedd6a3b8dbfd"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/shipping/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "user",
+            "property": {
+                "image": "weaveworksdemos/user:0.4.7",
+                "imageID": "docker-pullable://weaveworksdemos/user@sha256:2ffccc332963c89e035fea52201012208bf62df43a55fe461ad6598a5c757ab7",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://f1b71c098e291c95dccb77dc8feb4cb898f1b40245eee2cde30f3efbc427aec7"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "user-db",
+            "property": {
+                "image": "weaveworksdemos/user-db:0.4.0",
+                "imageID": "docker-pullable://weaveworksdemos/user-db@sha256:b43f0f8a76e0c908805fcec74d1ad7f4af4d93c4612632bd6dc20a87508e0b68",
+                "restartCount": "0",
+                "ready": "true",
+                "containerID": "docker://797bbcc351327e4939b56e0cc547e8bbb0553655605f5fc121314093303339cb"
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db",
+            "type": "container"
+        },
+        {
+            "name": "container_fs_io_current",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_io_current",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_receive_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/network_receive_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_usage_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_usage_bytes",
+            "type": "containerStorage"
+        },
+        {
+            "name": "container_fs_reads_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_reads_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "network_transmit_bytes",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/network_transmit_bytes",
+            "type": "containerNetwork"
+        },
+        {
+            "name": "container_fs_writes_bytes_total",
+            "property": {
+                "value": ""
+            },
+            "id": "http://containers/10.60.38.181/sock-shop/user-db/container_fs_writes_bytes_total",
+            "type": "containerStorage"
+        },
+        {
+            "name": "user-db-56bbb4c6db-vh86c",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "podIP": "172.20.3.194",
+                "contains": "http://containers/10.60.38.181/sock-shop/user-db",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-09T20:22:04Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-vh86c",
+            "type": "pod"
+        },
+        {
+            "name": "carts",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882401",
+                "creationTimestamp": "2019-05-08T09:03:31Z",
+                "clusterIP": "10.68.163.76"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "carts-db",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882380",
+                "creationTimestamp": "2019-05-08T09:03:30Z",
+                "clusterIP": "10.68.139.228"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts-db",
+            "type": "service"
+        },
+        {
+            "name": "throughput",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts-db/throughput",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/carts-db/response_time",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "catalogue",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882433",
+                "creationTimestamp": "2019-05-08T09:03:32Z",
+                "clusterIP": "10.68.67.249"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/catalogue",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/catalogue/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/catalogue/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "catalogue-db",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882416",
+                "creationTimestamp": "2019-05-08T09:03:32Z",
+                "clusterIP": "10.68.158.242"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/catalogue-db",
+            "type": "service"
+        },
+        {
+            "name": "throughput",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/catalogue-db/throughput",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "front-end",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "NodePort",
+                "resourceVersion": "4882457",
+                "creationTimestamp": "2019-05-08T09:03:33Z",
+                "clusterIP": "10.68.81.67"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/front-end",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/front-end/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/front-end/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "orders",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882505",
+                "creationTimestamp": "2019-05-08T09:03:35Z",
+                "clusterIP": "10.68.247.10"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "orders-db",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882480",
+                "creationTimestamp": "2019-05-08T09:03:34Z",
+                "clusterIP": "10.68.49.145"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders-db",
+            "type": "service"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders-db/response_time",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "throughput",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/orders-db/throughput",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "payment",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882525",
+                "creationTimestamp": "2019-05-08T09:03:36Z",
+                "clusterIP": "10.68.237.216"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/payment",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/payment/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "queue-master",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882541",
+                "creationTimestamp": "2019-05-08T09:03:36Z",
+                "clusterIP": "10.68.154.245"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/queue-master",
+            "type": "service"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/queue-master/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/queue-master/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "rabbitmq",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882556",
+                "creationTimestamp": "2019-05-08T09:03:37Z",
+                "clusterIP": "10.68.169.231"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/rabbitmq",
+            "type": "service"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/rabbitmq/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/rabbitmq/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "shipping",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882573",
+                "creationTimestamp": "2019-05-08T09:03:38Z",
+                "clusterIP": "10.68.227.62"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/shipping",
+            "type": "service"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/shipping/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/shipping/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "user",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882609",
+                "creationTimestamp": "2019-05-08T09:03:39Z",
+                "clusterIP": "10.68.203.149"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user",
+            "type": "service"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user/response_time",
+            "type": "serviceServer"
+        },
+        {
+            "name": "success_rate",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user/success_rate",
+            "type": "serviceServer"
+        },
+        {
+            "name": "user-db",
+            "namespace": "sock-shop",
+            "property": {
+                "service_type": "ClusterIP",
+                "resourceVersion": "4882588",
+                "creationTimestamp": "2019-05-08T09:03:38Z",
+                "clusterIP": "10.68.116.62"
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user-db",
+            "type": "service"
+        },
+        {
+            "name": "throughput",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user-db/throughput",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "response_time",
+            "property": {
+                "value": ""
+            },
+            "id": "http://services/10.60.38.181/sock-shop/user-db/response_time",
+            "type": "serviceDatabase"
+        },
+        {
+            "name": "carts-648d5f498d-l27fq",
+            "property": {
+                "phase": "Running",
+                "nodeName": "192.168.199.205",
+                "contains": "http://containers/10.60.38.181/sock-shop/carts",
+                "podIP": "172.20.1.37",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:17Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/carts-648d5f498d-l27fq",
+            "type": "pod"
+        },
+        {
+            "name": "carts-db-64b6cc584f-lffsh",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "podIP": "172.20.1.30",
+                "contains": "http://containers/10.60.38.181/sock-shop/carts-db",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:17Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/carts-db-64b6cc584f-lffsh",
+            "type": "pod"
+        },
+        {
+            "name": "catalogue-6759fc9bf5-q78f7",
+            "property": {
+                "phase": "Running",
+                "nodeName": "192.168.199.205",
+                "contains": "http://containers/10.60.38.181/sock-shop/catalogue",
+                "podIP": "172.20.1.40",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T07:17:40Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/catalogue-6759fc9bf5-q78f7",
+            "type": "pod"
+        },
+        {
+            "name": "catalogue-db-99cbcbb88-ddvvm",
+            "property": {
+                "nodeName": "192.168.199.188",
+                "phase": "Running",
+                "podIP": "172.20.4.50",
+                "contains": "http://containers/10.60.38.181/sock-shop/catalogue-db",
+                "hostIP": "192.168.199.188",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.188",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T08:40:18Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/catalogue-db-99cbcbb88-ddvvm",
+            "type": "pod"
+        },
+        {
+            "name": "front-end-77b48955b6-6ks2s",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "podIP": "172.20.3.74",
+                "contains": "http://containers/10.60.38.181/sock-shop/front-end",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:34Z",
+                "qosClass": "Burstable"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-6ks2s",
+            "type": "pod"
+        },
+        {
+            "name": "front-end-77b48955b6-9nzhf",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "podIP": "172.20.1.41",
+                "contains": "http://server/unset-base/c1",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T07:17:40Z",
+                "qosClass": "Burstable"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-9nzhf",
+            "type": "pod"
+        },
+        {
+            "name": "front-end-77b48955b6-kg4bg",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "podIP": "172.20.1.35",
+                "contains": "http://containers/10.60.38.181/sock-shop/front-end",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:18Z",
+                "qosClass": "Burstable"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-kg4bg",
+            "type": "pod"
+        },
+        {
+            "name": "front-end-77b48955b6-v5h2m",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "contains": "http://containers/10.60.38.181/sock-shop/front-end",
+                "podIP": "172.20.3.79",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:36Z",
+                "qosClass": "Burstable"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-v5h2m",
+            "type": "pod"
+        },
+        {
+            "name": "front-end-77b48955b6-zgxl4",
+            "property": {
+                "phase": "Running",
+                "nodeName": "192.168.199.188",
+                "contains": "http://containers/10.60.38.181/sock-shop/front-end",
+                "podIP": "172.20.4.58",
+                "hostIP": "192.168.199.188",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.188",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T08:40:21Z",
+                "qosClass": "Burstable"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/front-end-77b48955b6-zgxl4",
+            "type": "pod"
+        },
+        {
+            "name": "orders-6496fcd6f7-bh85p",
+            "property": {
+                "nodeName": "192.168.199.188",
+                "phase": "Running",
+                "podIP": "172.20.4.56",
+                "contains": "http://containers/10.60.38.181/sock-shop/orders",
+                "hostIP": "192.168.199.188",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.188",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T08:40:21Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-bh85p",
+            "type": "pod"
+        },
+        {
+            "name": "orders-6496fcd6f7-wpz28",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "contains": "http://containers/10.60.38.181/sock-shop/orders",
+                "podIP": "172.20.1.32",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:19Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-wpz28",
+            "type": "pod"
+        },
+        {
+            "name": "orders-6496fcd6f7-x7vfb",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "contains": "http://containers/10.60.38.181/sock-shop/orders",
+                "podIP": "172.20.3.75",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:35Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/orders-6496fcd6f7-x7vfb",
+            "type": "pod"
+        },
+        {
+            "name": "orders-db-86f5c494b9-tfmzc",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "podIP": "172.20.1.38",
+                "contains": "http://containers/10.60.38.181/sock-shop/orders-db",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:18Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/orders-db-86f5c494b9-tfmzc",
+            "type": "pod"
+        },
+        {
+            "name": "payment-7779bc549c-z2px4",
+            "property": {
+                "phase": "Running",
+                "nodeName": "192.168.199.206",
+                "contains": "http://containers/10.60.38.181/sock-shop/payment",
+                "podIP": "172.20.3.69",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:36Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/payment-7779bc549c-z2px4",
+            "type": "pod"
+        },
+        {
+            "name": "queue-master-6bb75d8867-6dbn7",
+            "property": {
+                "phase": "Running",
+                "nodeName": "192.168.199.206",
+                "podIP": "172.20.3.70",
+                "contains": "http://containers/10.60.38.181/sock-shop/queue-master",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:35Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/queue-master-6bb75d8867-6dbn7",
+            "type": "pod"
+        },
+        {
+            "name": "rabbitmq-549bb9596f-4ptgd",
+            "property": {
+                "nodeName": "192.168.199.133",
+                "phase": "Running",
+                "contains": "http://containers/10.60.38.181/sock-shop/rabbitmq",
+                "podIP": "172.20.2.248",
+                "hostIP": "192.168.199.133",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.133",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-23T00:29:30Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-4ptgd",
+            "type": "pod"
+        },
+        {
+            "name": "rabbitmq-549bb9596f-znfh2",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "podIP": "172.20.1.29",
+                "contains": "http://containers/10.60.38.181/sock-shop/rabbitmq",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:17Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/rabbitmq-549bb9596f-znfh2",
+            "type": "pod"
+        },
+        {
+            "name": "shipping-65769d99d7-glwdf",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "podIP": "172.20.3.78",
+                "contains": "http://containers/10.60.38.181/sock-shop/shipping",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:36Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/shipping-65769d99d7-glwdf",
+            "type": "pod"
+        },
+        {
+            "name": "user-6b445f9b5b-qlwlk",
+            "property": {
+                "nodeName": "192.168.199.206",
+                "phase": "Running",
+                "podIP": "172.20.3.81",
+                "contains": "http://containers/10.60.38.181/sock-shop/user",
+                "hostIP": "192.168.199.206",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.206",
+                "namespace": "sock-shop",
+                "startTime": "2019-05-31T18:31:37Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/user-6b445f9b5b-qlwlk",
+            "type": "pod"
+        },
+        {
+            "name": "user-db-56bbb4c6db-slpkv",
+            "property": {
+                "nodeName": "192.168.199.205",
+                "phase": "Running",
+                "contains": "http://containers/10.60.38.181/sock-shop/user-db",
+                "podIP": "172.20.1.33",
+                "hostIP": "192.168.199.205",
+                "deployed_in": "http://server/10.60.38.181/192.168.199.205",
+                "namespace": "sock-shop",
+                "startTime": "2019-06-02T05:47:18Z",
+                "qosClass": "BestEffort"
+            },
+            "id": "http://pods/10.60.38.181/sock-shop/user-db-56bbb4c6db-slpkv",
+            "type": "pod"
+        },
+        {
+            "name": "100867889",
+            "property": {},
+            "id": "http://server/unset-base/100867889",
+            "type": "server"
+        },
+        {
+            "name": "TestPod",
+            "property": {},
+            "id": "http://server/unset-base/TestPod",
+            "type": "server"
+        }
+    ],
+    "time": "2019-06-02 22:20:59"
+}
