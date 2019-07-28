@@ -54,6 +54,10 @@
                     labels: ['Time', 'Event'],
                     strokeWidth: 0.0,
                     pointSize: 8,
+                    pointClickCallback: function callback(e, point) {
+                        //emit the event to parents component
+                        //timestamp is point.xval eg.1564297357987
+                    }
 
                 });
         },
