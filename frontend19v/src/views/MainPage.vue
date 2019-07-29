@@ -20,16 +20,39 @@
             @select="handleSelect"
             :collapse="isCollapse"
           >
-            <el-menu-item index="ERChara">
+            <!-- <el-menu-item index="ERChara">
               <i class="el-icon-view"></i>
               <span slot="title">Entity/Relation Characteristic</span>
-            </el-menu-item>
+            </el-menu-item> -->
+
+            <el-submenu index="KnowledgeGraph">
+              <template slot="title">
+                <i class="el-icon-view"></i>
+                <span slot="title">Knowledge Graph</span>
+              </template>
+              <el-menu-item-group>
+                <!-- <span slot="title">Knowledge Graph</span> -->
+                <el-menu-item index="SystemOverview">System Overview</el-menu-item>
+                <el-menu-item index="ServiceCall">Service Call</el-menu-item>
+                <el-menu-item index="EventTimeStamp">Event-TimeStamp</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+
             <el-menu-item index="CauseRel">
               <i class="el-icon-share"></i>
-              <span slot="title">因果关系图</span>
+              <span slot="title">
+                Causality Diagram
+              </span>
             </el-menu-item>
 
-            <el-submenu index="ClassGraph">
+            <el-menu-item index="ClassGraph">
+              <i class="el-icon-wallet"></i>
+              <span slot="title">
+                Hierarchical View Of Classes
+              </span>
+            </el-menu-item>
+
+            <!-- <el-submenu index="ClassGraph">
               <template slot="title">
                 <i class="el-icon-wallet"></i>
                 <span slot="title">类图</span>
@@ -39,9 +62,9 @@
                 <el-menu-item index="ClassGraph">类图</el-menu-item>
                 <el-menu-item index="DirStruct">层级图</el-menu-item>
               </el-menu-item-group>
-            </el-submenu>
+            </el-submenu> -->
 
-            <el-submenu index="ModiDataMenu">
+            <!-- <el-submenu index="ModiDataMenu">
               <template slot="title">
                 <i class="el-icon-edit"></i>
                 <span slot="title">Modify Dataset</span>
@@ -65,7 +88,8 @@
               <el-menu-item-group title="Casual Loop Diagram">
                 <el-menu-item index="CausaView">Dashboard</el-menu-item>
               </el-menu-item-group>
-            </el-submenu>
+            </el-submenu> -->
+
           </el-menu>
         </el-col>
 
@@ -136,16 +160,16 @@ export default {
       }
     },
     handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
       this.$router.push({
         name: key
       });
     },
     handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     },
     handleCollapse() {
       this.isCollapse = !this.isCollapse;

@@ -1,26 +1,7 @@
 <template>
-  <div id="new-graph">
+  <div id="systemOverview">
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
-    <diff-pattern v-if="diffSwitch"></diff-pattern>
-    <!-- 是否显示属性节点切换按钮 -->
-    <div id="switch-p-node">
-      <el-switch
-        v-model="propertyNodeSwitch"
-        active-color="#409EFF"
-        inactive-color="lightgray"
-        active-text="显示属性节点"
-        inactive-text="隐藏属性节点"
-      ></el-switch>
-      <br />
-      <el-switch
-        v-model="diffSwitch"
-        active-color="#409EFF"
-        inactive-color="lightgray"
-        active-text="显示 diff"
-        inactive-text="隐藏 diff"
-      ></el-switch>
-    </div>
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
       <d3-network
@@ -100,7 +81,7 @@
         </el-tooltip>
       </el-radio-group>
     </div>
-    <!-- 属性卡片 -->
+    <!-- 右侧属性卡片 -->
     <el-card class="display-property">
       <div slot="header" class="clearfix">
         <span style="font-weight: bold;font-size:16px;">{{currentNode.name}}</span>
@@ -177,37 +158,16 @@
         </div>
       </el-card>
     </transition>
-    <timeline
-            v-if="showTimeline"
-            :allTimeStamps="allTimeStamps"
-            :eventList="perfEventList"
-            @click="getDatabyTimeStamp"
-    ></timeline>
-    <event-dygraph></event-dygraph>
-    <div id="rightSide" class="right-side">
-      <h4>
-        <i id="shrink-icon" class="funny el-icon-arrow-right" @click="shrink_open()" align="left" ></i>
-        Time range
-      </h4>
-      <!-- 时间线 -->
-      <div>
-        <time-period></time-period>
-      </div>
-    </div>
-
   </div>
 </template>
 
 <script>
-import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
-import SearchTree from "../components/SearchTree.vue";
-import TimePeriod from "../components/TimePeriod";
+// import D3Network from "../../components/vue-d3-network/src/vue-d3-network.vue";
+import D3Network from "../../components/vue-d3-network/src/d3-systemOverview.vue";
+import SearchTree from "../../components/SearchTree.vue";
+import Timeline from "../../components/Timeline";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
-import jsondiffpatch from "@/lib/diff.js";
-import DiffPattern from "@/components/DiffPattern.vue"
-import Timeline from "../components/Timeline";
-import EventDygraph from "../components/EventDygraph";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -254,16 +214,12 @@ var timer = null;
 
 export default {
   components: {
-    Timeline,
     D3Network,
     SearchTree,
-    TimePeriod,
-    EventDygraph,
-    DiffPattern
+    Timeline
   },
   data() {
     return {
-      toggle:true,
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -280,15 +236,12 @@ export default {
       },
       nodes: [],
       links: [],
+      pureNodes: [],
+      // normalNodes: [],
       selection: {
         links: {},
         nodes: {}
       },
-      allTimeStamps: [], // 排好序的 字符串
-      // currentTimeStampNodes: [], // 没有被d3-force化的当前节点数组（用于 diff）
-      eventList: [],
-      lastTimeStamp: "", // 用于（diff）
-      currentTimeStamp: "now", // 用于 diff 时恢复
       nodeSize: 40,
       fontSize: 14,
       linkWidth: 1,
@@ -311,14 +264,16 @@ export default {
         "pod",
         "container",
         "service",
-        "namespace",
         "environment",
         "serviceServer",
         "serviceDatabase",
         "containerNetwork",
         "containerStorage",
+        //
+        "namespace",
         "event",
         "timestamp",
+        //
         "deletedNode",
         "deletedPropertyNode",
         "addedNode",
@@ -344,9 +299,6 @@ export default {
         "nodesAddedNode",
         "nodesAddedPropertyNode"
       ],
-      propertyNodes: [], // 属性节点数组
-      propertyNodesCopy: [], // 属性节点的深拷贝
-      normalNodes: [],
       allPropertyNodeTypes: [
         // 属性节点的类型
         "serviceServer",
@@ -355,7 +307,6 @@ export default {
         "containerStorage"
       ],
       propertyNodeSwitch: true, // 是否显示属性节点
-      diffSwitch: false, // 显示 diff 开关
       // 增加节点时可以选择的类型
       selectNodeInfo: [],
       allLinkType: [
@@ -428,14 +379,14 @@ export default {
           ports: "",
           age: 0
         },
-        namespace: {
-          status: "",
-          age: 2
-        },
         environment: {
           name: "",
           dataPort: "",
           type: ""
+        },
+        namespace: {
+          status: "",
+          age: 2
         },
         event: {
           start: "",
@@ -508,41 +459,14 @@ export default {
           relType: "profile"
         }
       ],
-      showTimeline: false,
       showNewNodeInfoCard: false,
       svgClass: {
         noselect: true,
         crosshair: false
-      },
-      diffDelta: {
-        add: { nodes: [], links: [] },
-        delete: { nodes: [], links: [] }
       }
     };
   },
   computed: {
-    perfEventList() {
-      return this.eventList.map(event => {
-        this.links.forEach(link => {
-          if (link.tid === event.id) {
-            let arr = link.sid
-              .slice(link.sid.length - 1 - 18, link.sid.length)
-              .split("");
-            arr[10] = " ";
-            event[link.name] = arr.join("");
-          }
-          if (link.sid === event.id) {
-            let arr = link.tid
-              .slice(link.tid.length - 1 - 18, link.tid.length)
-              .split("");
-            arr[10] = " ";
-            event[link.name] = arr.join("");
-          }
-        });
-        console.log(event);
-        return event;
-      });
-    },
     // 节点数量
     id() {
       return this.nodes.length;
@@ -577,127 +501,11 @@ export default {
         this.svgClass.crosshair = false;
       }
     },
-
-    // 显示/隐藏属性节点
-    // 别写成 key-value 的形式
-    propertyNodeSwitch(newVal) {
-      // 当不显示属性时
-      if (newVal === false) {
-        // 不渲染 node 和 label
-        this.propertyNodes.forEach(propertNode => {
-          this.nodes.remove(propertNode);
-        });
-        // this.nodes = JSON.parse(JSON.stringify(this.normalNodes))
-        // 隐藏 link
-        document.getElementsByClassName("profile").forEach(x => {
-          x.style.visibility = "hidden";
-        });
-        // 当显示属性时
-      } else {
-        // 重新渲染节点和 label
-        // this.nodes = this.nodes.concat(this.propertyNodes);
-        // this.propertyNodes = JSON.parse(JSON.stringify(this.propertyNodesCopy))
-        this.nodes = this.normalNodes.concat(this.propertyNodes);
-        // 显示边
-        document.getElementsByClassName("profile").forEach(x => {
-          x.style.visibility = "visible";
-        });
-      }
-    },
-    diffSwitch(newVal) {
-      if (newVal) {
-        // 当显示 diff 时
-        axios
-          .get(reqUrl + "/api/getAllByTime?time=" + this.lastTimeStamp)
-          .then(res => {
-            this.diffNodes(res);
-            this.diffLinks(res);
-            // console.log(JSON.stringify(this.diffDelta));
-          });
-      } else {
-        this.nodes = this.getDatabyTimeStamp(
-          this.currentTimeStamp,
-          this.lastTimeStamp
-        );
-      }
-    }
   },
   created() {
     this.nodes.push(this.initialNode);
   },
   methods: {
-    shrink_open(){
-      if (this.toggle) {
-        setTimeout(() => {
-          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-right");
-          document.getElementById("shrink-icon").classList.add("el-icon-arrow-left");
-          document.getElementById("rightSide").style.transform = "translate(100%, 0)";
-        }, 500);
-      }
-      else{
-        setTimeout(() => {
-          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-left");
-          document.getElementById("shrink-icon").classList.add("el-icon-arrow-right");
-        }, 500);
-        document.getElementById("rightSide").style.transform = "";
-      }
-      this.toggle = !this.toggle;
-    },
-    diffNodes(res) {
-      let { nodeList: nodeBefore } = res.data;
-      let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
-      console.log(delta);
-      Object.keys(delta).forEach(key => {
-        // 删除的！位置 2 是 0 ！
-        if (key.startsWith("_")) {
-          if (delta[key][2] === 0) {
-            this.diffDelta.delete.nodes.push(delta[key][0]);
-            let deletedNode = delta[key][0];
-            // deletedNode.type = 'pod'
-            // let nodeType = deletedNode.type;
-            deletedNode.svgSym = nodeIcons[deletedNode.type];
-            if (this.allPropertyNodeTypes.indexOf(deletedNode.type) !== -1) {
-              deletedNode.type = "deletedPropertyNode";
-            } else {
-              deletedNode.type = "deletedNode";
-            }
-            this.nodes.push(deletedNode);
-          }
-        }
-        // 新增的！
-        else if (key === "_t") {
-        } else {
-          // console.log(this.nodes[key]);
-          this.diffDelta.add.nodes.push(delta[key][0]); //???? 是 0 吗
-          if (this.allPropertyNodeTypes.indexOf(this.nodes[key].type) !== -1) {
-            this.nodes[key]._cssClass = "nodesAddedPropertyNode";
-          } else {
-            this.nodes[key]._cssClass = "nodesAddedNode";
-          }
-        }
-      });
-    },
-    diffLinks(res) {
-      let { linkList: linkBefore } = res.data;
-      let delta = jsondiffpatch.diffLinks(linkBefore, this.links);
-      Object.keys(delta).forEach(key => {
-        // 删除的！位置 2 是 0 ！
-        if (key.startsWith("_")) {
-          if (delta[key][2] === 0) {
-            this.diffDelta.delete.links.push(delta[key][0]);
-            let deletedlink = delta[key][0];
-            // 凡是 push 进去的都会经过 lcb 所以直接设置 _color 没用！
-            deletedlink.diffType = "delete";
-            this.links.push(deletedlink);
-          }
-        }
-        // 新增的！
-        else {
-          this.diffDelta.add.links.push(delta[key][0]); //???? 是 0 吗
-          this.links[key]._color = "blue";
-        }
-      });
-    },
     getData() {
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
@@ -710,15 +518,6 @@ export default {
       envPropertyValues.append("address", this.propertyValues[3]); // 10.60.38.181
       envPropertyValues.append("namespace", this.propertyValues[4]); // sock-shop
 
-      // console.log(envPropertyValues);
-
-      // API POST
-      // axios({
-      //   method: 'post',
-      //   url: reqUrl + '/api/storeEnvironment',
-      //   data: envPropertyValues,
-      //   config: { headers: {'Content-Type': 'multipart/form-data' }}
-      // })
       axios
         // API GET
         .get(reqUrl + "/api/getNodesAndLinks")
@@ -726,110 +525,41 @@ export default {
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
-          console.log(response);
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
-          this.allTimeStamps = response.data.timeList;
-          this.lastTimeStamp = this.allTimeStamps[
-            this.allTimeStamps.length - 1
-          ];
+
           let allNodes = response.data.nodeList;
-          this.nodes = [];
-          this.normalNodes = [];
-          // this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
 
-          this.propertyNodes = allNodes.filter(node => {
-            if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-              return true;
-            } else {
-              this.normalNodes.push(node);
+          this.nodes = [];
+
+          this.pureNodes = allNodes.filter(node => {
+            if (
+              node.type === "event" ||
+              node.type === "timestamp" ||
+              node.type === "serviceServer" ||
+              node.type === "serviceDatabase" ||
+              node.type === "containerNetwork" ||
+              node.type === "containerStorage"
+            ) {
               return false;
+            } else {
+              return true;
             }
           });
 
-          this.propertyNodesCopy = JSON.parse(
-            JSON.stringify(this.propertyNodes)
-          );
+          this.nodes = this.pureNodes;
 
-          this.nodes = this.normalNodes.concat(this.propertyNodes);
-
-          // 在 links 和 nodes 都有数据之后
-          this.eventList = response.data.eventList;
-
-          this.showTimeline = true;
-          this.propertyNodeSwitch = true;
-          this.diffSwitch = false;
-          this.diffDelta = {
-            add: { nodes: [], links: [] },
-            delete: { nodes: [], links: [] }
-          };
-
-          // this.$nextTick(() => {
-          //   this.addDblClickEvent();
-          // });
+          // this.propertyNodeSwitch = false;
         })
         .catch(function(error) {
           // handle error
-          console.log(error);
         });
-      // .then(function() {
-      //   // always executed
-      // });
+
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
-    },
-    getDatabyTimeStamp(currentTimeStamp, lastTimeStamp) {
-      this.currentTimeStamp = currentTimeStamp;
-      this.lastTimeStamp = lastTimeStamp;
-      console.log("lastTimeStamp: " + lastTimeStamp);
-
-      console.log("currentTimeStamp: " + currentTimeStamp);
-      if (currentTimeStamp === "now") {
-        this.getData();
-      } else {
-        axios
-          .get(reqUrl + "/api/getAllByTime?time=" + currentTimeStamp)
-          .then(response => {
-            // this.currentTimeStampNodes = response.data.nodeList.slice()
-            response.data.nodeList.forEach(x => {
-              x.svgSym = nodeIcons[x.type];
-            });
-
-            let allNodes = response.data.nodeList;
-            this.nodes = [];
-            this.normalNodes = [];
-            // this.nodes = response.data.nodeList;
-            this.links = response.data.linkList;
-
-            this.propertyNodes = allNodes.filter(node => {
-              if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-                return true;
-              } else {
-                this.normalNodes.push(node);
-                return false;
-              }
-            });
-            this.propertyNodesCopy = JSON.parse(
-              JSON.stringify(this.propertyNodes)
-            );
-
-            this.nodes = this.normalNodes.concat(this.propertyNodes);
-
-            console.log("可显示");
-            this.propertyNodeSwitch = true;
-            this.diffSwitch = false;
-            this.diffDelta = {
-              add: { nodes: [], links: [] },
-              delete: { nodes: [], links: [] }
-            };
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      }
     },
     // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
     frontTimeFottoEnd(time) {
@@ -858,7 +588,6 @@ export default {
         }
         // 普通点击
         if (_this.radio === "1") {
-          // console.log(document.getElementsByClassName("nodesNamespace"))
           // 显示连接的节点
           _this.displayNodeRelation(node);
           // 如果已经有弹出框则关掉
@@ -924,18 +653,13 @@ export default {
           removeNodeList.forEach(node => {
             _this.nodes.remove(node);
           });
-          // console.log(JSON.stringify(removeNodeList))
-          // console.log(JSON.stringify(removeLinkList))
           // 删除请求（先删除关系->怕后端出问题
           axios
             .post(reqUrl + "/api/delLinks", removeLinkList)
             .then(response => {
-              console.log("删除边的请求成功");
               axios
                 .post(reqUrl + "/api/delNodes", removeNodeList)
-                .then(response => {
-                  console.log("删除节点的请求成功");
-                })
+                .then(response => {})
                 .catch(error => {
                   console.log(error);
                 });
@@ -1033,7 +757,6 @@ export default {
       this.allLinkType.forEach((element, index, array) => {
         if (link.type == element) {
           link._linkLabelClass = this.linkStyleList[index];
-          // console.log(link)
         }
       });
       return link;
@@ -1042,8 +765,6 @@ export default {
       this.allNodeType.forEach((element, index, array) => {
         if (node.type == element) {
           node._cssClass = this.styleList[index];
-          // node._linkLabelClass = this.linkStyleList[index];
-          // console.log(node)
         }
       });
 
@@ -1063,7 +784,6 @@ export default {
         links: {}
       };
       // let
-      // console.log(this.selection.nodes.node.id)
       this.selection.nodes[node.id] = node;
       for (let link of this.links) {
         if (link.sid === node.id) {
@@ -1109,7 +829,6 @@ export default {
     },
     focusNodePosition(node) {
       let netSvg = document.getElementsByClassName("net-svg")[0];
-      console.log(document.getElementsByClassName("net-svg"));
       // offset 是与中心的偏差 是一个相对值
       this.offset_X += netSvg.scrollWidth / 2 - node.x;
       this.offset_Y += netSvg.scrollHeight / 2 - node.y - 150;
@@ -1247,12 +966,9 @@ export default {
         axios
           .post(reqUrl + "/api/addNewNode", newNode)
           .then(response => {
-            console.log(response.data);
             axios
               .post(reqUrl + "/api/addNewLink", newLink)
-              .then(response => {
-                console.log(response.data);
-              })
+              .then(response => {})
               .catch(function(error) {
                 console.log(error);
               });
@@ -1270,38 +986,14 @@ export default {
         this.$message.error("添加失败，节点 ID 应为 URI");
       }
     },
-    // 把事件监听器加在每个节点上台费性能惹
-    // 加在画布上就可以 搜 mousedown 可以看到
-    // addDblClickEvent() {
-    //   let onDblClick = e => {
-    //     clearTimeout(timer);
-    //     var e = e || window.event;
-    //     let property = this.currentNode.property;
-    //     this.propertyKeys = Object.keys(property);
-    //     for (var key in property) {
-    //       this.propertyValues.push(property[key]);
-    //     }
-    //     let displayProps = document.getElementsByClassName(
-    //       "display-property"
-    //     )[0];
-    //     displayProps.style.display = 'block'
-    //     displayProps.style.right = "-20px";
-    //   };
-    //   let list = document.getElementsByTagName("circle");
-    //   for (var i = 0; i < list.length; i++) {
-    //     addEvent(list[i], "dblclick", onDblClick);
-    //   }
-    // },
     showLinkLabel(e) {
       // 功能：hover 上 link 后显示 label
       // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，
       //      通过 id 搜索到 label，改变 label 的字体大小
       if (e.target.id.indexOf("link") != -1) {
         let linkid = e.target.id;
-        // console.log(document.querySelectorAll('[*|href]:not([href])'))
         let labels = document.querySelectorAll("[*|href]:not([href])");
         for (let label of labels) {
-          // console.log(label)
           if (label.href.animVal.indexOf(linkid) != -1) {
             label.setAttribute("style", "font-size:15px;");
             setTimeout(() => {
@@ -1326,9 +1018,7 @@ export default {
         this.nodes.push(newNode);
         axios
           .post(reqUrl + "/api/addNewNode", newNode)
-          .then(response => {
-            console.log("添加成功");
-          })
+          .then(response => {})
           .catch(function(error) {
             console.log(error);
           });
@@ -1371,7 +1061,6 @@ export default {
           links: {}
         };
         // 如果是双击显示属性面板
-        // console.log(e)
         if (
           e.detail === 2 &&
           (e.target.localName === "path" || e.target.localName === "circle")
@@ -1468,26 +1157,6 @@ export default {
 </script>
 
 <style>
-
-.right-side{
-  position: absolute;
-  width: 400px;
-  transition: .5s ease;
-  background-color: white;
-  box-shadow: lightgrey 0px 0px 5px 5px;
-  top: 0;
-  right: 0;
-  padding: 15px 15px;
-  max-height: 150%;
-}
-.funny {
-  position: fixed;
-  margin-left: -33px;
-  background-color: white;
-  border-radius: 0 5px 5px 0;
-  box-shadow: lightgrey 5px 0px 5px 2px;
-  align-items: left;
-}
 #button-group {
   position: fixed;
   right: 60px;
@@ -1508,87 +1177,85 @@ export default {
 }
 
 /* 被选中的图标 */
-#new-graph .node-svg.selected {
+#systemOverview .node-svg.selected {
   /* stroke:tomato !important; */
   stroke-width: 20px !important;
   fill: tomato !important;
 }
 
 /* 被选中的 link */
-#new-graph .link.selected {
+#systemOverview .link.selected {
   marker-end: url(#m-end-selected);
 }
 
 /* 被选中的所有元素 */
-#new-graph .selected {
+#systemOverview .selected {
   stroke: tomato !important;
   stroke-width: 4px;
 }
 
-#new-graph .nodesInit {
+#systemOverview .nodesInit {
   fill: lightblue;
 }
 
-#new-graph .nodesServer {
+#systemOverview .nodesServer {
   fill: darkcyan;
 }
 
-#new-graph .nodesPod {
+#systemOverview .nodesPod {
   fill: rgb(7, 244, 188);
 }
 
-#new-graph .nodesContainer {
+#systemOverview .nodesContainer {
   fill: dimgray;
 }
 
-#new-graph .nodesContainerNetwork,
-#new-graph .nodesContainerStorage {
+#systemOverview .nodesContainerNetwork,
+#systemOverview .nodesContainerStorage {
   fill: rgb(200, 255, 195);
-  r: 12;
 }
 
-#new-graph .nodesService {
+#systemOverview .nodesService {
   fill: cornflowerblue;
 }
 
-#new-graph .nodesServiceDatabase,
-#new-graph .nodesServiceServer {
+#systemOverview .nodesServiceDatabase,
+#systemOverview .nodesServiceServer {
   fill: lightgoldenrodyellow;
-  r: 12;
 }
 
-#new-graph .nodesNamespace {
+#systemOverview .nodesNamespace {
   fill: darkgoldenrod;
 }
 
-#new-graph .linkManage {
+#systemOverview .linkManage {
   /* color: rgb(8, 113, 241); */
   /* fill: rgb(1, 1, 77); */
   fill: gray;
   text-anchor: middle;
 }
 
-#new-graph .linkDeployed {
+#systemOverview .linkDeployed {
   fill: rgb(0, 71, 70);
   text-anchor: middle;
 }
 
-#new-graph .linkProvides {
+#systemOverview .linkProvides {
   fill: rgb(2, 75, 58);
   text-anchor: middle;
 }
 
-#new-graph .linkContains {
+#systemOverview .linkContains {
   fill: rgb(1, 78, 18);
   text-anchor: middle;
 }
 
-#new-graph .linkService {
+#systemOverview .linkService {
   fill: rgb(68, 82, 2);
   text-anchor: middle;
 }
 
-#new-graph .linkNamespace {
+#systemOverview .linkNamespace {
   fill: rgb(76, 2, 78);
   text-anchor: middle;
 }
@@ -1630,7 +1297,7 @@ export default {
   stroke-width: 30px;
 }
 
-#new-graph #switch-p-node {
+/* #systemOverview #switch-p-node {
   background: white;
   border: 1px lightgray solid;
   border-radius: 10px;
@@ -1641,7 +1308,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+} */
 
 .new-node-info-card {
   position: absolute;
@@ -1667,23 +1334,21 @@ export default {
   padding: 10px 0;
 }
 
-#new-graph .nodesAddedNode {
-  stroke: #409EFF;
+#systemOverview .nodesAddedNode {
+  stroke: #409eff;
   stroke-width: 50px;
 }
 
-#new-graph .nodesDeletedNode {
-  stroke: #F56C6C;
+#systemOverview .nodesDeletedNode {
+  stroke: #f56c6c;
   stroke-width: 50px;
 }
 
-#new-graph .nodesDeletedPropertyNode {
-  stroke: #F56C6C;
-  r: 12;
+#systemOverview .nodesDeletedPropertyNode {
+  stroke: #f56c6c;
 }
 
-#new-graph .nodesAddedPropertyNode {
-  stroke: #409EFF;
-  r: 12;
+#systemOverview .nodesAddedPropertyNode {
+  stroke: #409eff;
 }
 </style>

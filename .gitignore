@@ -25,3 +25,6 @@ hs_err_pid*
 # node_modules plugin files
 Frontend/node_modules/
 .DS_Store
+
+#file folder
+.idea/
