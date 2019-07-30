@@ -2729,6 +2729,7 @@ public class Neo4jDriver {
     public static List<List> getEventMongByTime(String startDate,String startTime, String endDate,String endTime){
         String start=startDate+' '+startTime + ":00";
         String end=endDate+' '+endTime + ":59";
+        List<List> result = new ArrayList<>();
         try {
             //连接到mongodb服务
             MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
@@ -2739,7 +2740,6 @@ public class Neo4jDriver {
             FindIterable<Document> findIterable = collection.find(Filters.and(Filters.gte("time", start), Filters.lte("time", end)));
             MongoCursor<Document> mongoCursor = findIterable.iterator();
             //System.out.println(mongoCursor);
-            List<List> result = new ArrayList<>();
             while(mongoCursor.hasNext()){
                 Document d=mongoCursor.next();
                 //System.out.println(d);
@@ -2762,8 +2762,29 @@ public class Neo4jDriver {
 //                System.out.println(aL);
                 result.add(aL);
             }
+
+            MongoCollection<Document> collectionK = mongoDatabase.getCollection("Kapacitor");
+            //多条件查询
+            FindIterable<Document> findIterableK = collectionK.find(Filters.and(Filters.gte("time", start), Filters.lte("time", end)));
+            MongoCursor<Document> mongoCursorK = findIterableK.iterator();
+            //System.out.println(mongoCursor);
+            while(mongoCursorK.hasNext()){
+                Document d=mongoCursorK.next();
+                ArrayList aL = new ArrayList();
+                Date date = new Date();
+                SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+                try {
+                    date=DateFormat.parse(d.get("time").toString());
+                } catch(ParseException px) {
+                    px.printStackTrace();
+                }
+                aL.add(date);
+                aL.add(d.getInteger("type"));
+                result.add(aL);
+            }
             if(result.size()==0) return null;
             //System.out.println(result);
+
             return result;
         } catch (Exception e){
             e.printStackTrace();
