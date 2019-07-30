@@ -6,14 +6,6 @@
     <!-- 是否显示属性节点切换按钮 -->
     <div id="switch-p-node">
       <el-switch
-        v-model="propertyNodeSwitch"
-        active-color="#409EFF"
-        inactive-color="lightgray"
-        active-text="显示属性节点"
-        inactive-text="隐藏属性节点"
-      ></el-switch>
-      <br />
-      <el-switch
         v-model="diffSwitch"
         active-color="#409EFF"
         inactive-color="lightgray"
@@ -177,16 +169,19 @@
         </div>
       </el-card>
     </transition>
-    <timeline
-            v-if="showTimeline"
-            :allTimeStamps="allTimeStamps"
-            :eventList="perfEventList"
-            @click="getDatabyTimeStamp"
-    ></timeline>
-    <event-dygraph></event-dygraph>
+
+    <!-- <timeline
+      v-if="showTimeline"
+      :allTimeStamps="allTimeStamps"
+      :eventList="perfEventList"
+      @click="getDatabyTimeStamp"
+    ></timeline>-->
+
+    <event-dygraph v-if="reloadDy" :eventObj="eventObj"></event-dygraph>
+
     <div id="rightSide" class="right-side">
       <h4>
-        <i id="shrink-icon" class="funny el-icon-arrow-right" @click="shrink_open()" align="left" ></i>
+        <i id="shrink-icon" class="funny el-icon-arrow-right" @click="shrink_open()" align="left"></i>
         Time range
       </h4>
       <!-- 时间线 -->
@@ -194,7 +189,6 @@
         <time-period></time-period>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -205,13 +199,15 @@ import TimePeriod from "../components/TimePeriod";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import jsondiffpatch from "@/lib/diff.js";
-import DiffPattern from "@/components/DiffPattern.vue"
+import DiffPattern from "@/components/DiffPattern.vue";
 import Timeline from "../components/Timeline";
 import EventDygraph from "../components/EventDygraph";
+import { all } from "q";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-const reqUrl = "http://10.60.38.173:9990/bbs";
+// const reqUrl = "http://10.60.38.173:9990/bbs";
+const reqUrl = "http://localhost:8088/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -263,7 +259,7 @@ export default {
   },
   data() {
     return {
-      toggle:true,
+      toggle: true,
       radio: "1",
       initialNode: {
         name: "Environment",
@@ -278,6 +274,8 @@ export default {
         },
         svgSym: nodeIcons["environment"]
       },
+      eventObj: [],
+      reloadDy: false,
       nodes: [],
       links: [],
       selection: {
@@ -287,7 +285,8 @@ export default {
       allTimeStamps: [], // 排好序的 字符串
       // currentTimeStampNodes: [], // 没有被d3-force化的当前节点数组（用于 diff）
       eventList: [],
-      lastTimeStamp: "", // 用于（diff）
+      // firstTimeStamp:"",
+      // lastTimeStamp: "",
       currentTimeStamp: "now", // 用于 diff 时恢复
       nodeSize: 40,
       fontSize: 14,
@@ -344,9 +343,6 @@ export default {
         "nodesAddedNode",
         "nodesAddedPropertyNode"
       ],
-      propertyNodes: [], // 属性节点数组
-      propertyNodesCopy: [], // 属性节点的深拷贝
-      normalNodes: [],
       allPropertyNodeTypes: [
         // 属性节点的类型
         "serviceServer",
@@ -539,7 +535,7 @@ export default {
             event[link.name] = arr.join("");
           }
         });
-        console.log(event);
+        // console.log(event);
         return event;
       });
     },
@@ -578,32 +574,7 @@ export default {
       }
     },
 
-    // 显示/隐藏属性节点
     // 别写成 key-value 的形式
-    propertyNodeSwitch(newVal) {
-      // 当不显示属性时
-      if (newVal === false) {
-        // 不渲染 node 和 label
-        this.propertyNodes.forEach(propertNode => {
-          this.nodes.remove(propertNode);
-        });
-        // this.nodes = JSON.parse(JSON.stringify(this.normalNodes))
-        // 隐藏 link
-        document.getElementsByClassName("profile").forEach(x => {
-          x.style.visibility = "hidden";
-        });
-        // 当显示属性时
-      } else {
-        // 重新渲染节点和 label
-        // this.nodes = this.nodes.concat(this.propertyNodes);
-        // this.propertyNodes = JSON.parse(JSON.stringify(this.propertyNodesCopy))
-        this.nodes = this.normalNodes.concat(this.propertyNodes);
-        // 显示边
-        document.getElementsByClassName("profile").forEach(x => {
-          x.style.visibility = "visible";
-        });
-      }
-    },
     diffSwitch(newVal) {
       if (newVal) {
         // 当显示 diff 时
@@ -626,18 +597,26 @@ export default {
     this.nodes.push(this.initialNode);
   },
   methods: {
-    shrink_open(){
+    shrink_open() {
       if (this.toggle) {
         setTimeout(() => {
-          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-right");
-          document.getElementById("shrink-icon").classList.add("el-icon-arrow-left");
-          document.getElementById("rightSide").style.transform = "translate(100%, 0)";
+          document
+            .getElementById("shrink-icon")
+            .classList.remove("el-icon-arrow-right");
+          document
+            .getElementById("shrink-icon")
+            .classList.add("el-icon-arrow-left");
+          document.getElementById("rightSide").style.transform =
+            "translate(100%, 0)";
         }, 500);
-      }
-      else{
+      } else {
         setTimeout(() => {
-          document.getElementById("shrink-icon").classList.remove("el-icon-arrow-left");
-          document.getElementById("shrink-icon").classList.add("el-icon-arrow-right");
+          document
+            .getElementById("shrink-icon")
+            .classList.remove("el-icon-arrow-left");
+          document
+            .getElementById("shrink-icon")
+            .classList.add("el-icon-arrow-right");
         }, 500);
         document.getElementById("rightSide").style.transform = "";
       }
@@ -646,7 +625,7 @@ export default {
     diffNodes(res) {
       let { nodeList: nodeBefore } = res.data;
       let delta = jsondiffpatch.diffNodes(nodeBefore, this.nodes);
-      console.log(delta);
+      // console.log(delta);
       Object.keys(delta).forEach(key => {
         // 删除的！位置 2 是 0 ！
         if (key.startsWith("_")) {
@@ -703,6 +682,9 @@ export default {
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
 
+      this.eventList = [];
+      this.allTimeStamps = [];
+
       var envPropertyValues = new FormData();
       envPropertyValues.append("masterName", this.propertyValues[0]); // 192.168.199.191
       envPropertyValues.append("podName", this.propertyValues[1]); // sock-shop
@@ -726,34 +708,39 @@ export default {
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
-          console.log(response);
+          // console.log(response)
+
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
+
           this.allTimeStamps = response.data.timeList;
+
           this.lastTimeStamp = this.allTimeStamps[
             this.allTimeStamps.length - 1
           ];
+
           let allNodes = response.data.nodeList;
-          this.nodes = [];
-          this.normalNodes = [];
-          // this.nodes = response.data.nodeList;
           this.links = response.data.linkList;
 
-          this.propertyNodes = allNodes.filter(node => {
-            if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-              return true;
-            } else {
-              this.normalNodes.push(node);
+          this.nodes = [];
+
+          this.pureNodes = allNodes.filter(node => {
+            if (
+              node.type === "event" ||
+              node.type === "timestamp" ||
+              node.type === "serviceServer" ||
+              node.type === "serviceDatabase" ||
+              node.type === "containerNetwork" ||
+              node.type === "containerStorage"
+            ) {
               return false;
+            } else {
+              return true;
             }
           });
 
-          this.propertyNodesCopy = JSON.parse(
-            JSON.stringify(this.propertyNodes)
-          );
-
-          this.nodes = this.normalNodes.concat(this.propertyNodes);
+          this.nodes = this.pureNodes;
 
           // 在 links 和 nodes 都有数据之后
           this.eventList = response.data.eventList;
@@ -769,14 +756,41 @@ export default {
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
           // });
+          var firstTimeStamp = response.data.timeList[20];
+          var lastTimeStamp =
+            response.data.timeList[response.data.timeList.length - 1];
+          var startDate = firstTimeStamp.substring(0, 10);
+          var endDate = lastTimeStamp.substring(0, 10);
+          var startTime = firstTimeStamp.substring(11, 16);
+          var endTime = lastTimeStamp.substring(11, 16);
+
+          // console.log(startDate)
+          // console.log(endDate)
+          // console.log(startTime)
+          // console.log(endTime)
+
+          var params = new URLSearchParams();
+          params.append("startDate", startDate);
+          params.append("endDate", endDate);
+          params.append("startTime", startTime);
+          params.append("endTime", endTime);
+
+          axios
+            .post(reqUrl + "/api/getEventByTime", params)
+            .then(response => {
+              this.eventObj = response.data;
+              console.log(response.data)
+              this.reloadDy = true;
+            })
+            .catch(error => {
+              console.error(error);
+            });
         })
         .catch(function(error) {
           // handle error
           console.log(error);
         });
-      // .then(function() {
-      //   // always executed
-      // });
+
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
@@ -784,9 +798,9 @@ export default {
     getDatabyTimeStamp(currentTimeStamp, lastTimeStamp) {
       this.currentTimeStamp = currentTimeStamp;
       this.lastTimeStamp = lastTimeStamp;
-      console.log("lastTimeStamp: " + lastTimeStamp);
+      // console.log("lastTimeStamp: " + lastTimeStamp);
 
-      console.log("currentTimeStamp: " + currentTimeStamp);
+      // console.log("currentTimeStamp: " + currentTimeStamp);
       if (currentTimeStamp === "now") {
         this.getData();
       } else {
@@ -799,26 +813,28 @@ export default {
             });
 
             let allNodes = response.data.nodeList;
-            this.nodes = [];
-            this.normalNodes = [];
-            // this.nodes = response.data.nodeList;
             this.links = response.data.linkList;
 
-            this.propertyNodes = allNodes.filter(node => {
-              if (this.allPropertyNodeTypes.indexOf(node.type) !== -1) {
-                return true;
-              } else {
-                this.normalNodes.push(node);
+            this.nodes = [];
+
+            this.pureNodes = allNodes.filter(node => {
+              if (
+                node.type === "event" ||
+                node.type === "timestamp" ||
+                node.type === "serviceServer" ||
+                node.type === "serviceDatabase" ||
+                node.type === "containerNetwork" ||
+                node.type === "containerStorage"
+              ) {
                 return false;
+              } else {
+                return true;
               }
             });
-            this.propertyNodesCopy = JSON.parse(
-              JSON.stringify(this.propertyNodes)
-            );
 
-            this.nodes = this.normalNodes.concat(this.propertyNodes);
+            this.nodes = this.pureNodes;
 
-            console.log("可显示");
+            // console.log("可显示");
             this.propertyNodeSwitch = true;
             this.diffSwitch = false;
             this.diffDelta = {
@@ -1468,11 +1484,10 @@ export default {
 </script>
 
 <style>
-
-.right-side{
+.right-side {
   position: absolute;
   width: 400px;
-  transition: .5s ease;
+  transition: 0.5s ease;
   background-color: white;
   box-shadow: lightgrey 0px 0px 5px 5px;
   top: 0;
@@ -1544,7 +1559,6 @@ export default {
 #new-graph .nodesContainerNetwork,
 #new-graph .nodesContainerStorage {
   fill: rgb(200, 255, 195);
-  r: 12;
 }
 
 #new-graph .nodesService {
@@ -1668,22 +1682,20 @@ export default {
 }
 
 #new-graph .nodesAddedNode {
-  stroke: #409EFF;
+  stroke: #409eff;
   stroke-width: 50px;
 }
 
 #new-graph .nodesDeletedNode {
-  stroke: #F56C6C;
+  stroke: #f56c6c;
   stroke-width: 50px;
 }
 
 #new-graph .nodesDeletedPropertyNode {
-  stroke: #F56C6C;
-  r: 12;
+  stroke: #f56c6c;
 }
 
 #new-graph .nodesAddedPropertyNode {
-  stroke: #409EFF;
-  r: 12;
+  stroke: #409eff;
 }
 </style>

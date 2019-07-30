@@ -3,7 +3,6 @@
         <div id="div_g" class="graph_div">
 
         </div>
-
     </div>
 </template>
 
@@ -12,8 +11,7 @@
     export default {
         name: "event-dygraph",
         props: {
-            allTimeStamps: Array,
-            eventList: Array
+            eventObj: Array,
         },
         components: {
 
@@ -34,13 +32,15 @@
 
         },
         mounted() {
-            var data = [];
-            var t = new Date();
-            for (var i = 10; i >= 0; i--) {
-                var x = new Date(t.getTime() - i * 1000);
-                data.push([x, Math.floor(Math.random()*4)] );
-            }
-            console.log(data)
+            // var data = [];
+            // var t = new Date();
+            // for (var i = 10; i >= 0; i--) {
+            //     var x = new Date(t.getTime() - i * 1000);
+            //     data.push([x, Math.floor(Math.random()*4)] );
+            // }
+
+            // console.log(data)
+            var data = this.eventObj;
 
             var g = new Dygraph(document.getElementById("div_g"), data,
                 {

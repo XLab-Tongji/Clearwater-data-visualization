@@ -77,6 +77,8 @@ export default {
     document.getElementById(
       "timeline-container"
     ).scrollLeft = document.getElementById("timeline-container").scrollWidth;
+
+    console.log(this.eventList)
   }
 };
 </script>
@@ -84,8 +86,8 @@ export default {
 <style scoped>
 #timeline-container {
   position: fixed;
-  /* bottom: -0px; */
-  bottom: -210px;
+  bottom: -0px;
+  /* bottom: -210px; */
   width: 70%;
   height: 200px;
   text-align: center;
