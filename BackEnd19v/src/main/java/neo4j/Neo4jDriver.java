@@ -2727,7 +2727,9 @@ public class Neo4jDriver {
                     px.printStackTrace();
                 }
                 aL.add(date);
-                aL.add(eventType);
+                if (eventType.equals("event")){
+                    aL.add(0);
+                }
                 System.out.println(aL);
                 result.add(aL);
             }
