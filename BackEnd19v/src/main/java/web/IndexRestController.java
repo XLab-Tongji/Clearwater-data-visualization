@@ -547,7 +547,9 @@ public class IndexRestController {
     }
 
     @RequestMapping(value = "/api/addKapacitorEvent", method = RequestMethod.POST, produces = "application/json")
-    public Boolean addKapacitorEvent(@RequestBody HashMap data){
-        return readKapacitor(data);
+    public Boolean addKapacitorEvent(@RequestBody String message){
+        //return readKapacitor(data);
+        System.out.println(message);
+        return saveKapacitor2Mongo(message);
     }
 }
