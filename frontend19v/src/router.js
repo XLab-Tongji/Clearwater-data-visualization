@@ -36,11 +36,11 @@ export default new Router({
                     name: 'EnterRel',
                     component: () => import('./views/EnterRel.vue'),
                 },
-                {
-                    path: 'graph',
-                    name: 'ERChara',
-                    component: () => import('./views/NewGraph.vue'),
-                },
+                // {
+                //     path: 'graph',
+                //     name: 'ERChara',
+                //     component: () => import('./views/NewGraph.vue'),
+                // },
                 {
                     path: 'causation',
                     name: 'CausaView',
@@ -74,7 +74,7 @@ export default new Router({
                 {
                     path: 'timestamp',
                     name: 'EventTimeStamp',
-                    component: () => import('./views/ThreeViews/EventTimeStamp.vue'),
+                    component: () => import('./views/NewGraph.vue'),
                 }
             ]
         }

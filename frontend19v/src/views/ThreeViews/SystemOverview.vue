@@ -504,6 +504,7 @@ export default {
   },
   created() {
     this.nodes.push(this.initialNode);
+    // this.getData();
   },
   methods: {
     getData() {

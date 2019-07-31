@@ -41,7 +41,11 @@
 
             // console.log(data)
             var data = this.eventObj;
-
+            for(var i=0;i<data.length;i++){
+                data[i][0] = new Date(data[i][0]);
+            }
+            console.log(data)
+            let _this = this;
             var g = new Dygraph(document.getElementById("div_g"), data,
                 {
                     legend: 'always',
@@ -54,6 +58,12 @@
                     labels: ['Time', 'Event'],
                     strokeWidth: 0.0,
                     pointSize: 8,
+
+                    pointClickCallback: function callback(e, point) {
+                        //emit the event to parents component
+                        //timestamp is point.xval eg.1564297357987
+                        _this.$emit("pointClickCallback", point.xval)
+                    }
 
                 });
         },

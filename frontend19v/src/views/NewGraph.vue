@@ -177,7 +177,7 @@
       @click="getDatabyTimeStamp"
     ></timeline>-->
 
-    <event-dygraph v-if="reloadDy" :eventObj="eventObj"></event-dygraph>
+    <event-dygraph v-if="reloadDy" :eventObj="eventObj" @pointClickCallback="pointClickCallback"></event-dygraph>
 
     <div id="rightSide" class="right-side">
       <h4>
@@ -186,7 +186,7 @@
       </h4>
       <!-- 时间线 -->
       <div>
-        <time-period></time-period>
+        <time-period @getEventsByTimeRange="getEventsByTimeRange"></time-period>
       </div>
     </div>
   </div>
@@ -203,6 +203,25 @@ import DiffPattern from "@/components/DiffPattern.vue";
 import Timeline from "../components/Timeline";
 import EventDygraph from "../components/EventDygraph";
 import { all } from "q";
+
+Date.prototype.format = function(fmt)   
+{ //author: meizz   
+  var o = {   
+    "M+" : this.getMonth()+1,                 //月份   
+    "d+" : this.getDate(),                    //日   
+    "h+" : this.getHours(),                   //小时   
+    "m+" : this.getMinutes(),                 //分   
+    "s+" : this.getSeconds(),                 //秒   
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
+    "S"  : this.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))   
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+    if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;   
+}
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -287,7 +306,7 @@ export default {
       eventList: [],
       // firstTimeStamp:"",
       // lastTimeStamp: "",
-      currentTimeStamp: "now", // 用于 diff 时恢复
+      // currentTimeStamp: "now", // 用于 diff 时恢复
       nodeSize: 40,
       fontSize: 14,
       linkWidth: 1,
@@ -595,6 +614,7 @@ export default {
   },
   created() {
     this.nodes.push(this.initialNode);
+    // this.getData();
   },
   methods: {
     shrink_open() {
@@ -607,7 +627,7 @@ export default {
             .getElementById("shrink-icon")
             .classList.add("el-icon-arrow-left");
           document.getElementById("rightSide").style.transform =
-            "translate(100%, 0)";
+            "translate(-100%, 0)";
         }, 500);
       } else {
         setTimeout(() => {
@@ -756,7 +776,9 @@ export default {
           // this.$nextTick(() => {
           //   this.addDblClickEvent();
           // });
-          var firstTimeStamp = response.data.timeList[20];
+          // var firstTimeStamp = response.data.timeList[20];
+          var firstTimeStamp =
+            response.data.timeList[response.data.timeList.length - 20];
           var lastTimeStamp =
             response.data.timeList[response.data.timeList.length - 1];
           var startDate = firstTimeStamp.substring(0, 10);
@@ -779,7 +801,7 @@ export default {
             .post(reqUrl + "/api/getEventByTime", params)
             .then(response => {
               this.eventObj = response.data;
-              console.log(response.data)
+              console.log(response.data);
               this.reloadDy = true;
             })
             .catch(error => {
@@ -794,6 +816,78 @@ export default {
       let displayProps = document.getElementsByClassName("display-property")[0];
       displayProps.style.right = "-420px";
       // displayProps.style.display = 'none'
+    },
+    getEventsByTimeRange(data) {
+      this.toggle = data.toggle;
+      this.reloadDy = false;
+
+      var params = new URLSearchParams();
+      params.append("startDate", data.startDate);
+      params.append("endDate", data.endDate);
+      params.append("startTime", data.startTime);
+      params.append("endTime", data.endTime);
+
+      axios
+        .post(reqUrl + "/api/getEventByTime", params)
+        .then(response => {
+          this.eventObj = response.data;
+          // console.log(response.data)
+          this.reloadDy = true;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    pointClickCallback(data) {
+      // console.log("fsgagaagd")
+      // console.log(data)
+      // console.log((new Date(data)).format("yyyy-MM-dd hh:mm:ss"));
+      var a = (new Date(data)).format("yyyy-MM-dd hh:mm:ss");
+      this.getDatabyTimeStampV2(a);
+    },
+    getDatabyTimeStampV2(timeStamp) {
+      axios
+        .get(reqUrl + "/api/getAllByTime?time=" + timeStamp)
+        .then(response => {
+          // this.currentTimeStampNodes = response.data.nodeList.slice()
+          // console.log(response.data)
+          response.data.nodeList.forEach(x => {
+            x.svgSym = nodeIcons[x.type];
+          });
+
+          let allNodes = response.data.nodeList;
+          this.links = response.data.linkList;
+
+          this.nodes = [];
+
+          this.pureNodes = allNodes.filter(node => {
+            if (
+              node.type === "event" ||
+              node.type === "timestamp" ||
+              node.type === "serviceServer" ||
+              node.type === "serviceDatabase" ||
+              node.type === "containerNetwork" ||
+              node.type === "containerStorage"
+            ) {
+              return false;
+            } else {
+              return true;
+            }
+          });
+
+          this.nodes = this.pureNodes;
+
+          // console.log("可显示");
+          this.propertyNodeSwitch = true;
+          this.diffSwitch = false;
+          this.diffDelta = {
+            add: { nodes: [], links: [] },
+            delete: { nodes: [], links: [] }
+          };
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
     getDatabyTimeStamp(currentTimeStamp, lastTimeStamp) {
       this.currentTimeStamp = currentTimeStamp;
@@ -1491,7 +1585,7 @@ export default {
   background-color: white;
   box-shadow: lightgrey 0px 0px 5px 5px;
   top: 0;
-  right: 0;
+  right: -420px;
   padding: 15px 15px;
   max-height: 150%;
 }
@@ -1568,7 +1662,6 @@ export default {
 #new-graph .nodesServiceDatabase,
 #new-graph .nodesServiceServer {
   fill: lightgoldenrodyellow;
-  r: 12;
 }
 
 #new-graph .nodesNamespace {
