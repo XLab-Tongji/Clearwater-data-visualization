@@ -204,24 +204,30 @@ import Timeline from "../components/Timeline";
 import EventDygraph from "../components/EventDygraph";
 import { all } from "q";
 
-Date.prototype.format = function(fmt)   
-{ //author: meizz   
-  var o = {   
-    "M+" : this.getMonth()+1,                 //月份   
-    "d+" : this.getDate(),                    //日   
-    "h+" : this.getHours(),                   //小时   
-    "m+" : this.getMinutes(),                 //分   
-    "s+" : this.getSeconds(),                 //秒   
-    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
-    "S"  : this.getMilliseconds()             //毫秒   
-  };   
-  if(/(y+)/.test(fmt))   
-    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
-  for(var k in o)   
-    if(new RegExp("("+ k +")").test(fmt))   
-  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-  return fmt;   
-}
+Date.prototype.format = function(fmt) {
+  //author: meizz
+  var o = {
+    "M+": this.getMonth() + 1, //月份
+    "d+": this.getDate(), //日
+    "h+": this.getHours(), //小时
+    "m+": this.getMinutes(), //分
+    "s+": this.getSeconds(), //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    S: this.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(fmt))
+    fmt = fmt.replace(
+      RegExp.$1,
+      (this.getFullYear() + "").substr(4 - RegExp.$1.length)
+    );
+  for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt))
+      fmt = fmt.replace(
+        RegExp.$1,
+        RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length)
+      );
+  return fmt;
+};
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -600,8 +606,26 @@ export default {
         axios
           .get(reqUrl + "/api/getAllByTime?time=" + this.lastTimeStamp)
           .then(res => {
-            this.diffNodes(res);
-            this.diffLinks(res);
+
+            let allNodes = response.data.nodeList;
+
+            let pureNodes = allNodes.filter(node => {
+              if (
+                node.type === "event" ||
+                node.type === "timestamp" ||
+                node.type === "serviceServer" ||
+                node.type === "serviceDatabase" ||
+                node.type === "containerNetwork" ||
+                node.type === "containerStorage"
+              ) {
+                return false;
+              } else {
+                return true;
+              }
+            });
+
+            this.diffNodes(pureNodes);
+            this.diffLinks(pureNodes);
             // console.log(JSON.stringify(this.diffDelta));
           });
       } else {
@@ -842,7 +866,7 @@ export default {
       // console.log("fsgagaagd")
       // console.log(data)
       // console.log((new Date(data)).format("yyyy-MM-dd hh:mm:ss"));
-      var a = (new Date(data)).format("yyyy-MM-dd hh:mm:ss");
+      var a = new Date(data).format("yyyy-MM-dd hh:mm:ss");
       this.getDatabyTimeStampV2(a);
     },
     getDatabyTimeStampV2(timeStamp) {
