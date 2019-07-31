@@ -1,5 +1,6 @@
 <template>
   <div id="systemOverview">
+    <LoadingEffect></LoadingEffect>
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
     <!-- 节点和关系图 -->
@@ -101,6 +102,7 @@
             v-if="currentNode.type === 'environment'"
           >导入</el-button>
           <el-button @click="updatePropsHandler" style="width:100%" type="primary" plain v-else>确定</el-button>
+          <!--<el-button @click="updatePropsHandler" style="width:100%" type="primary" plain >确定</el-button>-->
         </el-form-item>
       </el-form>
     </el-card>
@@ -166,8 +168,12 @@
 import D3Network from "../../components/vue-d3-network/src/d3-systemOverview.vue";
 import SearchTree from "../../components/SearchTree.vue";
 import Timeline from "../../components/Timeline";
+// import LoadingEffect from  "../../componets/LoadingEffect.vue";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
+import $ from "jquery";
+import LoadingEffect from "../../components/LoadingEffect";
+
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -214,6 +220,7 @@ var timer = null;
 
 export default {
   components: {
+      LoadingEffect,
     D3Network,
     SearchTree,
     Timeline
@@ -503,10 +510,13 @@ export default {
     },
   },
   created() {
+      // $('#fountainG').hide();
     this.nodes.push(this.initialNode);
+    //   this.getData();
   },
   methods: {
     getData() {
+        $('#fountainG').show();
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
@@ -524,6 +534,8 @@ export default {
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
+            console.log(response);
+            $('#fountainG').hide();
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
@@ -555,11 +567,27 @@ export default {
         })
         .catch(function(error) {
           // handle error
+            console.log("axios error:"+error);
         });
 
       let displayProps = document.getElementsByClassName("display-property")[0];
-      displayProps.style.right = "-420px";
+      // console.log(displayProps);
+      // if(displayProps != undefined) {
+          displayProps.style.right = "-420px";
+      // }
       // displayProps.style.display = 'none'
+      //   loadingEffect();
+      //   function loadingEffect() {
+      //       var loading = $("#fountainG");
+      //       loading.hide();
+      //       $(document)
+      //           .ajaxStart(function() {
+      //               loading.show();
+      //           })
+      //           .ajaxStop(function() {
+      //               loading.hide();
+      //           });
+      //   }
     },
     // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
     frontTimeFottoEnd(time) {
@@ -1042,7 +1070,10 @@ export default {
     }
   },
   mounted() {
-    var el = document.getElementsByClassName("net-svg")[0];
+
+      $('#fountainG').hide();
+
+      var el = document.getElementsByClassName("net-svg")[0];
     el.onmousedown = e => {
       this.staCoor = getCoordInDocument(e);
     };
@@ -1065,6 +1096,7 @@ export default {
           e.detail === 2 &&
           (e.target.localName === "path" || e.target.localName === "circle")
         ) {
+            // console.log(e.target);
           let property = this.currentNode.property;
           this.propertyKeys = Object.keys(property);
           for (var key in property) {
@@ -1351,4 +1383,5 @@ export default {
 #systemOverview .nodesAddedPropertyNode {
   stroke: #409eff;
 }
+
 </style>

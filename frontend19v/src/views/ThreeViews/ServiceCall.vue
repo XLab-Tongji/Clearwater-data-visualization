@@ -1,5 +1,6 @@
 <template>
   <div id="serviceCall">
+     <LoadingEffect></LoadingEffect>
     <!-- 节点和关系图 -->
     <div @mouseover="showLinkLabel">
       <d3-network
@@ -166,6 +167,8 @@ import D3Network from "../../components/vue-d3-network/src/d3-systemOverview.vue
 import SearchTree from "../../components/SearchTree.vue";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
+import $ from "jquery";
+import LoadingEffect from "../../components/LoadingEffect";
 
 import serviceLinks from "./data/data.json"
 
@@ -214,6 +217,7 @@ var timer = null;
 
 export default {
   components: {
+      LoadingEffect,
     D3Network,
     SearchTree,
   },
@@ -502,9 +506,11 @@ export default {
   },
   created() {
     this.nodes.push(this.initialNode);
+      // this.getData();
   },
   methods: {
     getData() {
+        $('#fountainG').show();
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
@@ -522,6 +528,7 @@ export default {
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
+            $('#fountainG').hide();
           console.log(response.data)
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
@@ -1031,6 +1038,7 @@ export default {
     }
   },
   mounted() {
+      $('#fountainG').hide();
     var el = document.getElementsByClassName("net-svg")[0];
     el.onmousedown = e => {
       this.staCoor = getCoordInDocument(e);
