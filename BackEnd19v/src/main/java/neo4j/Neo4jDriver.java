@@ -2374,7 +2374,12 @@ public class Neo4jDriver {
                 String[] plist = q.get("p").toString().split("/");
                 String p = plist[plist.length-1];
                 String o = q.get("o").toString();
-                if(p.equals("full_url")){
+                if (p.equals("type")){
+                    node.put("type", o);
+                    break;
+                }
+                pro.put(p, o);
+/*              if(p.equals("full_url")){
                     pro.put("full_url", o);
                 }
                 if(p.equals("name")){
@@ -2385,7 +2390,7 @@ public class Neo4jDriver {
                 }
                 if(p.equals("status")){
                     pro.put("status", o);
-                }
+                }*/
             }
             qE.close();
         }
@@ -2664,6 +2669,35 @@ public class Neo4jDriver {
         return true;
     }
 
+    public static boolean saveKapacitor2Mongo(String message){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("Kapacitor");
+            //获取当前时间
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = df.format(day);
+            System.out.println(time);
+            Map<String, Object> data = new HashMap<>();
+            data.put("message", message);
+            data.put("type", 1);
+            //插入文档
+            Document document = new Document(data).
+                    append("time", time);
+            collection.insertOne(document);
+            System.out.println("文档插入成功");
+//            if(storeTimestamp(time)==null)
+//                return false;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static Map<String, Object> getOneFromMongo(String time){
         try {
             //连接到mongodb服务
@@ -2692,9 +2726,10 @@ public class Neo4jDriver {
         }
     }
 
-    public static List<Map<String, Object>> getEventMongByTime(String startDate,String startTime, String endDate,String endTime){
-        String start=startDate+' '+startTime;
-        String end=endDate+' '+endTime;
+    public static List<List> getEventMongByTime(String startDate,String startTime, String endDate,String endTime){
+        String start=startDate+' '+startTime + ":00";
+        String end=endDate+' '+endTime + ":59";
+        List<List> result = new ArrayList<>();
         try {
             //连接到mongodb服务
             MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
@@ -2704,23 +2739,52 @@ public class Neo4jDriver {
             //多条件查询
             FindIterable<Document> findIterable = collection.find(Filters.and(Filters.gte("time", start), Filters.lte("time", end)));
             MongoCursor<Document> mongoCursor = findIterable.iterator();
-            List<Map<String, Object>> result = new ArrayList<>();
+            //System.out.println(mongoCursor);
             while(mongoCursor.hasNext()){
                 Document d=mongoCursor.next();
-                System.out.println(d.get("linkList"));
-                System.out.println(d.get("nodeList"));
+                //System.out.println(d);
                 JSONObject json=JSONObject.parseObject(d.toJson());
                 JSONArray eventList=json.getJSONArray("eventList");
-                String eventType=eventList.getJSONObject(0).getString("type");
-                Map<String, Object> map = new HashMap<>();
-                //map.putAll(d);
-                String time =d.get("time").toString();
-                map.put("time",time);
-                map.put("eventType",eventType);
-                result.add(map);
+                if (eventList.size()==0)continue;
+                String eventType=eventList.getJSONObject(eventList.size() - 1).getString("type");
+                ArrayList aL = new ArrayList();
+                Date date = new Date();
+                SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+                try {
+                    date=DateFormat.parse(d.get("time").toString());
+                } catch(ParseException px) {
+                    px.printStackTrace();
+                }
+                aL.add(date);
+                if (eventType.equals("event")){
+                    aL.add(0);
+                }
+//                System.out.println(aL);
+                result.add(aL);
+            }
+
+            MongoCollection<Document> collectionK = mongoDatabase.getCollection("Kapacitor");
+            //多条件查询
+            FindIterable<Document> findIterableK = collectionK.find(Filters.and(Filters.gte("time", start), Filters.lte("time", end)));
+            MongoCursor<Document> mongoCursorK = findIterableK.iterator();
+            //System.out.println(mongoCursor);
+            while(mongoCursorK.hasNext()){
+                Document d=mongoCursorK.next();
+                ArrayList aL = new ArrayList();
+                Date date = new Date();
+                SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+                try {
+                    date=DateFormat.parse(d.get("time").toString());
+                } catch(ParseException px) {
+                    px.printStackTrace();
+                }
+                aL.add(date);
+                aL.add(d.getInteger("type"));
+                result.add(aL);
             }
             if(result.size()==0) return null;
-            System.out.println(result);
+            //System.out.println(result);
+
             return result;
         } catch (Exception e){
             e.printStackTrace();

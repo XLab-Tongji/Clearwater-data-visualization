@@ -21,6 +21,7 @@ import org.apache.jena.riot.web.HttpOp;
 import org.springframework.stereotype.Component;
 import org.terracotta.statistics.Time;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
@@ -217,6 +218,42 @@ public class FusekiDriver {
             addLink2(hashMap, true, time);
 
         }
+        return true;
+    }
+
+    public static boolean readKapacitor(HashMap data){
+        String address = "10.60.38.173";
+        String message = data.get("message").toString();
+        //判断有没有type字段，没有则加一个
+        if (!data.containsKey("type")) {
+            data.put("type", "alert");
+        }
+        String serviceUrl = "http://event/" + address + "/" + message;
+        Date day=new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = df.format(day);
+        // 创建Timestamp节点 返回id
+        String timeID = storeTimestamp(time);
+        try {
+            Model model = ModelFactory.createDefaultModel();
+            Resource resource = model.createResource(serviceUrl);
+            System.out.println(serviceUrl);
+            System.out.println("-------");
+            for (Object key : data.keySet().toArray()
+                 ) {
+                key = key.toString();
+                resource.addProperty(model.createProperty(serviceUrl, "/" + key), data.get(key).toString() );
+            }
+            DataAccessor.getInstance().add(model);
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        HashMap hashMap = new HashMap();
+        hashMap.put("sid",serviceUrl);
+        hashMap.put("tid",timeID);
+        hashMap.put("type","time");
+        addLink2(hashMap, true, time);
         return true;
     }
 
