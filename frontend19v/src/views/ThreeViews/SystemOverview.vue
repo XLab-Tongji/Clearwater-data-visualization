@@ -534,7 +534,7 @@ export default {
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
-            console.log(response);
+            // console.log(response);
             $('#fountainG').hide();
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
