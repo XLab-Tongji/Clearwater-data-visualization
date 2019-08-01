@@ -1,5 +1,6 @@
 <template>
   <div id="new-graph">
+    <LoadingEffect></LoadingEffect>
     <!-- 搜索和树 在 ../components/SearchTree 下 -->
     <search-tree v-on:focusNode="focusNode" :nodes="nodes" :links="links"></search-tree>
     <diff-pattern v-if="diffSwitch"></diff-pattern>
@@ -203,6 +204,8 @@ import DiffPattern from "@/components/DiffPattern.vue";
 import Timeline from "../components/Timeline";
 import EventDygraph from "../components/EventDygraph";
 import { all } from "q";
+import LoadingEffect from "../components/LoadingEffect";
+import $ from "jquery";
 
 Date.prototype.format = function(fmt) {
   //author: meizz
@@ -231,8 +234,8 @@ Date.prototype.format = function(fmt) {
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-// const reqUrl = "http://10.60.38.173:9990/bbs";
-const reqUrl = "http://localhost:8088/bbs";
+const reqUrl = "http://10.60.38.173:9990/bbs";
+// const reqUrl = "http://localhost:8088/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -280,7 +283,8 @@ export default {
     SearchTree,
     TimePeriod,
     EventDygraph,
-    DiffPattern
+    DiffPattern,
+      LoadingEffect
   },
   data() {
     return {
@@ -722,6 +726,7 @@ export default {
       });
     },
     getData() {
+      $('#fountainG').show();
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
@@ -753,7 +758,7 @@ export default {
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           // console.log(response)
-
+          $('#fountainG').hide();
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
@@ -833,6 +838,7 @@ export default {
             });
         })
         .catch(function(error) {
+            $('#fountainG').hide();
           // handle error
           console.log(error);
         });
@@ -1486,6 +1492,7 @@ export default {
     }
   },
   mounted() {
+      $('#fountainG').hide();
     var el = document.getElementsByClassName("net-svg")[0];
     el.onmousedown = e => {
       this.staCoor = getCoordInDocument(e);
