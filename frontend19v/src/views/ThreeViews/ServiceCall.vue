@@ -529,7 +529,7 @@ export default {
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
             $('#fountainG').hide();
-          console.log(response.data)
+          // console.log(response.data)
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
@@ -538,7 +538,7 @@ export default {
           let allNodes = response.data.nodeList;
 
           this.links = serviceLinks.linkList;
-          console.log(this.links)
+          // console.log(this.links)
 
           // sl = JSON.parse(serviceLinks.linkList)
           // this.links = sl
@@ -556,7 +556,7 @@ export default {
           });
 
         this.nodes = this.pureNodes;
-        console.log(this.nodes)
+        // console.log(this.nodes)
           
           // 在 links 和 nodes 都有数据之后
           this.eventList = response.data.eventList;
