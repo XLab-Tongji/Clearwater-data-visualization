@@ -455,7 +455,7 @@ public class IndexRestController {
     }
 
     @RequestMapping(value = "/api/getEventByTime", method = RequestMethod.POST, produces = "application/json")
-    public List<Map<String, Object>> getEventByTime(@RequestParam("startDate")String startDate, @RequestParam("endDate")String endDate,@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime){
+    public List<List> getEventByTime(@RequestParam("startDate")String startDate, @RequestParam("endDate")String endDate,@RequestParam("startTime")String startTime, @RequestParam("endTime")String endTime){
         return getEventMongByTime(startDate,startTime,endDate, endTime);
     }
 
@@ -546,5 +546,8 @@ public class IndexRestController {
         return true;
     }
 
-
+    @RequestMapping(value = "/api/addKapacitorEvent", method = RequestMethod.POST, produces = "application/json")
+    public Boolean addKapacitorEvent(@RequestBody HashMap data){
+        return readKapacitor(data);
+    }
 }

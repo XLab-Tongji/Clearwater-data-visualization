@@ -1,9 +1,9 @@
 <template>
     <div>
         <VueCtkDateTimePicker class="time-picker" label="Select date range" v-model="value"  :range="range" format="YYYY-MM-DD" formatted="ll"/>
-        <VueCtkDateTimePicker class="time-picker" label="Select start date time" v-model="value1" :only-time="onlytime" format="HH:mm:ss" formatted="HH:mm:ss"/>
+        <VueCtkDateTimePicker class="time-picker" label="Select start date time" v-model="value1" :only-time="onlytime" format="HH:mm" formatted="HH:mm"/>
         <VueCtkDateTimePicker class="time-picker" label="Select end date time" v-model="value2" :only-time="onlytime" format="HH:mm" formatted="HH:mm"/>
-        <el-button @click="getEventsByTimeRange">
+        <el-button @click.prevent="getEventsByTimeRange">
             Comfirm
         </el-button>
     </div>
@@ -43,9 +43,15 @@
         },
         methods: {
             getEventsByTimeRange() {
-                console.log(this.value)
-                console.log(this.value1)
-                console.log(this.value2)
+                var timeObj={
+                    startDate:this.value.start,
+                    endDate:this.value.end,
+                    startTime:this.value1,
+                    endTime:this.value2,
+                    toggle:true
+                }
+                // console.log(timeObj)
+                this.$emit("getEventsByTimeRange", timeObj)
             }
         }
     }

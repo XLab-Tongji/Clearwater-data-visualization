@@ -512,7 +512,11 @@ export default {
   created() {
       // $('#fountainG').hide();
     this.nodes.push(this.initialNode);
+<<<<<<< HEAD
     //   this.getData();
+=======
+    // this.getData();
+>>>>>>> 19b5766c6d07a472664b240fae71bb5ca810dc0e
   },
   methods: {
     getData() {

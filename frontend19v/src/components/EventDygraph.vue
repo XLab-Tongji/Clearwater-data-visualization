@@ -3,7 +3,6 @@
         <div id="div_g" class="graph_div">
 
         </div>
-
     </div>
 </template>
 
@@ -12,8 +11,7 @@
     export default {
         name: "event-dygraph",
         props: {
-            allTimeStamps: Array,
-            eventList: Array
+            eventObj: Array,
         },
         components: {
 
@@ -34,14 +32,20 @@
 
         },
         mounted() {
-            var data = [];
-            var t = new Date();
-            for (var i = 10; i >= 0; i--) {
-                var x = new Date(t.getTime() - i * 1000);
-                data.push([x, Math.floor(Math.random()*4)] );
+            // var data = [];
+            // var t = new Date();
+            // for (var i = 10; i >= 0; i--) {
+            //     var x = new Date(t.getTime() - i * 1000);
+            //     data.push([x, Math.floor(Math.random()*4)] );
+            // }
+
+            // console.log(data)
+            var data = this.eventObj;
+            for(var i=0;i<data.length;i++){
+                data[i][0] = new Date(data[i][0]);
             }
             console.log(data)
-
+            let _this = this;
             var g = new Dygraph(document.getElementById("div_g"), data,
                 {
                     legend: 'always',
@@ -57,6 +61,12 @@
                     pointClickCallback: function callback(e, point) {
                         //emit the event to parents component
                         //timestamp is point.xval eg.1564297357987
+                    }
+
+                    pointClickCallback: function callback(e, point) {
+                        //emit the event to parents component
+                        //timestamp is point.xval eg.1564297357987
+                        _this.$emit("pointClickCallback", point.xval)
                     }
 
                 });
