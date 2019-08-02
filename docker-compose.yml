@@ -13,6 +13,6 @@ services:
     ports:
       - "3030:3030"
   mongo:
-    image: mongo
+    build: ./mongo
     ports:
       - "27020:27017"
