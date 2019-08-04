@@ -171,10 +171,10 @@ import $ from "jquery";
 import LoadingEffect from "../../components/LoadingEffect";
 
 import serviceLinks from "./data/data.json"
-
+import backurl from '../../Global'
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-const reqUrl = "http://10.60.38.173:9990/bbs";
+const reqUrl = backurl.backurl+"/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -529,7 +529,7 @@ export default {
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
             $('#fountainG').hide();
-          // console.log(response.data)
+          console.log(reqUrl)
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];

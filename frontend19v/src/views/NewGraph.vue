@@ -206,6 +206,7 @@ import EventDygraph from "../components/EventDygraph";
 import { all } from "q";
 import LoadingEffect from "../components/LoadingEffect";
 import $ from "jquery";
+import backurl from '../Global'
 
 Date.prototype.format = function(fmt) {
   //author: meizz
@@ -234,7 +235,7 @@ Date.prototype.format = function(fmt) {
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-const reqUrl = "http://10.60.38.173:9990/bbs";
+const reqUrl = backurl.backurl+"/bbs";
 // const reqUrl = "http://localhost:8088/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
@@ -757,7 +758,7 @@ export default {
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           // this.currentTimeStampNodes = response.data.nodeList.slice()
-          // console.log(response)
+          console.log(reqUrl)
           $('#fountainG').hide();
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];

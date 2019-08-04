@@ -3,11 +3,16 @@ services:
   frontend:
     build: ./frontend19v
     ports:
-      - "9998:8080"
+      - "9998:9998"
+    depends_on:
+      - backend
   backend:
     build: ./BackEnd19v
-    ports:
-      - "9990:8080"
+    expose:
+      - 8080
+    links:
+      - fuseki:fuseki
+      - mongo:mongo
   fuseki:
     image: stain/jena-fuseki
     ports:

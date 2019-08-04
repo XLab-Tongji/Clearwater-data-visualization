@@ -17,7 +17,7 @@
 <script>
 import $ from "jquery";
 import * as d3 from "d3";
-
+import backurl from '../Global'
 export default {
   name: "causerel",
   data() {
@@ -45,7 +45,7 @@ export default {
         // url: window.location + "causality",
         // url: window.location + "search/"+$('#select')[0].value,
         // url: "/cause.json",
-        url: "http://10.60.38.173:9990/bbs/api/postCSV",
+        url: backurl.backurl+"/bbs/api/postCSV",
         type: "POST",
         processData: false,
         contentType: false,
@@ -66,7 +66,7 @@ export default {
             return;
           }
           if (fb_data.message == "Success" && fb_data.code == 200) {
-            // console.log(fb_data['data']);
+            console.log(this.url);
             let analysis_result = $.parseJSON(fb_data.data);
             cleanShow();
             buildShow(analysis_result);
