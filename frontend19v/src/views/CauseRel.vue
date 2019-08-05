@@ -66,14 +66,14 @@ export default {
             return;
           }
           if (fb_data.message == "Success" && fb_data.code == 200) {
-            console.log(this.url);
+            // console.log(this.url);
             let analysis_result = $.parseJSON(fb_data.data);
             cleanShow();
             buildShow(analysis_result);
           }
 
           function buildShow(jsonObj) {
-            console.log(jsonObj)
+            // console.log(jsonObj)
             var text_tree_show_div = d3
               .select("#cause-rel-view")
               .append("div")

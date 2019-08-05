@@ -831,7 +831,7 @@ export default {
             .post(reqUrl + "/api/getEventByTime", params)
             .then(response => {
               this.eventObj = response.data;
-              console.log(response.data);
+              // console.log(response.data);
               this.reloadDy = true;
             })
             .catch(error => {

@@ -44,7 +44,7 @@
             for(var i=0;i<data.length;i++){
                 data[i][0] = new Date(data[i][0]);
             }
-            console.log(data)
+            // console.log(data)
             let _this = this;
             var g = new Dygraph(document.getElementById("div_g"), data,
                 {
