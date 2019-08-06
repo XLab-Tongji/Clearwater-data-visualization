@@ -552,4 +552,10 @@ public class IndexRestController {
         System.out.println(message);
         return saveKapacitor2Mongo(message);
     }
+
+    //添加事件和指标之间的关联度
+    @RequestMapping(value = "/api/addEventLinkToProfile", method = RequestMethod.GET, produces = "application/json")
+    public void addEventLinkToProfile(){
+        addLinkEvent2S();
+    }
 }

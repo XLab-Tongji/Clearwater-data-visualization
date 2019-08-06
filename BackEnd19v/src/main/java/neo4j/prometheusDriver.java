@@ -7,6 +7,7 @@ import org.terracotta.statistics.Time;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,55 @@ public class prometheusDriver {
             }
         }
         return arrayList;
+    }
+
+    public static JSONArray getProInfor(String urlNode, String start, String end) {
+//        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
+        String url = new String();
+        try {
+            url = "http://10.60.38.181:30003/api/v1/query_range?query=" + URLEncoder.encode(urlNode, "UTF-8") + "&start=" + start + "&end=" + end + "&step=60";
+//        url = java.net.URLEncoder.encode(url);
+            System.out.println(url);
+        }catch (Exception e){
+            System.out.println();
+        }
+        JSONArray value = new JSONArray();
+        //ArrayList arrayList = new ArrayList();
+        InputStream is = null;
+        try {
+            is = new URL(url).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            StringBuilder sb = new StringBuilder();
+            int cp;
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+            String jsonText = sb.toString();
+
+            JSONObject jsStr = JSONObject.parseObject(jsonText);
+
+            JSONArray result = jsStr.getJSONObject("data").getJSONArray("result");
+
+            try{
+                value = ((JSONObject)result.get(0)).getJSONArray("values");
+
+            }catch (Exception e){
+                value = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
     }
 
     public static boolean newPrometheus(HashMap data){

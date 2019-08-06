@@ -2858,5 +2858,6 @@ public class Neo4jDriver {
         String[] list = str.split("/");
         System.out.println(list[list.length-1]);
         System.out.println(list[list.length-2]);
+
     }
 }
