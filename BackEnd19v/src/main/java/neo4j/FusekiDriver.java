@@ -592,25 +592,36 @@ public class FusekiDriver {
         return result;
     }
 
-    public static boolean addCorrelation(String fromUrl, String toUrl, String correlation){
+    public static boolean addCorrelation(String fromUrl, String toUrl, String influence){
+        int last= toUrl.lastIndexOf("/");
+        String temp=toUrl.substring(0,last);
+        int target=temp.lastIndexOf("/");
+        String index=toUrl.substring(target+1);
+        String result=index.replace('/','_');
         String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
                 "INSERT DATA{\n" +
-                "<"+fromUrl+"> j0:"+ correlation +" <"+toUrl+">\n" +
+                "<"+fromUrl+"> j0:influence_"+result+"<"+toUrl+">\n" +
+                "}";
+        String setInfluenceValue = "PREFIX j0:<"+fromUrl+"/influence_"+result+"/>\n" +
+                "INSERT DATA{\n" +
+                "<"+fromUrl+"/influence_"+result+"> j0:value\""+influence+"\"\n" +
                 "}";
         System.out.println(addRelation);
+        System.out.println(setInfluenceValue);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/update");
-//                .destination("http://127.0.0.1");
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
-        credsProvider.setCredentials(AuthScope.ANY, credentials);
+//                .destination("http://10.60.38.173:3030/DevKGData/update");
+                .destination("http://localhost:3030/gundam/update");
+//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+//        credsProvider.setCredentials(AuthScope.ANY, credentials);
         HttpClient httpclient = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
+//                .setDefaultCredentialsProvider(credsProvider)
                 .build();
         HttpOp.setDefaultHttpClient(httpclient);
         builderAddRelation.httpClient(httpclient);
         try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
             connAddRelation.update(addRelation);
+            connAddRelation.update(setInfluenceValue);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -621,6 +632,6 @@ public class FusekiDriver {
 
 
     public static void main(String[] args) {
-  //      addLinkEvent2S();
+      addLinkEvent2S();
     }
 }
