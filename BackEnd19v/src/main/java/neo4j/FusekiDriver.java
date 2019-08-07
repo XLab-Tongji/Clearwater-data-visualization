@@ -599,8 +599,8 @@ public class FusekiDriver {
                 "}";
         System.out.println(addRelation);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-//                .destination("http://10.60.38.173:3030/DevKGData/update");
-                .destination("http://127.0.0.1");
+                .destination("http://10.60.38.173:3030/DevKGData/update");
+//                .destination("http://127.0.0.1");
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
         credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -621,6 +621,6 @@ public class FusekiDriver {
 
 
     public static void main(String[] args) {
-        addLinkEvent2S();
+  //      addLinkEvent2S();
     }
 }
