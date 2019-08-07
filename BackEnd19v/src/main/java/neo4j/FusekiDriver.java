@@ -528,8 +528,10 @@ public class FusekiDriver {
                  ) {
                 for (Object k:proInfor
                      ) {
-                    if ((Long)j <= ((JSONArray)k).getLong(0) ){
+                    if ((Long)j <= ((JSONArray)k).getLong(0)){
+                        if (!timeList.contains(((JSONArray)k).getLong(0))){
                         timeList.add(((JSONArray)k).getLong(0));
+                        }
                         break;
                     }
                 }
@@ -541,6 +543,7 @@ public class FusekiDriver {
             jsonObject.put("file1",timeList);
             jsonObject.put("file2", proInfor);
             String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
+            System.out.println(re);
             if (re != null){
                 for (String ev:(ArrayList<String>)dates.get("Event")
                      ) {
@@ -596,7 +599,8 @@ public class FusekiDriver {
                 "}";
         System.out.println(addRelation);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/update");
+//                .destination("http://10.60.38.173:3030/DevKGData/update");
+                .destination("http://127.0.0.1");
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
         credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -617,6 +621,6 @@ public class FusekiDriver {
 
 
     public static void main(String[] args) {
-        //addLinkEvent2S();
+        addLinkEvent2S();
     }
 }
