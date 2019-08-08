@@ -2,9 +2,10 @@ package neo4jentities;
 
 import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.query.DatasetAccessorFactory;
+import global.globalvalue;
 
 public class DataAccessor {
-    public static String serviceURI = "http://10.60.38.173:3030/DevKGData";
+    public static String serviceURI = globalvalue.fusekiapi+":3030/DevKGData";
     public static DatasetAccessorFactory factory = null;
     public static DatasetAccessor accessor;
 

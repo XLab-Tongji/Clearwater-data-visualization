@@ -8,13 +8,13 @@ services:
       - backend
   backend:
     build: ./BackEnd19v
-    expose:
-      - 8080
-    links:
-      - fuseki:fuseki
-      - mongo:mongo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fuseki
+      - mongo
   fuseki:
-    image: stain/jena-fuseki
+    image: 993492964/kg
     ports:
       - "3030:3030"
   mongo:

@@ -25,7 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
-
+import global.globalvalue;
 import static neo4j.Neo4jDriver.*;
 
 
@@ -39,7 +39,7 @@ public class FusekiDriver {
         List<Map<String, Object>> linkList = new ArrayList<>();
         List<String> timeList = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
 
         Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
                 "\t?s ?p ?o\n" +
@@ -298,7 +298,7 @@ public class FusekiDriver {
         System.out.println(addRelation);
 
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/update");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
 
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
@@ -396,7 +396,7 @@ public class FusekiDriver {
     public static boolean deleteAll(){
         try {
             RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.173:3030/DevKGData/update");
+                    .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
             String deleteAll = "DELETE WHERE\n" +
                     "{\n" +
                     "\t?s ?p ?o .\n" +

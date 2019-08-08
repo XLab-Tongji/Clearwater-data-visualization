@@ -1,5 +1,6 @@
 package neo4j;
 
+import global.globalvalue;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvReader;
@@ -1629,7 +1630,7 @@ public class Neo4jDriver {
         try {
             String envName = "http://environment/"+address;
             RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.173:3030/DevKGData/query");
+                    .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
             Query query = QueryFactory.create("SELECT ?p ?o " +
                     "WHERE { <http://backup/"+address+"> ?p ?o }");
             try ( RDFConnectionFuseki conn = (RDFConnectionFuseki)builder.build() ) {
@@ -1646,7 +1647,7 @@ public class Neo4jDriver {
                             "<"+envName+"> j0:has "+"<"+urlNode+">\n" +
                             "}";
                     RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                            .destination("http://10.60.38.173:3030/DevKGData/update");
+                            .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
                     CredentialsProvider credsProvider = new BasicCredentialsProvider();
                     Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
                     credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -1679,7 +1680,7 @@ public class Neo4jDriver {
         // save master url
         String urlMasterNode = "http://server/"+address+"/"+masterName;
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         // execute query, get all nodes
         Query query = QueryFactory.create("SELECT ?p ?o " +
                 "WHERE { <http://backup/"+address+"> ?p ?o }");
@@ -1719,7 +1720,7 @@ public class Neo4jDriver {
                             "<"+urlMasterNode+"> j0:manage "+"<"+urlNode+">\n" +
                             "}";
                     RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                            .destination("http://10.60.38.173:3030/DevKGData/update");
+                            .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
                     CredentialsProvider credsProvider = new BasicCredentialsProvider();
                     Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
                     credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -1963,7 +1964,7 @@ public class Neo4jDriver {
     public static boolean podToService(String address, String namespace) {
         String urlPod = "http://pods/" + address + "/" + namespace + "/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<" + urlPod + ">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -1999,7 +2000,7 @@ public class Neo4jDriver {
                                 "<" + urlPod + temp + ">  j0:provides " + "<" + urlService + ">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://10.60.38.173:3030/DevKGData/update");
+                                .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
                         CredentialsProvider credsProvider = new BasicCredentialsProvider();
                         Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
                         credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -2029,7 +2030,7 @@ public class Neo4jDriver {
     public static boolean podToServer(String address,String namespace){
         String urlPod = "http://pods/"+address+"/"+namespace+"/";
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
 
         Query query = QueryFactory.create("PREFIX j0:<"+urlPod+">\n" +
                 "SELECT ?o WHERE {\n" +
@@ -2065,7 +2066,7 @@ public class Neo4jDriver {
                                 "<"+urlPod+subject+">  j0:deployed_in "+"<"+urlNode+">\n" +
                                 "}";
                         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                                .destination("http://10.60.38.173:3030/DevKGData/update");
+                                .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
                         CredentialsProvider credsProvider = new BasicCredentialsProvider();
                         Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
                         credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -2113,7 +2114,7 @@ public class Neo4jDriver {
                 JSONObject jsonObject = JSONObject.parseObject(jsonString);
                 String address = (String) jsonObject.getJSONObject("detail").keySet().toArray()[0];
                 RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                        .destination("http://10.60.38.173:3030/DevKGData/update");
+                        .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
                 String response_time = "http://services/" + address + "/" + namespace + "/" + serviceName + "/response_time";
                 String proRelation = "PREFIX j0:<"+response_time+"/>\n" +
                         "INSERT DATA{\n" +
@@ -2155,7 +2156,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "namespace");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2186,7 +2187,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "timestamp");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2217,7 +2218,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "environment");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2251,7 +2252,7 @@ public class Neo4jDriver {
         else
             node.put("type", "server");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+urlNode+"> ?p ?o\n" +
                 "}");
@@ -2287,7 +2288,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "service");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2330,7 +2331,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", type);
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2361,7 +2362,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "event");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2406,7 +2407,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "pod");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2455,7 +2456,7 @@ public class Neo4jDriver {
         node.put("name", l[l.length-1]);
         node.put("type", "container");
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?p ?o WHERE {\n" +
                 "\t<"+url+"> ?p ?o\n" +
                 "}");
@@ -2494,7 +2495,7 @@ public class Neo4jDriver {
     public static List<Map<String, Object>> getLink(String url, String linkType){
         List<Map<String, Object>> list = new ArrayList<>();
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?s ?o WHERE {\n" +
                 "\t?s <"+url+"/"+linkType+"> ?o\n" +
                 "}");
@@ -2519,7 +2520,7 @@ public class Neo4jDriver {
 
     public static boolean judgeExist(String url){
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
 
         Query query = QueryFactory.create("SELECT distinct ?s WHERE {\n" +
                 "\t?s ?p ?o\n" +
@@ -2542,7 +2543,7 @@ public class Neo4jDriver {
     public static boolean deleteOneLink(String sid, String tid){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.173:3030/DevKGData/update");
+                    .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
 
             String delete = "DELETE WHERE\n" +
                     "{\n" +
@@ -2572,7 +2573,7 @@ public class Neo4jDriver {
     public static boolean deleteOneNode(String url){
         try {
             RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create()
-                    .destination("http://10.60.38.173:3030/DevKGData/update");
+                    .destination(globalvalue.fusekiapi+":3030/DevKGData/update");
             String delete = "DELETE WHERE\n" +
                     "{\n" +
                     "<"+url+"> ?p ?o .\n" +
@@ -2600,7 +2601,7 @@ public class Neo4jDriver {
 
     public static String findEvent(String full_url){
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create()
-                .destination("http://10.60.38.173:3030/DevKGData/query");
+                .destination(globalvalue.fusekiapi+":3030/DevKGData/query");
         Query qNode = QueryFactory.create("SELECT ?s ?p ?o WHERE {\n" +
                 "\t<"+full_url+"> ?p ?o\n" +
                 "}");
@@ -2625,7 +2626,7 @@ public class Neo4jDriver {
     public static boolean save2Mongo(Map<String, Object> data){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("info");
@@ -2651,7 +2652,7 @@ public class Neo4jDriver {
     public static boolean save2MongoByTime(Map<String, Object> data, String time){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("info");
@@ -2672,7 +2673,7 @@ public class Neo4jDriver {
     public static boolean saveKapacitor2Mongo(String message){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("Kapacitor");
@@ -2701,7 +2702,7 @@ public class Neo4jDriver {
     public static Map<String, Object> getOneFromMongo(String time){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("info");
@@ -2732,7 +2733,7 @@ public class Neo4jDriver {
         List<List> result = new ArrayList<>();
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("info");
@@ -2812,7 +2813,7 @@ public class Neo4jDriver {
     }
 
     public static List<String> getTimesFromMongo(){
-        MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+        MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
         MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
         MongoCollection<Document> collection = mongoDatabase.getCollection("info");
         FindIterable<Document> findIterable = collection.find();

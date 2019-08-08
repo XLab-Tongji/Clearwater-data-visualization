@@ -5,6 +5,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import global.globalvalue;
 import org.bson.Document;
 
 import java.text.SimpleDateFormat;
@@ -13,7 +14,7 @@ import java.util.*;
 public class MongoDriver {
 
     //连接到mongodb服务
-    private MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+    private MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
     //连接到数据库
     private MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
     private MongoCollection<Document> collection = mongoDatabase.getCollection("query_statements");
