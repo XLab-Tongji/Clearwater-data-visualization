@@ -13,10 +13,6 @@ services:
     depends_on:
       - fuseki
       - mongo
-  fuseki:
-    image: 993492964/kg
-    ports:
-      - "3030:3030"
   mongo:
     build: ./mongo
     ports:
