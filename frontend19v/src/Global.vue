@@ -1,6 +1,6 @@
 <script>
-    //const backurl='http://127.0.0.1:8080/back';
-    const backurl='http://10.60.38.173:9990';
+    //具体使用时将10.60.38.173改为对应ip
+    const backurl='http://10.60.38.173:9998/back';
     export default
     {
         backurl
