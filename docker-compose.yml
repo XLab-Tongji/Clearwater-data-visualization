@@ -11,7 +11,14 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - fuseki
       - mongo
+  fuseki:
+    image: stain/jena-fuseki
+    environment:
+      - ADMIN_PASSWORD=D0rlghQl5IAgYOm
+    ports:
+      - "3030:3030"
   mongo:
     build: ./mongo
     ports:
