@@ -1343,7 +1343,7 @@ public class Neo4jDriver {
         return hashMap;
     }
     public static Map<String, Object> csvPost(String algorithm,String filepath) throws IOException {
-        String sURL = "http://10.60.38.173:10080/causality";
+        String sURL = globalvalue.causeapi + ":10080/causality";
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost uploadFile = new HttpPost(sURL);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
