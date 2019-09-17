@@ -1,27 +1,12 @@
 package web;
 
-<<<<<<< Updated upstream
-import neo4j.MongoDriver;
 import neo4j.Neo4jDriver;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
-=======
-import neo4j.Neo4jDriver;
->>>>>>> Stashed changes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-<<<<<<< Updated upstream
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.yaml.snakeyaml.Yaml;
+
 import service.Neo4jService;
-import util.TimerUtil;
-=======
-import service.Neo4jService;
->>>>>>> Stashed changes
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,14 +15,12 @@ import java.util.*;
 
 import static neo4j.FusekiDriver.*;
 import static neo4j.Neo4jDriver.*;
-<<<<<<< Updated upstream
-import static neo4j.prometheusDriver.DealPrometheusRequest;
-=======
->>>>>>> Stashed changes
+
 import static neo4j.prometheusDriver.newPrometheus;
 
+@RestController
 public class Neo4jController {
-    @Autowired
+  //  @Autowired
     private Neo4jDriver neo4jDriver;
     private Neo4jService neo4jService;
     @Cacheable(cacheNames = "getdata")
@@ -178,18 +161,7 @@ public class Neo4jController {
         return getElement();
     }
 
-<<<<<<< Updated upstream
 
-
-
-
-
-
-
-
-
-=======
->>>>>>> Stashed changes
     //以下为Fuseki部分
     @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
     public Map<String, Object> getNodesAndLinks(){
@@ -239,19 +211,12 @@ public class Neo4jController {
     @RequestMapping(value = "/api/createPrometheus", method = RequestMethod.POST, produces = "application/json")
     public Boolean createPrometheus(@RequestBody HashMap data) { return newPrometheus(data);}
 
-<<<<<<< Updated upstream
     //添加事件和指标之间的关联度
     @RequestMapping(value = "/api/addEventLinkToProfile", method = RequestMethod.GET, produces = "application/json")
     public void addEventLinkToProfile(){
         addLinkEvent2S();
     }
-=======
-//    //添加事件和指标之间的关联度
-//    @RequestMapping(value = "/api/addEventLinkToProfile", method = RequestMethod.GET, produces = "application/json")
-//    public void addEventLinkToProfile(){
-//        addLinkEvent2S();
-//    }
->>>>>>> Stashed changes
+
 
 
 }
