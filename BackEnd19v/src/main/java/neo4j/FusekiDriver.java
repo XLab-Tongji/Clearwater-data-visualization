@@ -11,9 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.query.*;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.commons.codec.binary.Base64;
@@ -26,11 +24,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import global.globalvalue;
 
 import static neo4j.MongoDriver.*;
+import static neo4j.prometheusDriver.getProInfor;
 
 
 @Component
@@ -1668,6 +1668,156 @@ public class FusekiDriver {
         }
         System.out.println(eventID);
         return eventID;
+    }
+
+    public static ArrayList getResourcesWithQuery(){
+        ArrayList result = new ArrayList();
+        Model model = DataAccessor.getInstance().getModel();
+        ResIterator iter = model.listSubjects();
+        while (iter.hasNext()) {
+            Resource r = iter.nextResource();
+            if (r.hasProperty(model.createProperty(r.toString()+"/query"))){
+                result.add(r);
+            }
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    //将event和实体的属性对应起来的接口（添加事件和指标之间的关联度）
+    public static void addLinkEvent2S(){
+        SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = DateFormat.parse("2019-08-06 00:00:00");
+            end = DateFormat.parse("2019-08-06 23:59:59");
+        } catch(ParseException px) {
+            px.printStackTrace();
+        }
+        Model model = DataAccessor.getInstance().getModel();
+        ArrayList<Resource> resources = getResourcesWithQuery();
+        //受到时区的影响
+        Map dates = getEventInFuseki(start, end);
+        List times = new ArrayList<>();
+        for (Date i:(ArrayList<Date>)dates.get("Date")
+        ) {
+            times.add(i.getTime()/1000);
+        }
+        Collections.sort(times);
+        for (Resource i:resources
+        ) {
+            Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
+            System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
+
+            JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
+            //JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),times.get(0)+"", times.get(times.size()-1)+"");
+            if (proInfor == null)continue;
+            List timeList = new ArrayList();
+            for (Object j:times
+            ) {
+                for (Object k:proInfor
+                ) {
+                    if ((Long)j <= ((JSONArray)k).getLong(0)){
+                        if (!timeList.contains(((JSONArray)k).getLong(0))){
+                            timeList.add(((JSONArray)k).getLong(0));
+                        }
+                        break;
+                    }
+                }
+            }
+            System.out.println("request---------");
+            System.out.println(timeList);
+            System.out.println(proInfor);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("file1",timeList);
+            jsonObject.put("file2", proInfor);
+            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
+            System.out.println(re);
+            if (re != null){
+                for (String ev:(ArrayList<String>)dates.get("Event")
+                ) {
+                    addCorrelation(ev, i.toString(), re);
+                }
+            }
+        }
+
+
+
+    }
+
+
+    //查询指定范围内发生的时间
+    public static Map<String, ArrayList> getEventInFuseki(Date startTime,Date endTime)
+    {
+        SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+        String start = DateFormat.format(startTime);
+        String end = DateFormat.format(endTime);
+        Map result = new HashMap<>();
+        result.put("Date", new ArrayList<>());
+        result.put("Event", new ArrayList<>());
+        Model model = DataAccessor.getInstance().getModel();
+        ResIterator iter = model.listSubjects();
+        while (iter.hasNext()) {
+            Resource r = iter.nextResource();
+            if (r.toString().contains("event"))
+            {
+                String timeProperty=r.getProperty(model.createProperty(r.toString()+"/starts_at")).getResource().toString();
+                //截取出时间字符串，去掉中间的“-”
+                int length=timeProperty.length();
+                String time=timeProperty.substring(length-19,length-9)+" "+timeProperty.substring(length-8);
+                if(time.compareTo(start)>=0&&time.compareTo(end)<=0)
+                {
+                    try {
+                        Date dateResult = DateFormat.parse(time);
+                        ((ArrayList)result.get("Date")).add(dateResult);
+                        ((ArrayList)result.get("Event")).add(r.toString());
+                    }catch(ParseException px) {
+                        px.printStackTrace();
+                    }
+                }
+            }
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    public static boolean addCorrelation(String fromUrl, String toUrl, String influence){
+        int last= toUrl.lastIndexOf("/");
+        String temp=toUrl.substring(0,last);
+        int target=temp.lastIndexOf("/");
+        String index=toUrl.substring(target+1);
+        String result=index.replace('/','_');
+        String addRelation = "PREFIX j0:<"+fromUrl+"/>\n" +
+                "INSERT DATA{\n" +
+                "<"+fromUrl+"> j0:influence_"+result+"<"+toUrl+">\n" +
+                "}";
+        String setInfluenceValue = "PREFIX j0:<"+fromUrl+"/influence_"+result+"/>\n" +
+                "INSERT DATA{\n" +
+                "<"+fromUrl+"/influence_"+result+"> j0:value\""+influence+"\"\n" +
+                "}";
+        System.out.println(addRelation);
+        System.out.println(setInfluenceValue);
+        RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
+                //                .destination("http://10.60.38.173:3030/DevKGData/update");
+                .destination("http://localhost:3030/gundam/update");
+        //        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        //        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
+        //        credsProvider.setCredentials(AuthScope.ANY, credentials);
+        HttpClient httpclient = HttpClients.custom()
+                //                .setDefaultCredentialsProvider(credsProvider)
+                .build();
+        HttpOp.setDefaultHttpClient(httpclient);
+        builderAddRelation.httpClient(httpclient);
+        try ( RDFConnectionFuseki connAddRelation = (RDFConnectionFuseki)builderAddRelation.build() ) {
+            connAddRelation.update(addRelation);
+            connAddRelation.update(setInfluenceValue);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 

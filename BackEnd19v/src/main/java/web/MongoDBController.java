@@ -1,31 +1,5 @@
 package web;
 
-<<<<<<< Updated upstream
-import neo4j.MongoDriver;
-import neo4j.Neo4jDriver;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.yaml.snakeyaml.Yaml;
-import service.MongoService;
-import util.TimerUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.*;
-
-import static neo4j.FusekiDriver.*;
-import static neo4j.Neo4jDriver.*;
-import static neo4j.prometheusDriver.DealPrometheusRequest;
-import static neo4j.prometheusDriver.newPrometheus;
-=======
 
 import org.springframework.web.bind.annotation.*;
 import service.MongoService;
@@ -36,8 +10,8 @@ import java.util.*;
 import static neo4j.FusekiDriver.*;
 import static neo4j.MongoDriver.*;
 import static neo4j.prometheusDriver.DealPrometheusRequest;
->>>>>>> Stashed changes
 
+@RestController
 public class MongoDBController {
     private MongoService mongoService;
     @RequestMapping(value = "/api/storeEnvironment",method = RequestMethod.POST,produces = "application/json")
@@ -62,7 +36,7 @@ public class MongoDBController {
             // 匿名方法
             Runnable runnable = () -> {
                 // 把当前数据库中所有数据存到mongodb中
-                Map<String, Object> result = getNodesAndLinks();
+                Map<String, Object> result = getAllNodesAndLinks();
                 save2Mongo(result);
             };
             final long time = 5;//延迟执行实际：5秒
@@ -105,9 +79,4 @@ public class MongoDBController {
         return saveKapacitor2Mongo(message);
     }
 
-    //以下为Fuseki提供支持部分
-    @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
-    public Map<String, Object> getNodesAndLinks(){
-        return getAllNodesAndLinks();
-    }
 }

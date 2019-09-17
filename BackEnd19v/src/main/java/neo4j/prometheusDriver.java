@@ -7,6 +7,7 @@ import org.terracotta.statistics.Time;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,55 +206,62 @@ public class prometheusDriver {
         return null;
     }
 
+    public static JSONArray getProInfor(String urlNode, String start, String end) {
+        //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
+        String url = new String();
+        try {
+            url = "http://10.60.38.181:30003/api/v1/query_range?query=" + URLEncoder.encode(urlNode, "UTF-8") + "&start=" + start + "&end=" + end + "&step=60";
+            //        url = java.net.URLEncoder.encode(url);
+            System.out.println(url);
+        }catch (Exception e){
+            System.out.println();
+        }
+        JSONArray value = new JSONArray();
+        //ArrayList arrayList = new ArrayList();
+        InputStream is = null;
+        try {
+            is = new URL(url).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            StringBuilder sb = new StringBuilder();
+            int cp;
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+            String jsonText = sb.toString();
 
-     public static void main(String[] args) throws IOException {
-//        String startTime = "1561845600";
-//        String endTime = "1561849200";
-//         ArrayList<HashMap> arrayList = new ArrayList<>();
-//         HashMap hashMap = new HashMap<String,String>();
-//         hashMap.put("type","container/catalogue-db/container_network_receive_packets");
-//         hashMap.put("sql","sum(rate(container_network_receive_packets_total{image!=\"\",namespace=~\"sock-shop\",pod_name=\"catalogue-db-99cbcbb88-mw7q6\"}[5m]))");
-//         HashMap hashMap1 = new HashMap<String,String>();
-//         hashMap1.put("type","ss");
-//         hashMap1.put("sql","sca");
-//
-//         arrayList.add(hashMap);
-//         arrayList.add(hashMap1);
-//         DealPrometheusRequest(startTime,endTime,arrayList);
+            JSONObject jsStr = JSONObject.parseObject(jsonText);
+
+            JSONArray result = jsStr.getJSONObject("data").getJSONArray("result");
+
+            try{
+                value = ((JSONObject)result.get(0)).getJSONArray("values");
+
+            }catch (Exception e){
+                value = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
 
 
 
-//        String query = "APIServiceOpenAPIAggregationControllerQueue1_adds{instance=\"192.168.199.191:6443\",job=\"kubernetes-apiservers\"}";
-//        String query = "avg(rate (container_cpu_usage_seconds_total{image!=\"\",container_name!=\"POD\",namespace=~\"sock-shop\",pod_name=~\"%s-[0-9A-Za-z]{3,}.+\"}[5m]))";
-//        proTemp(query, startTime, endTime);
+    public static void main(String[] args) throws IOException {
 
-//        hashMap.put("type","response_time");
-//        hashMap.put("sql","sum(rate(request_duration_seconds_sum{service=\"catalogue\"}[1m]))");
-//        arrayList.add(hashMap);
-//        hashMap = new HashMap<String,String>();
-//        hashMap.put("type","response_time1");
-//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"catalogue\"}[1m]))");
-//        arrayList.add(hashMap);
-//        hashMap = new HashMap<String,String>();
-//        hashMap.put("type","success_rate");
-//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\",status_code=~\"2..\",route!=\"metrics\"}[1m]))");
-//        arrayList.add(hashMap);
-//        hashMap = new HashMap<String,String>();
-//        hashMap.put("type","success_rate1");
-//        hashMap.put("sql","sum(rate(request_duration_seconds_count{service=\"front-end\"}[1m]))");
 
     }
 
 }
-//sum(rate(request_duration_seconds_sum{service="catalogue"}[1m]))
-//sum(rate(request_duration_seconds_count{service="catalogue"}[1m]))
-//sum(rate(request_duration_seconds_count{service="front-end",status_code=~"2..",route!="metrics"}[1m]))
-//sum(rate(request_duration_seconds_count{service="front-end"}[1m]))
-
-//http://10.60.38.181:31003/api/v1/query?query=sum(rate(request_duration_seconds_count{service="front-end"}[1m]))&start=0&end=1500&step=1s
-//{service/catalogue/response_time=[0.00008038849999999856], service/front-end/success_rate=[3.333311111851827], service/catalogue/response_time1=[0.03333333333333333], timestamp=[0]}
-
-//http://10.60.38.181:31003/api/v1/query_range?query=sum(rate(container_network_receive_packets_total{image!="",namespace=~"sock-shop",pod_name="catalogue-db-99cbcbb88-mw7q6"}[5m]))&start=1561845600&end=1561849200&step=10
-
 
 

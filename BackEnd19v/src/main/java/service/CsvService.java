@@ -1,8 +1,6 @@
 package service;
 
-<<<<<<< Updated upstream
-public class CsvService {
-=======
+
 import com.csvreader.CsvReader;
 import global.globalvalue;
 import org.apache.http.HttpEntity;
@@ -292,5 +290,4 @@ public class CsvService {
     }
 
 
->>>>>>> Stashed changes
 }
