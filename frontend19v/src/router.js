@@ -21,40 +21,11 @@ export default new Router({
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
-            children: [{
-                path: 'series',
-                name: 'series',
-                component: () => import('./views/SeriesView.vue'),
-            },
-                {
-                    path: 'modify',
-                    name: 'ModiData',
-                    component: () => import('./views/ModifyView.vue'),
-                },
-                {
-                    path: 'enterRel',
-                    name: 'EnterRel',
-                    component: () => import('./views/EnterRel.vue'),
-                },
-                // {
-                //     path: 'graph',
-                //     name: 'ERChara',
-                //     component: () => import('./views/NewGraph.vue'),
-                // },
-                {
-                    path: 'causation',
-                    name: 'CausaView',
-                    component: () => import('./views/CausationView.vue'),
-                },
+            children: [
                 {
                     path: 'class',
                     name: 'ClassGraph',
                     component: () => import('./views/ClassGraph.vue'),
-                },
-                {
-                    path: 'struct',
-                    name: 'DirStruct',
-                    component: () => import('./views/DirStruct.vue'),
                 },
                 {
                     path: 'causerel',
@@ -64,17 +35,17 @@ export default new Router({
                 {
                     path: 'overview',
                     name: 'SystemOverview',
-                    component: () => import('./views/ThreeViews/SystemOverview.vue'),
+                    component: () => import('./views/KnowledgeGraph/SystemOverview.vue'),
                 },
                 {
                     path: 'service',
                     name: 'ServiceCall',
-                    component: () => import('./views/ThreeViews/ServiceCall.vue'),
+                    component: () => import('./views/KnowledgeGraph/ServiceCall.vue'),
                 },
                 {
                     path: 'timestamp',
                     name: 'EventTimeStamp',
-                    component: () => import('./views/NewGraph.vue'),
+                    component: () => import('./views/KnowledgeGraph/EventTimeStamp.vue'),
                 }
             ]
         }
