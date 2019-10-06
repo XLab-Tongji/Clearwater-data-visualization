@@ -194,19 +194,19 @@
 </template>
 
 <script>
-import D3Network from "../components/vue-d3-network/src/vue-d3-network.vue";
-import SearchTree from "../components/SearchTree.vue";
-import TimePeriod from "../components/TimePeriod";
+import D3Network from "../../components/vue-d3-network/src/vue-d3-network.vue";
+import SearchTree from "../../components/SearchTree.vue";
+import TimePeriod from "../../components/TimePeriod";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import jsondiffpatch from "@/lib/diff.js";
 import DiffPattern from "@/components/DiffPattern.vue";
-import Timeline from "../components/Timeline";
-import EventDygraph from "../components/EventDygraph";
+import Timeline from "../../components/Timeline";
+import EventDygraph from "../../components/EventDygraph";
 import { all } from "q";
-import LoadingEffect from "../components/LoadingEffect";
+import LoadingEffect from "../../components/LoadingEffect";
 import $ from "jquery";
-import backurl from '../Global'
+import backurl from '../../Global'
 
 Date.prototype.format = function(fmt) {
   //author: meizz
