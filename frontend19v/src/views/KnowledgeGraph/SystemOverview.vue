@@ -177,7 +177,8 @@ import backurl from '../../Global'
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-const reqUrl = backurl.backurl+"/bbs";
+// const reqUrl = backurl.backurl+"/bbs";
+const reqUrl = "http://10.60.38.173:9990/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -552,7 +553,8 @@ export default {
               node.type === "serviceServer" ||
               node.type === "serviceDatabase" ||
               node.type === "containerNetwork" ||
-              node.type === "containerStorage"
+              node.type === "containerStorage" ||
+              node.type === "environment"
             ) {
               return false;
             } else {
@@ -1090,23 +1092,7 @@ export default {
           nodes: {},
           links: {}
         };
-        // 如果是双击显示属性面板
-        if (
-          e.detail === 2 &&
-          (e.target.localName === "path" || e.target.localName === "circle")
-        ) {
-            // console.log(e.target);
-          let property = this.currentNode.property;
-          this.propertyKeys = Object.keys(property);
-          for (var key in property) {
-            this.propertyValues.push(property[key]);
-          }
-          let displayProps = document.getElementsByClassName(
-            "display-property"
-          )[0];
-          // displayProps.style.display = 'block'
-          displayProps.style.right = "0px";
-        }
+
         this.finCoor = getCoordInDocument(e);
         if (this.moveable) {
           this.offset_X += this.finCoor.x - this.staCoor.x;
@@ -1140,32 +1126,10 @@ export default {
           // this.linkWidth = Math.max(0, this.linkWidth - 0.5);
           this.fontSize = Math.max(0, this.fontSize - 0.1);
         }
-
-        // 这两段代码会影响 namespace 节点的缩放 所以被我注释掉惹（cyl）
-
-        // var list = document.getElementsByClassName("nodesNamespace");
-        // for (var i = 0; i < list.length; i++) {
-        //   let element = list[i];
-        //   this.$set(
-        //     element.attributes[0],
-        //     "value",
-        //     parseFloat(element.attributes[0].value) - 0.5
-        //   );
-        // }
       } else {
         this.force = this.force + 80;
         this.nodeSize = this.nodeSize + 0.2;
         this.fontSize = this.fontSize + 0.1;
-
-        // var list = document.getElementsByClassName("nodesNamespace");
-        // for (var i = 0; i < list.length; i++) {
-        //   let element = list[i];
-        //   this.$set(
-        //     element.attributes[0],
-        //     "value",
-        //     parseFloat(element.attributes[0].value) + 0.5
-        //   );
-        // }
       }
       if (ev.preventDefault) {
         /*FF 和 Chrome*/
@@ -1177,12 +1141,7 @@ export default {
     addEvent(el, "mousewheel", onMouseWheel);
     addEvent(el, "DOMMouseScroll", onMouseWheel);
 
-    //引入jsondiffpatch
-    // const jsondiff = document.createElement("script");
-    // jsondiff.type = "text/javascript";
-    // jsondiff.src =
-    //   "https://cdn.jsdelivr.net/npm/jsondiffpatch/dist/jsondiffpatch.umd.min.js";
-    // document.body.appendChild(jsondiff);
+    this.getData();
   }
 };
 </script>
