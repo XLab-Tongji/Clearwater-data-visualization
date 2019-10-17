@@ -9,7 +9,6 @@
           :show-all-levels="false"
           :options="options"
           :props="{ expandTrigger: 'hover' }"
-          @change="handleChange"
         ></el-cascader>
       </el-form-item>
 
@@ -25,48 +24,20 @@
 export default {
   data() {
     return {
-      form:{},
+      form: {},
       value: [],
-      options: [
-        {
-          value: "k8s",
-          label: "k8s",
-          children: [
-            {
-              value: "k8s1",
-              label: "k8s1"
-            },
-            {
-              value: "k8s2",
-              label: "k8s2"
-            }
-          ]
-        },
-        {
-          value: "5g",
-          label: "5g",
-          children: [
-            {
-              value: "5g1",
-              label: "5g1"
-            },
-            {
-              value: "5g2",
-              label: "5g2"
-            },
-            {
-              value: "5g3",
-              label: "5g3"
-            }
-          ]
-        }
-      ],
       type: ""
     };
   },
+  props: {
+    options: Array
+  },
   methods: {
-    handleChange(value) {},
-    onSubmit(){}  
+    onSubmit() {
+      // console.log('type',this.value[0])
+      // console.log('env',this.value[1])
+      // console.log("转到对应环境的知识图谱");
+    }
   }
 };
 </script>

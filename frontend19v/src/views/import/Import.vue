@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- <EnvExist /> -->
-    <Env />
-    <ImportEnv />
+    <Env :options="options" />
+    <ImportEnv :types="types"/>
     <ImportType />
   </div>
 </template>
@@ -55,6 +55,16 @@ export default {
             }
           ]
         }
+      ],
+      types: [
+        {
+          value: "k8s",
+          label: "k8s"
+        },
+        {
+          value: "5g",
+          label: "5g"
+        },
       ]
     };
   }

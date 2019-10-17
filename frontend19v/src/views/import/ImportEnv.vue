@@ -1,10 +1,11 @@
 <template>
   <div class="enter-info">
     <el-form ref="form" :model="form" label-width="80px">
+      
       <el-form-item label="环境类型:">
         <el-select v-model="value" placeholder="请选择">
           <el-option
-            v-for="item in options"
+            v-for="item in types"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -26,11 +27,10 @@
 
       <el-form-item label="配置文件:">
         <el-upload
-          class="upload-demo"
           drag
           action="https://jsonplaceholder.typicode.com/posts/"
           multiple
-          accept="json"
+          accept=".json"
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
@@ -57,24 +57,11 @@ export default {
         type: "",
         name: ""
       },
-      options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
       value: ""
     };
+  },
+  props:{
+    types:Array,
   },
   methods: {
     onSubmit() {
