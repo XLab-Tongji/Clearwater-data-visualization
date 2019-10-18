@@ -26,7 +26,6 @@
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
-        <el-button>取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -43,12 +42,13 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit(e) {
       // let formData = new FormData();
       // formData.append("name", this.form.name);
       // for (let i = 0; i < this.files.length; i++) {
       //   formData.append("files[]", this.files[i]);
       // }
+      this.$emit('submit',e)
     },
     handleAdd(file, fileList) {
       this.files.push(file);

@@ -9,10 +9,10 @@
             :label="item.label"
             :value="item.value"
           ></el-option>
-          <el-option value="hello" class="addnewtype">
-            <el-row>
-              <i class="el-icon-plus"></i>添加新类型
-            </el-row>
+          <el-option value="addnewtype" class="addnewtype">
+            <div @click="addnewtype">
+              <i class="el-icon-plus"></i>类型不存在，添加新类型
+            </div>
           </el-option>
         </el-select>
       </el-form-item>
@@ -42,7 +42,6 @@
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
-        <el-button>取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -64,16 +63,20 @@ export default {
     types: Array
   },
   methods: {
-    onSubmit() {
+    onSubmit(e) {
       // let formData = new FormData();
       // formData.append("type", this.form.type);
       // formData.append("name", this.form.name);
       // for (let i = 0; i < this.files.length; i++) {
       //   formData.append("files[]", this.files[i]);
       // }
+      this.$emit("submit",e)
     },
     handleAdd(file, fileList) {
       this.files.push(file);
+    },
+    addnewtype(e) {
+      this.$emit("func", e);
     }
   }
 };

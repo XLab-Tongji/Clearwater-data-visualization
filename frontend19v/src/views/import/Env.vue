@@ -14,7 +14,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">进入环境</el-button>
-        <el-button>添加新环境</el-button>
+        <el-button @click="addNewEnv">添加新环境</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -29,7 +29,8 @@ export default {
     };
   },
   props: {
-    options: Array
+    options: Array,
+    handle: Function,
   },
   methods: {
     onSubmit() {
@@ -37,6 +38,9 @@ export default {
       // formData.append("type", this.value[0]);
       // formData.append("env", this.value[1]);
       // console.log("转到对应环境的知识图谱");
+    },
+    addNewEnv(e){
+      this.$emit('func', e); // 将当前对象 evt 传递到父组件
     }
   }
 };

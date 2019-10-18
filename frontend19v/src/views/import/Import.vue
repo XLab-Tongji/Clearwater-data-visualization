@@ -1,17 +1,14 @@
 <template>
   <div>
-    <button>111</button>
-    <button>222</button>
-    <button>333</button>
     <div class="container">
       <div class="env">
-        <Env :options="options" />
+        <Env :options="options" @func="addnewenv" />
       </div>
       <div class="importenv">
-        <ImportEnv :types="types" />
+        <ImportEnv :types="types" @func="addnewtype" @submit="returntoenv"/>
       </div>
       <div class="importtype">
-        <ImportType />
+        <ImportType @submit="returntonewenv"/>
       </div>
     </div>
   </div>
@@ -77,13 +74,31 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    addnewenv() {
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "-100%";
+    },
+    addnewtype(){
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "-200%";
+    },
+    returntonewenv(){
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "-100%";
+    },
+    returntoenv(){
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "0%";
+    }
   }
 };
 </script>
 
 <style scoped>
 .container {
-  /* position: fixed; */
+  position: fixed;
   width: 300%;
   display: grid;
   grid-template-columns: 1fr, 1fr, 1fr;
@@ -91,11 +106,17 @@ export default {
 }
 .env {
   grid-column: 1/2;
+  justify-self: center;
+  align-self: center;
 }
 .importenv {
   grid-column: 2/3;
+  justify-self: center;
+  align-self: center;
 }
 .importtype {
   grid-column: 3/4;
+  justify-self: center;
+  align-self: center;
 }
 </style>
