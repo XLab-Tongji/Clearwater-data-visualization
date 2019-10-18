@@ -1,9 +1,19 @@
 <template>
   <div>
-    <!-- <EnvExist /> -->
-    <Env :options="options" />
-    <ImportEnv :types="types"/>
-    <ImportType />
+    <button>111</button>
+    <button>222</button>
+    <button>333</button>
+    <div class="container">
+      <div class="env">
+        <Env :options="options" />
+      </div>
+      <div class="importenv">
+        <ImportEnv :types="types" />
+      </div>
+      <div class="importtype">
+        <ImportType />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -64,12 +74,28 @@ export default {
         {
           value: "5g",
           label: "5g"
-        },
+        }
       ]
     };
   }
 };
 </script>
 
-<style>
+<style scoped>
+.container {
+  /* position: fixed; */
+  width: 300%;
+  display: grid;
+  grid-template-columns: 1fr, 1fr, 1fr;
+  grid-column-gap: 30px;
+}
+.env {
+  grid-column: 1/2;
+}
+.importenv {
+  grid-column: 2/3;
+}
+.importtype {
+  grid-column: 3/4;
+}
 </style>

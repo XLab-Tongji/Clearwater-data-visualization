@@ -18,7 +18,7 @@
       </el-form-item>
 
       <el-form-item label="环境名称:">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.name" style="width:195px"></el-input>
       </el-form-item>
 
       <el-form-item label="配置文件:">
