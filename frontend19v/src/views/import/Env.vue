@@ -25,8 +25,7 @@ export default {
   data() {
     return {
       form: {},
-      value: [],
-      type: ""
+      value: []
     };
   },
   props: {
@@ -34,8 +33,9 @@ export default {
   },
   methods: {
     onSubmit() {
-      // console.log('type',this.value[0])
-      // console.log('env',this.value[1])
+      // let formData = new FormData();
+      // formData.append("type", this.value[0]);
+      // formData.append("env", this.value[1]);
       // console.log("转到对应环境的知识图谱");
     }
   }

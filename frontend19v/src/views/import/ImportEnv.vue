@@ -1,22 +1,18 @@
 <template>
   <div class="enter-info">
     <el-form ref="form" :model="form" label-width="80px">
-      
       <el-form-item label="环境类型:">
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="form.type" placeholder="请选择">
           <el-option
             v-for="item in types"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           ></el-option>
-          <el-option
-            value='hello'
-            class="addnewtype"
-          >
-          <el-row>
+          <el-option value="hello" class="addnewtype">
+            <el-row>
               <i class="el-icon-plus"></i>添加新类型
-          </el-row>
+            </el-row>
           </el-option>
         </el-select>
       </el-form-item>
@@ -27,10 +23,13 @@
 
       <el-form-item label="配置文件:">
         <el-upload
+          action
+          :auto-upload="false"
           drag
-          action="https://jsonplaceholder.typicode.com/posts/"
           multiple
           accept=".json"
+          :on-change="handleAdd"
+          :file-list="files"
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
@@ -57,15 +56,24 @@ export default {
         type: "",
         name: ""
       },
-      value: ""
+      value: "",
+      files: []
     };
   },
-  props:{
-    types:Array,
+  props: {
+    types: Array
   },
   methods: {
     onSubmit() {
-        console.log(this.value)  
+      // let formData = new FormData();
+      // formData.append("type", this.form.type);
+      // formData.append("name", this.form.name);
+      // for (let i = 0; i < this.files.length; i++) {
+      //   formData.append("files[]", this.files[i]);
+      // }
+    },
+    handleAdd(file, fileList) {
+      this.files.push(file);
     }
   }
 };
@@ -73,6 +81,6 @@ export default {
 
 <style scoped>
 .addnewtype {
-    background-color:#d4e4f8;
+  background-color: #d4e4f8;
 }
 </style>

@@ -7,11 +7,13 @@
 
       <el-form-item label="本体文档:">
         <el-upload
-          class="upload-demo"
+          action
+          :auto-upload="false"
           drag
-          action="https://jsonplaceholder.typicode.com/posts/"
           multiple
-          accept="json"
+          accept=".json"
+          :on-change="handleAdd"
+          :file-list="files"
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
@@ -35,41 +37,21 @@ export default {
   data() {
     return {
       form: {
-        type: "",
         name: ""
       },
-      cities: [
-        {
-          value: "Beijing",
-          label: "北京"
-        },
-        {
-          value: "Shanghai",
-          label: "上海"
-        },
-        {
-          value: "Nanjing",
-          label: "南京"
-        },
-        {
-          value: "Chengdu",
-          label: "成都"
-        },
-        {
-          value: "Shenzhen",
-          label: "深圳"
-        },
-        {
-          value: "Guangzhou",
-          label: "广州"
-        }
-      ],
-      value: ""
+      files: []
     };
   },
   methods: {
     onSubmit() {
-      console.log("submit!");
+      // let formData = new FormData();
+      // formData.append("name", this.form.name);
+      // for (let i = 0; i < this.files.length; i++) {
+      //   formData.append("files[]", this.files[i]);
+      // }
+    },
+    handleAdd(file, fileList) {
+      this.files.push(file);
     }
   }
 };
