@@ -135,6 +135,44 @@ public class MongoDriver {
         return true;
     }
 
+    public static boolean saveEvent2Mongo(String content, String source){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
+            //MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("Event");
+            //获取当前时间
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = df.format(day);
+            System.out.println(time);
+            Map<String, Object> data = new HashMap<>();
+            data.put("content", content);
+            data.put("source", source);
+            switch (source) {
+                case "Kapacitor":
+                    data.put("type", 1);
+                    break;
+                case "K8s":
+                    data.put("type", 2);
+                    break;
+                    default:
+                        data.put("type", 0);
+            }
+            //插入文档
+            Document document = new Document(data).
+                    append("time", time);
+            collection.insertOne(document);
+            System.out.println("文档插入成功");
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public static Map<String, Object> getOneFromMongo(String time){
         try {
             //连接到mongodb服务

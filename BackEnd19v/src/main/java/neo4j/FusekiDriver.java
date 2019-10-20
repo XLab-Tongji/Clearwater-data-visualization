@@ -20,6 +20,7 @@ import org.apache.jena.riot.web.HttpOp;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -1690,8 +1691,8 @@ public class FusekiDriver {
         Date start = new Date();
         Date end = new Date();
         try {
-            start = DateFormat.parse("2019-08-06 00:00:00");
-            end = DateFormat.parse("2019-08-06 23:59:59");
+            start = DateFormat.parse("2019-09-25 00:00:00");
+            end = DateFormat.parse("2019-09-25 23:59:59");
         } catch(ParseException px) {
             px.printStackTrace();
         }
@@ -1705,10 +1706,11 @@ public class FusekiDriver {
             times.add(i.getTime()/1000);
         }
         Collections.sort(times);
+        StringBuffer stringBuffer = new StringBuffer();
         for (Resource i:resources
         ) {
             Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
-            System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
+            //System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
 
             JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
             //JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),times.get(0)+"", times.get(times.size()-1)+"");
@@ -1726,12 +1728,17 @@ public class FusekiDriver {
                     }
                 }
             }
-            System.out.println("request---------");
+            String[] strings = i.toString().split("/");
+            System.out.println(strings[strings.length-1]);
             System.out.println(timeList);
             System.out.println(proInfor);
+//            stringBuffer.append(strings[strings.length-1]);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("file1",timeList);
             jsonObject.put("file2", proInfor);
+//            stringBuffer.append("\r\n");
+//            stringBuffer.append(jsonObject.toString());
+//            stringBuffer.append("\r\n");
             String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
             System.out.println(re);
             if (re != null){
@@ -1741,6 +1748,13 @@ public class FusekiDriver {
                 }
             }
         }
+/*        try {
+            FileOutputStream fos = new FileOutputStream("/Users/jiang/data.txt");
+            fos.write(stringBuffer.toString().getBytes());
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }*/
 
 
 
@@ -1762,7 +1776,9 @@ public class FusekiDriver {
             Resource r = iter.nextResource();
             if (r.toString().contains("event"))
             {
-                String timeProperty=r.getProperty(model.createProperty(r.toString()+"/starts_at")).getResource().toString();
+                Statement statement =  r.getProperty(model.createProperty(r.toString()+"/starts_at"));
+                if (statement == null) continue;
+                String timeProperty=statement.getResource().toString();
                 //截取出时间字符串，去掉中间的“-”
                 int length=timeProperty.length();
                 String time=timeProperty.substring(length-19,length-9)+" "+timeProperty.substring(length-8);
@@ -1823,5 +1839,6 @@ public class FusekiDriver {
 
 
     public static void main(String[] args) {
+       // addLinkEvent2S();
     }
 }
