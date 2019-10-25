@@ -73,13 +73,18 @@ public class FileController {
                     String oldName = file.getOriginalFilename();
                     String path = savePath + fileName + oldName.substring(oldName.lastIndexOf("."));
                     System.out.println(path);
-                    File filePath = new File(path);
+                    File folder = new File(savePath);
+                    //文件夹路径不存在
+                    if (!folder.exists() && !folder.isDirectory()) {
+                        folder.mkdirs();
+                    }
+                    File newFile = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
-                    if(!filePath.getParentFile().exists()){
-                        filePath.getParentFile().mkdir();
+                    if(!newFile.exists()){
+                        newFile.mkdir();
                     }
                     //上传
-                    file.transferTo(filePath);
+                    file.transferTo(newFile);
 
                 }
 
