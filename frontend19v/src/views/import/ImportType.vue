@@ -32,6 +32,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+const url = "http://0.0.0.0:8088/bbs/api/uploadSystemFile";
+
 export default {
   data() {
     return {
@@ -45,6 +49,11 @@ export default {
     onSubmit(e) {
       // let formData = new FormData();
       // formData.append("name", this.form.name);
+      // formData.append("file",this.files[0]);
+      // axios.post(url,formData)
+      // .then((res)=>{
+      //   console.log(res.data)
+      // })
       // for (let i = 0; i < this.files.length; i++) {
       //   formData.append("files[]", this.files[i]);
       // }

@@ -212,7 +212,7 @@ public class prometheusDriver {
         try {
             url = "http://10.60.38.181:30003/api/v1/query_range?query=" + URLEncoder.encode(urlNode, "UTF-8") + "&start=" + start + "&end=" + end + "&step=60";
             //        url = java.net.URLEncoder.encode(url);
-            System.out.println(url);
+            //System.out.println(url);
         }catch (Exception e){
             System.out.println();
         }

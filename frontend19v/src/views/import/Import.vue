@@ -15,10 +15,13 @@
 </template>
 
 <script>
-// import EnvExist from "./EnvExist";
 import Env from "./Env";
 import ImportEnv from "./ImportEnv";
 import ImportType from "./ImportType";
+
+import axios from 'axios';
+
+const url = "http://0.0.0.0:8088/bbs/api/uploadSystemFile";
 
 export default {
   components: {

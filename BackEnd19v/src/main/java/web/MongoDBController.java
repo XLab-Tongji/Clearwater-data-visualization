@@ -79,4 +79,9 @@ public class MongoDBController {
         return saveKapacitor2Mongo(message);
     }
 
+    @RequestMapping(value = "/api/addVariousEvent", method = RequestMethod.POST, produces = "application/json")
+    public Boolean addEvent(@RequestParam("Source") String source, @RequestParam("Content") String content){
+        return saveEvent2Mongo(content, source);
+    }
+
 }

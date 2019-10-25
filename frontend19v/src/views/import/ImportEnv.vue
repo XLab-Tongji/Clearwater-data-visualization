@@ -23,13 +23,13 @@
 
       <el-form-item label="配置文件:">
         <el-upload
+          ref="miao"
           action
           :auto-upload="false"
           drag
           multiple
           accept=".json"
           :on-change="handleAdd"
-          :file-list="files"
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
@@ -48,6 +48,10 @@
 </template>
 
 <script>
+import axios from "axios";
+
+const url = "http://localhost:8088/bbs/api/uploadSystemFile";
+
 export default {
   data() {
     return {
@@ -64,16 +68,20 @@ export default {
   },
   methods: {
     onSubmit(e) {
-      // let formData = new FormData();
-      // formData.append("type", this.form.type);
-      // formData.append("name", this.form.name);
+      let formData = new FormData();
+      formData.append("type", this.form.type);
+      formData.append("name", this.form.name);
+      formData.append("file", this.files[0]);
+      axios.post(url, formData).then(res => {
+        console.log(res);
+      });
       // for (let i = 0; i < this.files.length; i++) {
       //   formData.append("files[]", this.files[i]);
       // }
-      this.$emit("submit",e)
+      this.$emit("submit", e);
     },
     handleAdd(file, fileList) {
-      this.files.push(file);
+      this.files.push(file.raw);
     },
     addnewtype(e) {
       this.$emit("func", e);
