@@ -16,11 +16,11 @@ public class FileController {
 
     @RequestMapping(value = "/api/uploadTypeFile",method = RequestMethod.POST,produces = "application/json")
     //上传系统的tpye文件
-    public Map<String, Object> postType(HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> postType(HttpServletRequest request, HttpServletResponse response, @RequestParam("name") String name){
         String savePath = FileController.class.getResource("/").getPath().replace("classes","upload/type");
-        Map<String, Object> res = new HashMap<String, Object>();
+        Map<String, Object> res = new HashMap<>();
         try{
-            if (springUpload(request, savePath)) {
+            if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
             }
         }catch (Exception e) {
@@ -35,11 +35,11 @@ public class FileController {
 
     @RequestMapping(value = "/api/uploadSystemFile",method = RequestMethod.POST,produces = "application/json")
     //上传系统的tpye文件
-    public Map<String, Object> postSystem(HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> postSystem(HttpServletRequest request, HttpServletResponse response, @RequestParam("name") String name, @RequestParam("type") String type){
         String savePath = FileController.class.getResource("/").getPath().replace("classes","upload/system");
-        Map<String, Object> res = new HashMap<String, Object>();
+        Map<String, Object> res = new HashMap<>();
         try{
-            if (springUpload(request, savePath)) {
+            if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
             }
         }catch (Exception e) {
@@ -50,7 +50,7 @@ public class FileController {
         return res;
     }
 
-    private boolean springUpload(HttpServletRequest request, String savePath) throws IllegalStateException, IOException
+    private boolean springUpload(HttpServletRequest request, String savePath, String fileName) throws IllegalStateException, IOException
     {
         //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
         CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver(
@@ -70,7 +70,8 @@ public class FileController {
                 MultipartFile file=multiRequest.getFile(iter.next().toString());
                 if(file!=null)
                 {
-                    String path = savePath + file.getOriginalFilename();
+                    String oldName = file.getOriginalFilename();
+                    String path = savePath + fileName + oldName.substring(oldName.lastIndexOf("."));
                     System.out.println(path);
                     File filePath = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
@@ -79,6 +80,7 @@ public class FileController {
                     }
                     //上传
                     file.transferTo(filePath);
+
                 }
 
             }
