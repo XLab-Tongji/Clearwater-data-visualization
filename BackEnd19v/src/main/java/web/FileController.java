@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static neo4j.MongoDriver.saveSystemTypeAndNameFile;
+
 @RestController
 public class FileController {
 
@@ -22,6 +24,7 @@ public class FileController {
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                saveSystemTypeAndNameFile(name,"");
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -34,13 +37,14 @@ public class FileController {
 
 
     @RequestMapping(value = "/api/uploadSystemFile",method = RequestMethod.POST,produces = "application/json")
-    //上传系统的tpye文件
+    //上传系统的system文件
     public Map<String, Object> postSystem(HttpServletRequest request, HttpServletResponse response, @RequestParam("name") String name, @RequestParam("type") String type){
         String savePath = FileController.class.getResource("/").getPath().replace("classes","upload/system");
         Map<String, Object> res = new HashMap<>();
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                saveSystemTypeAndNameFile(type,name);
             }
         }catch (Exception e) {
             e.printStackTrace();

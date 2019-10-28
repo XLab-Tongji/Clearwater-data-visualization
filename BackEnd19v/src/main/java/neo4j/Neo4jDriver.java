@@ -105,7 +105,7 @@ public class Neo4jDriver {
         return resultgraph;
     }
     public HashMap<String, List<HashMap<String,Object>>> getAllNodes() {
-        Driver driver = GraphDatabase.driver("bolt://10.60.38.173:7687",
+        Driver driver = GraphDatabase.driver("bolt://localhost:7687",
                 AuthTokens.basic("neo4j","1234"));
         Map<Long,String> map = new HashMap<>();
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
@@ -142,6 +142,7 @@ public class Neo4jDriver {
             }
         }
         driver.close();
+        System.out.println(resultgraph);
         return resultgraph;
     }
     public HashMap<String,List<String>> getAllLabel(){
@@ -1126,6 +1127,6 @@ public class Neo4jDriver {
 
 
     public static void main(String[] args) {
-
+        new Neo4jDriver().getAllNodes();
     }
 }

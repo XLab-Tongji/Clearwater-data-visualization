@@ -2,6 +2,7 @@ package neo4j;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -301,4 +302,73 @@ public class MongoDriver {
         return result;
     }
 
+    public static boolean saveSystemTypeAndNameFile(String type, String name){
+        try {
+            //连接到mongodb服务
+            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
+            //MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("SystemTypeAndName");
+            //判断是否当前系统类型是否存在
+            BasicDBObject query = new BasicDBObject();
+            query.put("type",type);
+            FindIterable<Document> findIterable = collection.find(query);
+            MongoCursor<Document> mongoCursor = findIterable.iterator();
+            if (!mongoCursor.hasNext()){
+                Map<String, Object> data = new HashMap<>();
+                data.put("type",type);
+                data.put("name",new ArrayList<String>());
+                //插入文档
+                Document document = new Document(data);
+                collection.insertOne(document);
+                System.out.println("文档插入成功");
+            }
+            else {
+                Document d=mongoCursor.next();
+                //System.out.println(d);
+                JSONObject json=JSONObject.parseObject(d.toJson());
+                JSONArray jsonArray = json.getJSONArray("name");
+                jsonArray.add(name);
+//                DBCollection dbCol = db.getCollection(COLLECTION_NAME);
+//                DBCursor ret = dbCol.find();
+                BasicDBObject doc = new BasicDBObject();
+                BasicDBObject res = new BasicDBObject();
+                res.put("name", JSONObject.parseArray(jsonArray.toString(), String.class));
+//                System.out.println("将数据集中的所有文档的age修改成40！");
+                doc.put("$set", res);
+                collection.findOneAndUpdate(query,doc);
+                System.out.println("文档修改成功");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static JSONArray getAllTypeAndName(){
+        JSONArray re = new JSONArray();
+        try {
+            //连接到mongodb服务
+            //MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //连接到数据库
+            MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
+            MongoCollection<Document> collection = mongoDatabase.getCollection("SystemTypeAndName");
+            FindIterable<Document> findIterable = collection.find();
+            MongoCursor<Document> mongoCursor = findIterable.iterator();
+            while (mongoCursor.hasNext()){
+                Document d=mongoCursor.next();
+                re.add(JSONObject.parseObject(d.toJson()));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return re;
+    }
+
+    public static void main(String[] args) {
+        saveSystemTypeAndNameFile("1","2");
+    }
 }
