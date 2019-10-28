@@ -52,27 +52,19 @@ export default {
       displayProps.style.left = "-200%";
     },
     returntonewenv() {
-      let displayProps = document.getElementsByClassName("container")[0];
-      displayProps.style.left = "-100%";
-      
-      axios.get(url + "/getSystemTypeAndNameFile").then(res => {
-        // console.log(res.data)
-        this.options = res.data.options;
-        this.types = res.data.types;
-        // console.log(this.options)
-      });
+      setTimeout(() => {
+        axios.get(url + "/getSystemTypeAndNameFile").then(res => {
+          // console.log(res.data)
+          this.options = res.data.options;
+          this.types = res.data.types;
+          console.log(this.options[0].children);
+          // console.log(this.options)
+        });
+        let displayProps = document.getElementsByClassName("container")[0];
+        displayProps.style.left = "-100%";
+      }, 500);
     },
-    returntoenv() {
-      let displayProps = document.getElementsByClassName("container")[0];
-      displayProps.style.left = "0%";
-
-      axios.get(url + "/getSystemTypeAndNameFile").then(res => {
-        // console.log(res.data)
-        this.options = res.data.options;
-        this.types = res.data.types;
-        // console.log(this.options)
-      });
-    }
+    returntoenv() {}
   }
 };
 </script>
