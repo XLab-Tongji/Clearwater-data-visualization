@@ -21,6 +21,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+const url = "http://localhost:8088/bbs/api";
+
 export default {
   data() {
     return {
@@ -34,10 +38,12 @@ export default {
   },
   methods: {
     onSubmit() {
-      // let formData = new FormData();
-      // formData.append("type", this.value[0]);
-      // formData.append("env", this.value[1]);
-      // console.log("转到对应环境的知识图谱");
+      let formData = new FormData();
+      formData.append("type", this.value[0]);
+      formData.append("env", this.value[1]);
+      // axios.post(url+"", formData).then(res => {
+      //   console.log(res);
+      // });
     },
     addNewEnv(e){
       this.$emit('func', e); // 将当前对象 evt 传递到父组件

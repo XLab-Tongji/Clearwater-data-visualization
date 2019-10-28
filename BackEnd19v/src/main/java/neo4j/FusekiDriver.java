@@ -56,7 +56,7 @@ public class FusekiDriver {
                 QuerySolution qs = rs.next() ;
                 String subject = qs.get("s").toString();
                 if(subject.contains("http")){
-                    System.out.println("Subject: " + subject);
+                    //System.out.println("Subject: " + subject);
                     if(subject.contains("server")){
                         result.add(getServer(subject));
                         linkList.addAll(getLink(subject, "manage"));

@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static neo4j.MongoDriver.saveSystemTypeAndNameFile;
+
 @RestController
 public class FileController {
 
@@ -22,6 +24,7 @@ public class FileController {
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                saveSystemTypeAndNameFile(name,"");
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -34,14 +37,14 @@ public class FileController {
 
 
     @RequestMapping(value = "/api/uploadSystemFile",method = RequestMethod.POST,produces = "application/json")
-    //上传系统的tpye文件
+    //上传系统的system文件
     public Map<String, Object> postSystem(HttpServletRequest request, HttpServletResponse response, @RequestParam("name") String name, @RequestParam("type") String type){
         String savePath = FileController.class.getResource("/").getPath().replace("classes","upload/system");
         Map<String, Object> res = new HashMap<>();
-
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                saveSystemTypeAndNameFile(type,name);
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +56,6 @@ public class FileController {
 
     private boolean springUpload(HttpServletRequest request, String savePath, String fileName) throws IllegalStateException, IOException
     {
-        System.out.println(request);
         //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
         CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver(
                 request.getSession().getServletContext());
@@ -64,11 +66,12 @@ public class FileController {
             MultipartHttpServletRequest multiRequest=(MultipartHttpServletRequest)request;
             //获取multiRequest 中所有的文件名
             Iterator iter=multiRequest.getFileNames();
+
             while(iter.hasNext())
             {
+
                 //一次遍历所有文件
                 MultipartFile file=multiRequest.getFile(iter.next().toString());
-
                 if(file!=null)
                 {
                     String oldName = file.getOriginalFilename();

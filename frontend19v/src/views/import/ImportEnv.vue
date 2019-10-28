@@ -50,7 +50,7 @@
 <script>
 import axios from "axios";
 
-const url = "http://localhost:8088/bbs/api/uploadSystemFile";
+const url = "http://localhost:8088/bbs/api";
 
 export default {
   data() {
@@ -72,8 +72,8 @@ export default {
       formData.append("type", this.form.type);
       formData.append("name", this.form.name);
       formData.append("file", this.files[0]);
-      axios.post(url, formData).then(res => {
-        console.log(res);
+      axios.post(url+"/uploadSystemFile", formData).then(res => {
+        
       });
       // for (let i = 0; i < this.files.length; i++) {
       //   formData.append("files[]", this.files[i]);

@@ -5,10 +5,10 @@
         <Env :options="options" @func="addnewenv" />
       </div>
       <div class="importenv">
-        <ImportEnv :types="types" @func="addnewtype" @submit="returntoenv"/>
+        <ImportEnv :types="types" @func="addnewtype" @submit="returntoenv" />
       </div>
       <div class="importtype">
-        <ImportType @submit="returntonewenv"/>
+        <ImportType @submit="returntonewenv" />
       </div>
     </div>
   </div>
@@ -19,9 +19,9 @@ import Env from "./Env";
 import ImportEnv from "./ImportEnv";
 import ImportType from "./ImportType";
 
-import axios from 'axios';
+import axios from "axios";
 
-const url = "http://0.0.0.0:8088/bbs/api/uploadSystemFile";
+const url = "http://0.0.0.0:8088/bbs/api";
 
 export default {
   components: {
@@ -32,68 +32,46 @@ export default {
   },
   data() {
     return {
-      options: [
-        {
-          value: "k8s",
-          label: "k8s",
-          children: [
-            {
-              value: "k8s1",
-              label: "k8s1"
-            },
-            {
-              value: "k8s2",
-              label: "k8s2"
-            }
-          ]
-        },
-        {
-          value: "5g",
-          label: "5g",
-          children: [
-            {
-              value: "5g1",
-              label: "5g1"
-            },
-            {
-              value: "5g2",
-              label: "5g2"
-            },
-            {
-              value: "5g3",
-              label: "5g3"
-            }
-          ]
-        }
-      ],
-      types: [
-        {
-          value: "k8s",
-          label: "k8s"
-        },
-        {
-          value: "5g",
-          label: "5g"
-        }
-      ]
+      options: [],
+      types: []
     };
+  },
+  mounted() {
+    axios.get(url + "/getSystemTypeAndNameFile").then(res => {
+      this.options = res.data.options;
+      this.types = res.data.types;
+    });
   },
   methods: {
     addnewenv() {
       let displayProps = document.getElementsByClassName("container")[0];
       displayProps.style.left = "-100%";
     },
-    addnewtype(){
+    addnewtype() {
       let displayProps = document.getElementsByClassName("container")[0];
       displayProps.style.left = "-200%";
     },
-    returntonewenv(){
+    returntonewenv() {
       let displayProps = document.getElementsByClassName("container")[0];
       displayProps.style.left = "-100%";
+      
+      axios.get(url + "/getSystemTypeAndNameFile").then(res => {
+        // console.log(res.data)
+        this.options = res.data.options;
+        this.types = res.data.types;
+        // console.log(this.options)
+      });
     },
-    returntoenv(){
+    returntoenv() {
       let displayProps = document.getElementsByClassName("container")[0];
       displayProps.style.left = "0%";
+
+      axios.get(url + "/getSystemTypeAndNameFile").then(res => {
+        // console.log(res.data)
+        this.options = res.data.options;
+        this.types = res.data.types;
+        // console.log(this.options)
+      });
     }
   }
 };
