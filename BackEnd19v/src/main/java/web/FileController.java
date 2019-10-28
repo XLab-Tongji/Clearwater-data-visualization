@@ -31,9 +31,7 @@ public class FileController {
             res.put("succees", 0);
             res.put("Reason",e.toString());
         }
-        System.out.println(res);
-        return service.MongoService.jsonarray2Map();
-
+        return res;
     }
 
 
@@ -53,8 +51,8 @@ public class FileController {
             res.put("succees", 0);
             res.put("Reason",e.toString());
         }
-        System.out.println(res);
-        return service.MongoService.jsonarray2Map();
+        return res;
+
     }
 
     private boolean springUpload(HttpServletRequest request, String savePath, String fileName) throws IllegalStateException, IOException
