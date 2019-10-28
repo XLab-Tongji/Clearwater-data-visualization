@@ -1691,7 +1691,7 @@ public class FusekiDriver {
         Date start = new Date();
         Date end = new Date();
         try {
-            start = DateFormat.parse("2019-09-25 00:00:00");
+            start = DateFormat.parse("2019-10-25 00:00:00");
             end = DateFormat.parse("2019-09-25 23:59:59");
         } catch(ParseException px) {
             px.printStackTrace();
@@ -1839,6 +1839,6 @@ public class FusekiDriver {
 
 
     public static void main(String[] args) {
-       // addLinkEvent2S();
+        addLinkEvent2S();
     }
 }

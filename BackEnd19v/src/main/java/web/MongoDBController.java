@@ -86,7 +86,7 @@ public class MongoDBController {
 
     @RequestMapping(value = "/api/getSystemTypeAndNameFile",method = RequestMethod.GET,produces = "application/json")
     public Map<String, Object> getAllSystemTypeAndNameFile(){
-        return mongoService.jsonarray2Map();
+        return MongoService.jsonarray2Map();
     }
 
 }
