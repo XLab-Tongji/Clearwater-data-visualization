@@ -8,14 +8,15 @@ export default new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes: [
-        // {
-        //   path: '/',
-        //   name: 'main',
-        //   component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
-        // },
         {
             path: '/',
-            redirect: '/overview',
+            name: 'import',
+            component: () => import('./views/import/Import.vue'),
+            //   component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
+        },
+        {
+            path: '/main',
+            // redirect: '/overview',
             name: 'mainpage',
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
@@ -35,8 +36,8 @@ export default new Router({
                 {
                     path: 'overview',
                     name: 'SystemOverview',
-                    // component: () => import('./views/KnowledgeGraph/SystemOverview.vue'),
-                    component: () => import('./views/import/Import.vue'),
+                    component: () => import('./views/KnowledgeGraph/SystemOverview.vue'),
+                    // component: () => import('./views/import/Import.vue'),
                     // component: () => import('./views/import/test.vue'),
                 },
                 {

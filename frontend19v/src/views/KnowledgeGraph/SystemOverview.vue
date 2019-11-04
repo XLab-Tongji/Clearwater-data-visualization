@@ -516,21 +516,18 @@ export default {
   },
   methods: {
     getData() {
-        $('#fountainG').show();
+      $('#fountainG').show();
       this.nodes = [];
       // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
 
-      var envPropertyValues = new FormData();
-      envPropertyValues.append("masterName", this.propertyValues[0]); // 192.168.199.191
-      envPropertyValues.append("podName", this.propertyValues[1]); // sock-shop
-      envPropertyValues.append("serviceName", this.propertyValues[2]); // sock-shop
-      envPropertyValues.append("address", this.propertyValues[3]); // 10.60.38.181
-      envPropertyValues.append("namespace", this.propertyValues[4]); // sock-shop
+      let formData = new FormData();
+      formData.append("type", this.$route.query.type);
+      formData.append("env", this.$route.query.env);
 
       axios
         // API GET
-        .get(reqUrl + "/api/getNodesAndLinks")
+        .post(reqUrl + "/api/getNodesAndLinks",formData)
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
@@ -1071,6 +1068,8 @@ export default {
     }
   },
   mounted() {
+
+    console.log(this.$route.query);
 
       $('#fountainG').hide();
 
