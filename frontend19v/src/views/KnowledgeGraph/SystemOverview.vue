@@ -173,7 +173,7 @@ import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import $ from "jquery";
 import LoadingEffect from "../../components/LoadingEffect";
-import backurl from '../../Global'
+import backurl from "../../Global";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
@@ -221,7 +221,7 @@ var timer = null;
 
 export default {
   components: {
-      LoadingEffect,
+    LoadingEffect,
     D3Network,
     SearchTree,
     Timeline
@@ -229,19 +229,6 @@ export default {
   data() {
     return {
       radio: "1",
-      initialNode: {
-        name: "Environment",
-        id: "http://environment/10.60.38.181/environment",
-        type: "environment",
-        property: {
-          masterName: "192.168.199.191", // 192.168.199.191
-          podName: "sock-shop", // sock-shop
-          serviceName: "sock-shop", // sock-shop
-          address: "10.60.38.181", // 10.60.38.181
-          namespace: "sock-shop" // sock-shop
-        },
-        svgSym: nodeIcons["environment"]
-      },
       nodes: [],
       links: [],
       pureNodes: [],
@@ -508,17 +495,14 @@ export default {
       } else {
         this.svgClass.crosshair = false;
       }
-    },
+    }
   },
   created() {
-      // $('#fountainG').hide();
-    this.nodes.push(this.initialNode);
   },
   methods: {
     getData() {
-      $('#fountainG').show();
+      $("#fountainG").show();
       this.nodes = [];
-      // this.nodes.push(this.initialNode) // 等后端有 env 和其他节点的关系
       this.links = [];
 
       let formData = new FormData();
@@ -527,12 +511,13 @@ export default {
 
       axios
         // API GET
-        .post(reqUrl + "/api/getNodesAndLinks",formData)
+        // .post(reqUrl + "/api/getNodesAndLinks", formData)
+        .get(reqUrl + "/api/getNodesAndLinks")
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
-            console.log(reqUrl);
-            $('#fountainG').hide();
+          console.log(reqUrl);
+          $("#fountainG").hide();
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
             x.svgSym = nodeIcons[x.type];
@@ -565,13 +550,13 @@ export default {
         })
         .catch(function(error) {
           // handle error
-            console.log("axios error:"+error);
+          console.log("axios error:" + error);
         });
 
       let displayProps = document.getElementsByClassName("display-property")[0];
       // console.log(displayProps);
       // if(displayProps != undefined) {
-          displayProps.style.right = "-420px";
+      displayProps.style.right = "-420px";
       // }
       // displayProps.style.display = 'none'
       //   loadingEffect();
@@ -1068,12 +1053,11 @@ export default {
     }
   },
   mounted() {
-
     console.log(this.$route.query);
 
-      $('#fountainG').hide();
+    $("#fountainG").hide();
 
-      var el = document.getElementsByClassName("net-svg")[0];
+    var el = document.getElementsByClassName("net-svg")[0];
     el.onmousedown = e => {
       this.staCoor = getCoordInDocument(e);
     };
@@ -1340,5 +1324,4 @@ export default {
 #systemOverview .nodesAddedPropertyNode {
   stroke: #409eff;
 }
-
 </style>
