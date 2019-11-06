@@ -26,13 +26,14 @@
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
+        <el-button @click="back">返回</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 const url = "http://0.0.0.0:8088/bbs/api";
 
@@ -46,18 +47,28 @@ export default {
     };
   },
   methods: {
+    back(e) {
+      this.$emit("back", e);
+    },
     onSubmit(e) {
-      let formData = new FormData();
-      formData.append("name", this.form.name);
-      formData.append("file",this.files[0]);
-      axios.post(url+"/uploadTypeFile",formData)
-      .then((res)=>{
-        console.log(res.data)
-      })
-      // for (let i = 0; i < this.files.length; i++) {
-      //   formData.append("files[]", this.files[i]);
-      // }
-      this.$emit('submit',e)
+      if (
+        this.form.type == "" ||
+        this.form.name == "" ||
+        this.files[0] == undefined
+      ) {
+        this.$message.error("信息填写不完整，请完善信息后提交");
+      } else {
+        let formData = new FormData();
+        formData.append("name", this.form.name);
+        formData.append("file", this.files[0]);
+        axios.post(url + "/uploadTypeFile", formData).then(res => {
+          console.log(res.data);
+        });
+        // for (let i = 0; i < this.files.length; i++) {
+        //   formData.append("files[]", this.files[i]);
+        // }
+        this.$emit("submit", e);
+      }
     },
     handleAdd(file, fileList) {
       this.files.push(file.raw);

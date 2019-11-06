@@ -5,10 +5,10 @@
         <Env :options="options" @func="addnewenv" />
       </div>
       <div class="importenv">
-        <ImportEnv :types="types" @func="addnewtype" @submit="returntoenv" />
+        <ImportEnv :types="types" @func="addnewtype" @submit="returntoenv" @back="back1" />
       </div>
       <div class="importtype">
-        <ImportType @submit="returntonewenv" />
+        <ImportType @submit="returntonewenv" @back="back2" />
       </div>
     </div>
   </div>
@@ -43,6 +43,14 @@ export default {
     });
   },
   methods: {
+    back1() {
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "0%";
+    },
+    back2() {
+      let displayProps = document.getElementsByClassName("container")[0];
+      displayProps.style.left = "-100%";
+    },
     addnewenv() {
       let displayProps = document.getElementsByClassName("container")[0];
       displayProps.style.left = "-100%";
@@ -64,7 +72,16 @@ export default {
         displayProps.style.left = "-100%";
       }, 500);
     },
-    returntoenv() {}
+    returntoenv() {
+      setTimeout(() => {
+        axios.get(url + "/getSystemTypeAndNameFile").then(res => {
+          this.options = res.data.options;
+          this.types = res.data.types;
+        });
+        let displayProps = document.getElementsByClassName("container")[0];
+        displayProps.style.left = "0%";
+      }, 500);
+    }
   }
 };
 </script>
