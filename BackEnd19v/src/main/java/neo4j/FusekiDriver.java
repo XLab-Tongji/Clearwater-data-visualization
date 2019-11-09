@@ -28,6 +28,8 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
+
 import global.globalvalue;
 
 import static neo4j.MongoDriver.*;
@@ -1691,8 +1693,8 @@ public class FusekiDriver {
         Date start = new Date();
         Date end = new Date();
         try {
-            start = DateFormat.parse("2019-10-25 00:00:00");
-            end = DateFormat.parse("2019-09-25 23:59:59");
+            start = DateFormat.parse("2019-10-20 00:00:00");
+            end = DateFormat.parse("2019-10-20 23:59:59");
         } catch(ParseException px) {
             px.printStackTrace();
         }
@@ -1732,36 +1734,35 @@ public class FusekiDriver {
             System.out.println(strings[strings.length-1]);
             System.out.println(timeList);
             System.out.println(proInfor);
-//            stringBuffer.append(strings[strings.length-1]);
+            stringBuffer.append(strings[strings.length-1]);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("file1",timeList);
             jsonObject.put("file2", proInfor);
-//            stringBuffer.append("\r\n");
-//            stringBuffer.append(jsonObject.toString());
-//            stringBuffer.append("\r\n");
-            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
-            System.out.println(re);
-            if (re != null){
-                for (String ev:(ArrayList<String>)dates.get("Event")
-                ) {
-                    addCorrelation(ev, i.toString(), re);
-                }
-            }
+            stringBuffer.append("\r\n");
+            stringBuffer.append(jsonObject.toString());
+            stringBuffer.append("\r\n");
+//            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
+//            System.out.println(re);
+//            if (re != null){
+//                for (String ev:(ArrayList<String>)dates.get("Event")
+//                ) {
+//                    addCorrelation(ev, i.toString(), re);
+//                }
+//            }
         }
-/*        try {
+        try {
             FileOutputStream fos = new FileOutputStream("/Users/jiang/data.txt");
             fos.write(stringBuffer.toString().getBytes());
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
-        }*/
-
+        }
 
 
     }
 
 
-    //查询指定范围内发生的时间
+    //查询指定范围内发生的时间 只有 HW 事件
     public static Map<String, ArrayList> getEventInFuseki(Date startTime,Date endTime)
     {
         SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
@@ -1774,7 +1775,7 @@ public class FusekiDriver {
         ResIterator iter = model.listSubjects();
         while (iter.hasNext()) {
             Resource r = iter.nextResource();
-            if (r.toString().contains("event"))
+            if (Pattern.matches(".*event.*HW.*", r.toString()))
             {
                 Statement statement =  r.getProperty(model.createProperty(r.toString()+"/starts_at"));
                 if (statement == null) continue;

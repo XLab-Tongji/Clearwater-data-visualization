@@ -305,8 +305,8 @@ public class MongoDriver {
     public static boolean saveSystemTypeAndNameFile(String type, String name){
         try {
             //连接到mongodb服务
-            MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
-            //MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
+            //MongoClient mongoClient = new MongoClient(globalvalue.mongoapi, 27017);
+            MongoClient mongoClient = new MongoClient("10.60.38.173", 27020);
             //连接到数据库
             MongoDatabase mongoDatabase = mongoClient.getDatabase("knowledgegraph");
             MongoCollection<Document> collection = mongoDatabase.getCollection("SystemTypeAndName");
