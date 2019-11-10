@@ -1174,7 +1174,13 @@ public class Neo4jDriver {
                         nod.put("properties", node.asMap());
                         String[] name = node.asMap().get("uri").toString().split("#");
                         nod.put("name", name[name.length-1]);
-                        nod.put("type",node.asMap().get("type"));
+                        Iterator iterator = node.labels().iterator();
+                        iterator.next();
+                        if (iterator.hasNext()){
+                            nod.put("type",iterator.next().toString());
+                        } else {
+                            nod.put("type", "null");
+                        }
                         if(!allnodes.contains(nod))
                             allnodes.add(nod);
                     }
