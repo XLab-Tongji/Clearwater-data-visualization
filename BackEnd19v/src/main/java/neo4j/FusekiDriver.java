@@ -1586,6 +1586,7 @@ public class FusekiDriver {
                     return false;
                 }
             }
+            qExec.close();
         }
         return true;
     }
@@ -1741,22 +1742,23 @@ public class FusekiDriver {
             stringBuffer.append("\r\n");
             stringBuffer.append(jsonObject.toString());
             stringBuffer.append("\r\n");
-//            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
-//            System.out.println(re);
-//            if (re != null){
-//                for (String ev:(ArrayList<String>)dates.get("Event")
-//                ) {
-//                    addCorrelation(ev, i.toString(), re);
-//                }
-//            }
+            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
+            System.out.println(re);
+            if (re != null){
+                for (String ev:(ArrayList<String>)dates.get("Event")
+                ) {
+                    addCorrelation(ev, i.toString(), re);
+                }
+            }
         }
-        try {
-            FileOutputStream fos = new FileOutputStream("/Users/jiang/data.txt");
-            fos.write(stringBuffer.toString().getBytes());
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            FileOutputStream fos = new FileOutputStream("/Users/jiang/data.txt");
+//            fos.write(stringBuffer.toString().getBytes());
+//            fos.close();
+//        }
+//        catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
 
 
     }

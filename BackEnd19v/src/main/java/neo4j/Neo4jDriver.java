@@ -1177,7 +1177,9 @@ public class Neo4jDriver {
                         Iterator iterator = node.labels().iterator();
                         iterator.next();
                         if (iterator.hasNext()){
-                            nod.put("type",iterator.next().toString());
+                            String type = iterator.next().toString();
+                            if (type.contains("owl")) continue;
+                            nod.put("type",type.substring(2));
                         } else {
                             nod.put("type", "null");
                         }
