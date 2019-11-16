@@ -161,6 +161,12 @@ public class Neo4jController {
         return getElement();
     }
 
+    //获取结点、连接
+    @RequestMapping(value = "/api/getSystemNodesAndLinks",method = RequestMethod.GET,produces = "application/json")
+    public Map getNodeAndLink(){
+        return getAllNodesandlinks();
+    }
+
 
     //以下为Fuseki部分
     @RequestMapping(value = "/api/getNodesAndLinks",method = RequestMethod.GET,produces = "application/json")

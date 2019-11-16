@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static neo4j.MongoDriver.saveSystemTypeAndNameFile;
+import static neo4j.Neo4jDriver.importTtl;
+import static util.TurtleUtil.*;
 
 @RestController
 public class FileController {
@@ -24,6 +26,7 @@ public class FileController {
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                readOntologyJson(name);
                 saveSystemTypeAndNameFile(name,"");
             }
         }catch (Exception e) {
@@ -44,6 +47,7 @@ public class FileController {
         try{
             if (springUpload(request, savePath, name)) {
                 res.put("succees",1);
+                readSystemJson(name);
                 saveSystemTypeAndNameFile(type,name);
             }
         }catch (Exception e) {
@@ -51,8 +55,9 @@ public class FileController {
             res.put("succees", 0);
             res.put("Reason",e.toString());
         }
+        importTtl(FileController.class.getResource("/").getPath().replace("classes","turtle/type")+type+".ttl",
+                FileController.class.getResource("/").getPath().replace("classes","turtle/system")+name+".ttl");
         return res;
-
     }
 
     private boolean springUpload(HttpServletRequest request, String savePath, String fileName) throws IllegalStateException, IOException

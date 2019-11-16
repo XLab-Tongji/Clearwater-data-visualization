@@ -79,6 +79,7 @@ public class MongoDriver {
             System.out.println("文档插入成功");
 //            if(storeTimestamp(time)==null)
 //                return false;
+            mongoClient.close();
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -100,6 +101,7 @@ public class MongoDriver {
             System.out.println("文档插入成功");
 //            if(storeTimestamp(time)==null)
 //                return false;
+            mongoClient.close();
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -129,6 +131,7 @@ public class MongoDriver {
             System.out.println("文档插入成功");
 //            if(storeTimestamp(time)==null)
 //                return false;
+            mongoClient.close();
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -167,6 +170,7 @@ public class MongoDriver {
                     append("time", time);
             collection.insertOne(document);
             System.out.println("文档插入成功");
+            mongoClient.close();
         } catch (Exception e){
             e.printStackTrace();
             return false;
@@ -193,6 +197,7 @@ public class MongoDriver {
                 map.putAll(d);
                 result.add(map);
             }
+            mongoClient.close();
             if(result.size()==0) return null;
             System.out.println(result.get(0));
             return result.get(0);
@@ -258,9 +263,9 @@ public class MongoDriver {
                 aL.add(d.getInteger("type"));
                 result.add(aL);
             }
+            mongoClient.close();
             if(result.size()==0) return null;
             //System.out.println(result);
-
             return result;
         } catch (Exception e){
             e.printStackTrace();
@@ -299,6 +304,7 @@ public class MongoDriver {
             System.out.println(d.get("time"));
             result.add(d.get("time").toString());
         }
+        mongoClient.close();
         return result;
     }
 
@@ -339,6 +345,7 @@ public class MongoDriver {
                 doc.put("$set", res);
                 collection.findOneAndUpdate(query,doc);
                 System.out.println("文档修改成功");
+                mongoClient.close();
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -362,6 +369,7 @@ public class MongoDriver {
                 Document d=mongoCursor.next();
                 re.add(JSONObject.parseObject(d.toJson()));
             }
+            mongoClient.close();
         } catch (Exception e){
             e.printStackTrace();
         }
