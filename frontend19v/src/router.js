@@ -15,6 +15,11 @@ export default new Router({
             //   component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
         },
         {
+            path: '/show',
+            name: 'ShowData',
+            component: () => import('./views/showData/Show.vue'),
+        },
+        {
             path: '/main',
             // redirect: '/overview',
             name: 'mainpage',
