@@ -257,7 +257,7 @@ public class Neo4jDriver {
                             "SET n.volumeMount = $volumeMount "+"SET n.name = $name "+"SET n.arrayListAdd = $arrayListAdd "+"SET n.arrayListDrop = $arrayListDrop "+ "SET n.type = 'Container_Node' "+"SET n.performance = $performance "+
                             "return id(n)",
                     parameters("volumeMount",volumeMount,"name",name,"arrayListAdd",arrayListAdd,"arrayListDrop",arrayListDrop,
-                    "performance","name:"+name+";volumeMount:"+volumeMount+";arrayListAdd:"+arrayListAdd+";arrayListDrop:"+arrayListDrop+";type:Container_Node"));
+                            "performance","name:"+name+";volumeMount:"+volumeMount+";arrayListAdd:"+arrayListAdd+";arrayListDrop:"+arrayListDrop+";type:Container_Node"));
             trueId = newID.single().get(0).asInt();
             System.out.println("trueId:"+trueId);
             //System.out.println(relations);
@@ -437,19 +437,19 @@ public class Neo4jDriver {
         Boolean flag = true;
         try(Session session = driver.session()) {
 
-                StatementResult result0 = session.run("Match (n:Dataset) where n.name = $name return ID(n)"
-                        ,parameters("name",dataBaseName));
-                if (!result0.hasNext()){
-                    return false;
-                }
-                while (result0.hasNext()){
-                    Record record = result0.next();
-                    System.out.println(record);
-                    int curID = record.get(0).asInt();
-                    System.out.println(curID);
-                    session.run( "Start a=node("+ID+"),b=node("+curID+") Merge (a)-[r:collected_by{type:'collected_by',name:$name}]->(b)"
-                            ,parameters("name",resultName));
-                }
+            StatementResult result0 = session.run("Match (n:Dataset) where n.name = $name return ID(n)"
+                    ,parameters("name",dataBaseName));
+            if (!result0.hasNext()){
+                return false;
+            }
+            while (result0.hasNext()){
+                Record record = result0.next();
+                System.out.println(record);
+                int curID = record.get(0).asInt();
+                System.out.println(curID);
+                session.run( "Start a=node("+ID+"),b=node("+curID+") Merge (a)-[r:collected_by{type:'collected_by',name:$name}]->(b)"
+                        ,parameters("name",resultName));
+            }
 
         }
         return true;
@@ -506,7 +506,7 @@ public class Neo4jDriver {
         Boolean flag = true;
         try(Session session = driver.session()) {
             StatementResult result0 = session.run("Match (n:Deployment_Node) where n.name = $name return ID(n)"
-                        , parameters("name", deploymentName));
+                    , parameters("name", deploymentName));
             if (!result0.hasNext()) {
                 return false;
             }
@@ -525,7 +525,7 @@ public class Neo4jDriver {
                             parameters("timeStamp",timeStamp,"hostIP",hostIP,"nameSpace",nameSpace,
                                     "name",name,"podIP",podIP,
                                     "performance","name:"+name+";timeStamp:"+timeStamp+";hostIP:"+hostIP+";nameSpace:"+nameSpace+
-                                    ";podIP:"+podIP+";type:Node"));
+                                            ";podIP:"+podIP+";type:Node"));
                 }
                 int ID = result1.next().get(0).asInt();
                 session.run("Start a=node(" + curID + "),b=node(" + ID + ") Merge (a)-[r:deploys_at{type:'deploys_at'}]->(b)");
@@ -1128,7 +1128,8 @@ public class Neo4jDriver {
 
     //第一次适用需要运行 CREATE INDEX ON :Resource(uri)
     public static void importTtl(String typePath, String systemPath) {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic( "neo4j", "1234" ));
+        Driver driver = GraphDatabase.driver(neo4japi+":7687",
+                AuthTokens.basic("neo4j","1234"));
         //初始化驱动器
         try (Session session = driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
@@ -1140,14 +1141,21 @@ public class Neo4jDriver {
                         "`http://localhost/KGns/relationship#`:'rel'," +
                         "`http://localhost/KGns/Container_attributes#`:'Container_attributes'," +
                         "`http://localhost/KGns/Service_attributes#`:'Service_attributes'})";
-                String ontology="CALL semantics.importRDF(\"file://" + typePath + "\", \"Turtle\")";
-                String system="CALL semantics.importRDF(\"file://" + systemPath + "\", \"Turtle\")";
+                String ontology="CALL semantics.importRDF(\"file:///" + typePath + "\", \"Turtle\")";
+                String system="CALL semantics.importRDF(\"file:///" + systemPath + "\", \"Turtle\")";
+                String systemFileName=systemPath.substring(systemPath.lastIndexOf("/")+1);
+                String systemName=systemFileName.substring(0,systemFileName.lastIndexOf("."));
+                String createSystemNode="create(n:System{name:'"+systemName+"'})return n";
+                String addRelation= "match(a:System),(b)where(not b:System and not (a)-->(b))create (a)-[r:has]->(b) return r";
                 System.out.println(ontology);
                 System.out.println(system);
 
-                StatementResult result1 = tx.run(namespace);
+                tx.run(namespace);
                 StatementResult result2 = tx.run(ontology);
-                StatementResult result3 = tx.run(system);
+                tx.run(system);
+                tx.run(createSystemNode);
+                tx.run(addRelation);
+
                 System.out.println(result2.toString());
                 tx.success();
             }
@@ -1155,13 +1163,13 @@ public class Neo4jDriver {
         driver.close();
     }
 
-    public static HashMap<String, List<HashMap<String,Object>>> getAllNodesandlinks() {
+    public static HashMap<String, List<HashMap<String,Object>>> getAllNodesandlinks(String systemName) {
         Driver driver = GraphDatabase.driver(neo4japi+":7687",
                 AuthTokens.basic("neo4j","1234"));
         HashMap<String, List<HashMap<String,Object>>> resultgraph = new HashMap<>();
         try(Session session = driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
-                StatementResult result = tx.run("Match p=(n)-[r]-(m) return p as nodesrelation");
+                StatementResult result = tx.run("Match p=(n)-[r]-(m) , (a:System)-[e:has]-(n) where a.name = '"+systemName+"' return p as nodesrelation");
                 List<HashMap<String,Object>> allnodes = new ArrayList<>();
                 List<HashMap<String,Object>> allrelations = new ArrayList<>();
                 while(result.hasNext()){
@@ -1181,7 +1189,8 @@ public class Neo4jDriver {
                             if (type.contains("owl")) continue;
                             nod.put("type",type.substring(2));
                         } else {
-                            nod.put("type", "null");
+//                            nod.put("type", "null");
+                            continue;
                         }
                         if(!allnodes.contains(nod))
                             allnodes.add(nod);
@@ -1208,8 +1217,9 @@ public class Neo4jDriver {
 
     public static void main(String[] args) {
 
-        new Neo4jDriver().getAllNodesandlinks();
-        //importTtl("/Users/jiang/Operation_KnowledgeGraph/BackEnd19v/target/turtle/type/ontology.ttl","/Users/jiang/Operation_KnowledgeGraph/BackEnd19v/target/turtle/system/system.ttl");
+        new Neo4jDriver().getAllNodesandlinks("system");
+//        importTtl("F:/Xlab/ontology.ttl",
+//                "F:/Xlab/system.ttl");
 
     }
 }

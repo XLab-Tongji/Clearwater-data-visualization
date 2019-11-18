@@ -43,8 +43,8 @@ public class TurtleUtil {
                 "@prefix rel: <http://localhost/KGns/relationship#> .\n" +
                 "@prefix Container_attributes: <http://localhost/KGns/Container_attributes#> .\n" +
                 "@prefix Service_attributes: <http://localhost/KGns/Service_attributes#> .\n\n");
-                ontologyTtlWriter.flush();
-         ontologyJsonToTurtle(ontology,ontologyTtlWriter);
+        ontologyTtlWriter.flush();
+        ontologyJsonToTurtle(ontology,ontologyTtlWriter);
 
     }
 
@@ -146,7 +146,7 @@ public class TurtleUtil {
                 JSONObject instance = instances.getJSONObject(i);
                 //节点名字
                 String name = instance.getString("name");
-                writer.write("<#" + name + ">\n\t\t");
+                writer.write(":" + name + "\n\t\t");
                 writer.flush();
                 //属性
                 JSONObject attributes=instance.getJSONObject("attributes");
