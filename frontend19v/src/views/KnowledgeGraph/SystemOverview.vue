@@ -177,8 +177,9 @@ import backurl from "../../Global";
 
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
+const reqUrl = "http://localhost:8088/bbs";
 // const reqUrl = backurl.backurl+"/bbs";
-const reqUrl = "http://10.60.38.173:9990/bbs";
+// const reqUrl = "http://10.60.38.173:9990/bbs";
 // const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
@@ -506,17 +507,21 @@ export default {
       this.links = [];
 
       let formData = new FormData();
-      formData.append("type", this.$route.query.type);
-      formData.append("env", this.$route.query.env);
+      // formData.append("type", this.$route.query.type);
+      // formData.append("env", this.$route.query.env);
+      formData.append('systemName', this.$route.query.env);
+      console.log(formData.get('systemName'));
+
 
       axios
         // API GET
         // .post(reqUrl + "/api/getNodesAndLinks", formData)
-        .get(reqUrl + "/api/getNodesAndLinks")
+        .get(reqUrl + "/api/getSystemNodesAndLinks"+'?systemName='+this.$route.query.env)
         // .get("/example.json")
         // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
           console.log(reqUrl);
+          console.log(response);
           $("#fountainG").hide();
           // this.currentTimeStampNodes = response.data.nodeList.slice()
           response.data.nodeList.forEach(x => {
