@@ -1684,7 +1684,7 @@ public class FusekiDriver {
                 result.add(r);
             }
         }
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
@@ -1840,8 +1840,80 @@ public class FusekiDriver {
     }
 
 
+    //供算法导出数据使用
+    public static void getDate(int month, int day){
+        SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = DateFormat.parse("2019-"+month+"-"+day+" 00:00:00");
+            end = DateFormat.parse("2019-"+month+"-"+day+" 23:59:59");
+        } catch(ParseException px) {
+            px.printStackTrace();
+        }
+        Model model = DataAccessor.getInstance().getModel();
+        ArrayList<Resource> resources = getResourcesWithQuery();
+        //受到时区的影响
+        Map dates = getEventInFuseki(start, end);
+        List times = new ArrayList<>();
+        for (Date i:(ArrayList<Date>)dates.get("Date")
+        ) {
+            times.add(i.getTime()/1000);
+        }
+        Collections.sort(times);
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Resource i:resources
+        ) {
+            Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
+            //System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
+
+            JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
+            //JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),times.get(0)+"", times.get(times.size()-1)+"");
+            if (proInfor == null)continue;
+            List timeList = new ArrayList();
+            for (Object j:times
+            ) {
+                for (Object k:proInfor
+                ) {
+                    if ((Long)j <= ((JSONArray)k).getLong(0)){
+                        if (!timeList.contains(((JSONArray)k).getLong(0))){
+                            timeList.add(((JSONArray)k).getLong(0));
+                        }
+                        break;
+                    }
+                }
+            }
+            String[] strings = i.toString().split("/");
+            System.out.println(strings[strings.length-1]);
+            System.out.println(timeList);
+            System.out.println(proInfor);
+            stringBuffer.append(strings[strings.length-1]);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("file1",timeList);
+            jsonObject.put("file2", proInfor);
+            stringBuffer.append("\r\n");
+            stringBuffer.append(jsonObject.toString());
+            stringBuffer.append("\r\n");
+        }
+        if (stringBuffer.length() == 0){
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream("/Users/jiang/data/data"+month+"-"+day+".txt");
+            fos.write(stringBuffer.toString().getBytes());
+            fos.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
-        addLinkEvent2S();
+        for (int i = 30; i <= 31; i++) {
+            getDate(10,i);
+        }
+        for (int i = 1; i <= 14; i++) {
+            getDate(11,i);
+        }
     }
 }

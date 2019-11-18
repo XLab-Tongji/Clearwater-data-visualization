@@ -210,7 +210,7 @@ public class prometheusDriver {
         //        query=APIServiceOpenAPIAggregationControllerQueue1_adds{instance="192.168.199.191:6443",job="kubernetes-apiservers"}
         String url = new String();
         try {
-            url = "http://10.60.38.181:30003/api/v1/query_range?query=" + URLEncoder.encode(urlNode, "UTF-8") + "&start=" + start + "&end=" + end + "&step=60";
+            url = "http://10.60.38.181:31003/api/v1/query_range?query=" + URLEncoder.encode(urlNode, "UTF-8") + "&start=" + start + "&end=" + end + "&step=60";
             //        url = java.net.URLEncoder.encode(url);
             //System.out.println(url);
         }catch (Exception e){
