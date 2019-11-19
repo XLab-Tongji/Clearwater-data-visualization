@@ -164,11 +164,9 @@
 </template>
 
 <script>
-// import D3Network from "../../components/vue-d3-network/src/vue-d3-network.vue";
 import D3Network from "../../components/vue-d3-network/src/d3-systemOverview.vue";
 import SearchTree from "../../components/SearchTree.vue";
 import Timeline from "../../components/Timeline";
-// import LoadingEffect from  "../../componets/LoadingEffect.vue";
 import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import $ from "jquery";
@@ -178,9 +176,6 @@ import backurl from "../../Global";
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
 const reqUrl = "http://localhost:8088/bbs";
-// const reqUrl = backurl.backurl+"/bbs";
-// const reqUrl = "http://10.60.38.173:9990/bbs";
-// const reqUrl = "http://192.168.1.160:8088/bbs";
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == val) return i;
