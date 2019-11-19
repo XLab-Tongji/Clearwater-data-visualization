@@ -507,29 +507,18 @@ export default {
       this.links = [];
 
       let formData = new FormData();
-      // formData.append("type", this.$route.query.type);
-      // formData.append("env", this.$route.query.env);
       formData.append('systemName', this.$route.query.env);
-      console.log(formData.get('systemName'));
-
 
       axios
-        // API GET
-        // .post(reqUrl + "/api/getNodesAndLinks", formData)
         .get(reqUrl + "/api/getSystemNodesAndLinks"+'?systemName='+this.$route.query.env)
-        // .get("/example.json")
-        // .get(reqUrl + "/api/getAllByTime?time=2019-06-02 22:20:59")
         .then(response => {
-          console.log(reqUrl);
-          console.log(response);
           $("#fountainG").hide();
-          // this.currentTimeStampNodes = response.data.nodeList.slice()
-          response.data.nodeList.forEach(x => {
+          response.data.nodes.forEach(x => {
             x.svgSym = nodeIcons[x.type];
           });
 
-          let allNodes = response.data.nodeList;
-          this.links = response.data.linkList;
+          let allNodes = response.data.nodes;
+          this.links = response.data.links;
 
           this.nodes = [];
 
@@ -559,23 +548,7 @@ export default {
         });
 
       let displayProps = document.getElementsByClassName("display-property")[0];
-      // console.log(displayProps);
-      // if(displayProps != undefined) {
       displayProps.style.right = "-420px";
-      // }
-      // displayProps.style.display = 'none'
-      //   loadingEffect();
-      //   function loadingEffect() {
-      //       var loading = $("#fountainG");
-      //       loading.hide();
-      //       $(document)
-      //           .ajaxStart(function() {
-      //               loading.show();
-      //           })
-      //           .ajaxStop(function() {
-      //               loading.hide();
-      //           });
-      //   }
     },
     // yyyy-MM-ddThh:mm:ss -> yyyyMMdd hh:mm:ss
     frontTimeFottoEnd(time) {
@@ -1058,8 +1031,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query);
-
     $("#fountainG").hide();
 
     var el = document.getElementsByClassName("net-svg")[0];
