@@ -1141,11 +1141,11 @@ public class Neo4jDriver {
                         "`http://localhost/KGns/relationship#`:'rel'," +
                         "`http://localhost/KGns/Container_attributes#`:'Container_attributes'," +
                         "`http://localhost/KGns/Service_attributes#`:'Service_attributes'})";
-                String ontology="CALL semantics.importRDF(\"file:///" + typePath + "\", \"Turtle\")";
-                String system="CALL semantics.importRDF(\"file:///" + systemPath + "\", \"Turtle\")";
+                String ontology="CALL semantics.importRDF(\"file://" + typePath + "\", \"Turtle\")";
+                String system="CALL semantics.importRDF(\"file://" + systemPath + "\", \"Turtle\")";
                 String systemFileName=systemPath.substring(systemPath.lastIndexOf("/")+1);
                 String systemName=systemFileName.substring(0,systemFileName.lastIndexOf("."));
-                String createSystemNode="create(n:System{name:'"+systemName+"'})return n";
+                String createSystemNode="create(n:System{name:'"+systemName+"',uri:'www.tongji.edu.cn/"+systemName+"'})return n";
                 String addRelation= "match(a:System),(b)where(not b:System and not (a)-->(b))create (a)-[r:has]->(b) return r";
                 System.out.println(ontology);
                 System.out.println(system);
@@ -1170,6 +1170,7 @@ public class Neo4jDriver {
         try(Session session = driver.session()) {
             try (Transaction tx = session.beginTransaction()) {
                 StatementResult result = tx.run("Match p=(n)-[r]-(m) , (a:System)-[e:has]-(n) where a.name = '"+systemName+"' return p as nodesrelation");
+               // StatementResult result = tx.run("match (:System{name:'"+systemName+"'})--(n)return n as nodesrelation");
                 List<HashMap<String,Object>> allnodes = new ArrayList<>();
                 List<HashMap<String,Object>> allrelations = new ArrayList<>();
                 while(result.hasNext()){
@@ -1217,7 +1218,7 @@ public class Neo4jDriver {
 
     public static void main(String[] args) {
 
-        new Neo4jDriver().getAllNodesandlinks("system");
+        new Neo4jDriver().getAllNodesandlinks("0000");
 //        importTtl("F:/Xlab/ontology.ttl",
 //                "F:/Xlab/system.ttl");
 
