@@ -1,5 +1,6 @@
 package neo4j;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import neo4jentities.DataAccessor;
@@ -20,6 +21,7 @@ import org.apache.jena.riot.web.HttpOp;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -27,10 +29,14 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
+
 import global.globalvalue;
 
 import static neo4j.MongoDriver.*;
 import static neo4j.prometheusDriver.getProInfor;
+import static util.FileUtil.saveClusterResult;
+import static util.HttpPostUtil.getImage;
 
 
 @Component
@@ -55,7 +61,7 @@ public class FusekiDriver {
                 QuerySolution qs = rs.next() ;
                 String subject = qs.get("s").toString();
                 if(subject.contains("http")){
-                    System.out.println("Subject: " + subject);
+                    //System.out.println("Subject: " + subject);
                     if(subject.contains("server")){
                         result.add(getServer(subject));
                         linkList.addAll(getLink(subject, "manage"));
@@ -1583,6 +1589,7 @@ public class FusekiDriver {
                     return false;
                 }
             }
+            qExec.close();
         }
         return true;
     }
@@ -1680,7 +1687,7 @@ public class FusekiDriver {
                 result.add(r);
             }
         }
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
@@ -1690,8 +1697,8 @@ public class FusekiDriver {
         Date start = new Date();
         Date end = new Date();
         try {
-            start = DateFormat.parse("2019-08-06 00:00:00");
-            end = DateFormat.parse("2019-08-06 23:59:59");
+            start = DateFormat.parse("2019-10-20 00:00:00");
+            end = DateFormat.parse("2019-10-20 23:59:59");
         } catch(ParseException px) {
             px.printStackTrace();
         }
@@ -1705,10 +1712,11 @@ public class FusekiDriver {
             times.add(i.getTime()/1000);
         }
         Collections.sort(times);
+        StringBuffer stringBuffer = new StringBuffer();
         for (Resource i:resources
         ) {
             Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
-            System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
+            //System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
 
             JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
             //JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),times.get(0)+"", times.get(times.size()-1)+"");
@@ -1726,7 +1734,8 @@ public class FusekiDriver {
                     }
                 }
             }
-            System.out.println("request---------");
+            String[] strings = i.toString().split("/");
+            System.out.println(strings[strings.length-1]);
             System.out.println(timeList);
             System.out.println(proInfor);
             JSONObject jsonObject = new JSONObject();
@@ -1741,13 +1750,10 @@ public class FusekiDriver {
                 }
             }
         }
-
-
-
     }
 
 
-    //查询指定范围内发生的时间
+    //查询指定范围内发生的时间 只有 HW 事件
     public static Map<String, ArrayList> getEventInFuseki(Date startTime,Date endTime)
     {
         SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
@@ -1760,9 +1766,11 @@ public class FusekiDriver {
         ResIterator iter = model.listSubjects();
         while (iter.hasNext()) {
             Resource r = iter.nextResource();
-            if (r.toString().contains("event"))
+            if (Pattern.matches(".*event.*HW.*", r.toString()))
             {
-                String timeProperty=r.getProperty(model.createProperty(r.toString()+"/starts_at")).getResource().toString();
+                Statement statement =  r.getProperty(model.createProperty(r.toString()+"/starts_at"));
+                if (statement == null) continue;
+                String timeProperty=statement.getResource().toString();
                 //截取出时间字符串，去掉中间的“-”
                 int length=timeProperty.length();
                 String time=timeProperty.substring(length-19,length-9)+" "+timeProperty.substring(length-8);
@@ -1799,8 +1807,8 @@ public class FusekiDriver {
         System.out.println(addRelation);
         System.out.println(setInfluenceValue);
         RDFConnectionRemoteBuilder builderAddRelation = RDFConnectionFuseki.create()
-                //                .destination("http://10.60.38.173:3030/DevKGData/update");
-                .destination("http://localhost:3030/gundam/update");
+                                .destination("http://10.60.38.173:3030/DevKGData/update");
+                //.destination("http://localhost:3030/gundam/update");
         //        CredentialsProvider credsProvider = new BasicCredentialsProvider();
         //        Credentials credentials = new UsernamePasswordCredentials("admin", "D0rlghQl5IAgYOm");
         //        credsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -1821,7 +1829,145 @@ public class FusekiDriver {
     }
 
 
+    //供算法导出数据使用
+    public static void getDate(int month, int day){
+        SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = DateFormat.parse("2019-"+month+"-"+day+" 00:00:00");
+            end = DateFormat.parse("2019-"+month+"-"+day+" 23:59:59");
+        } catch(ParseException px) {
+            px.printStackTrace();
+        }
+        Model model = DataAccessor.getInstance().getModel();
+        ArrayList<Resource> resources = getResourcesWithQuery();
+        //受到时区的影响
+        Map dates = getEventInFuseki(start, end);
+        List times = new ArrayList<>();
+        for (Date i:(ArrayList<Date>)dates.get("Date")
+        ) {
+            times.add(i.getTime()/1000);
+        }
+        Collections.sort(times);
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Resource i:resources
+        ) {
+            Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
+            //System.out.println(start.getTime()/1000 + " " + end.getTime()/1000);
+
+            JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
+            //JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),times.get(0)+"", times.get(times.size()-1)+"");
+            if (proInfor == null)continue;
+            List timeList = new ArrayList();
+            for (Object j:times
+            ) {
+                for (Object k:proInfor
+                ) {
+                    if ((Long)j <= ((JSONArray)k).getLong(0)){
+                        if (!timeList.contains(((JSONArray)k).getLong(0))){
+                            timeList.add(((JSONArray)k).getLong(0));
+                        }
+                        break;
+                    }
+                }
+            }
+            String[] strings = i.toString().split("/");
+            System.out.println(strings[strings.length-1]);
+            System.out.println(timeList);
+            System.out.println(proInfor);
+            stringBuffer.append(strings[strings.length-1]);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("file1",timeList);
+            jsonObject.put("file2", proInfor);
+            stringBuffer.append("\r\n");
+            stringBuffer.append(jsonObject.toString());
+            stringBuffer.append("\r\n");
+        }
+        if (stringBuffer.length() == 0){
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream("/Users/jiang/data/data"+month+"-"+day+".txt");
+            fos.write(stringBuffer.toString().getBytes());
+            fos.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    //向算法部分发送数据，返回一个String、两个时间序列
+    public static void getClusterResult(){
+        SimpleDateFormat DateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //加上时间
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = DateFormat.parse("2019-11-18 00:00:00");
+            end = DateFormat.parse("2019-11-18 23:59:59");
+        } catch(ParseException px) {
+            px.printStackTrace();
+        }
+        Model model = DataAccessor.getInstance().getModel();
+        ArrayList<Resource> resources = getResourcesWithQuery();
+        //受到时区的影响
+        Map dates = getEventInFuseki(start, end);
+        List times = new ArrayList<>();
+        for (Date i:(ArrayList<Date>)dates.get("Date")
+        ) {
+            times.add(i.getTime()/1000);
+        }
+        Collections.sort(times);
+        StringBuffer stringBuffer = new StringBuffer();
+        for (Resource i:resources
+        ) {
+            Statement statement = i.getProperty(model.createProperty(i.toString()+"/query"));
+            JSONArray proInfor = getProInfor(statement.getString().replace(" ",""),start.getTime()/1000 + "", end.getTime()/1000 + "");
+            if (proInfor == null)continue;
+            List timeList = new ArrayList();
+            for (Object j:times
+            ) {
+                for (Object k:proInfor
+                ) {
+                    if ((Long)j <= ((JSONArray)k).getLong(0)){
+                        if (!timeList.contains(((JSONArray)k).getLong(0))){
+                            timeList.add(((JSONArray)k).getLong(0));
+                        }
+                        break;
+                    }
+                }
+            }
+            String[] strings = i.toString().split("/");
+            System.out.println(strings[strings.length-1]);
+            System.out.println(timeList);
+            System.out.println(proInfor);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("file4", 1);
+            jsonObject.put("file3", strings[strings.length-1]);
+            jsonObject.put("file1",timeList);
+            jsonObject.put("file2", proInfor);
+
+            String re =  util.HttpPostUtil.postData(jsonObject.toJSONString());
+            System.out.println(re);
+            if (re != null){
+                JSONObject jsonRe = JSON.parseObject(re);
+//                String correlation = jsonRe.getString("Correlation");
+//                List<List> SST = JSONArray.parseArray(jsonRe.getString("SST"), List.class);
+//                List<List> alarm = JSONArray.parseArray(jsonRe.getString("Alarm"), List.class);
+                saveClusterResult(jsonRe.toJSONString(), strings[strings.length-1]);
+
+            }
+        }
+    }
 
     public static void main(String[] args) {
+//        for (int i = 30; i <= 31; i++) {
+//            getDate(10,i);
+//        }
+//        for (int i = 1; i <= 14; i++) {
+//            getDate(11,i);
+//        }
+
+
     }
 }

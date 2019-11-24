@@ -79,4 +79,14 @@ public class MongoDBController {
         return saveKapacitor2Mongo(message);
     }
 
+    @RequestMapping(value = "/api/addVariousEvent", method = RequestMethod.POST, produces = "application/json")
+    public Boolean addEvent(@RequestParam("Source") String source, @RequestParam("Content") String content){
+        return saveEvent2Mongo(content, source);
+    }
+
+    @RequestMapping(value = "/api/getSystemTypeAndNameFile",method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> getAllSystemTypeAndNameFile(){
+        return MongoService.jsonarray2Map();
+    }
+
 }
