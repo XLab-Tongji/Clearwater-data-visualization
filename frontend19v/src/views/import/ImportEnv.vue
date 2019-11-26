@@ -9,7 +9,7 @@
             :label="item.label"
             :value="item.value"
           ></el-option>
-          <el-option value="addnewtype" class="addnewtype">
+          <el-option value="" class="addnewtype">
             <div @click="addnewtype">
               <i class="el-icon-plus"></i>类型不存在，添加新类型
             </div>

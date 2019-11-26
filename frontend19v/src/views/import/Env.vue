@@ -46,7 +46,7 @@ export default {
         this.$message.error("错了哦，您没有选择任何环境");
       } else {
         this.$router.push({
-          path: "main/overview",
+          path: "/overview",
           query: { type: this.value[0], env: this.value[1] }
         });
       }

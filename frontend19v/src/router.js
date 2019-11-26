@@ -10,18 +10,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'import',
-            component: () => import('./views/import/Import.vue'),
-            //   component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
-        },
-        {
-            path: '/show',
-            name: 'ShowData',
-            component: () => import('./views/showData/Show.vue'),
-        },
-        {
-            path: '/main',
-            // redirect: '/overview',
+            redirect: '/import',
             name: 'mainpage',
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
@@ -29,14 +18,14 @@ export default new Router({
             component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
             children: [
                 {
-                    path: 'class',
-                    name: 'ClassGraph',
-                    component: () => import('./views/ClassGraph.vue'),
+                    path: '/import',
+                    name: 'import',
+                    component: () => import('./views/import/Import.vue'),
                 },
                 {
-                    path: 'causerel',
-                    name: 'CauseRel',
-                    component: () => import('./views/CauseRel.vue'),
+                    path: '/show',
+                    name: 'show',
+                    component: () => import('./views/showData/Show.vue'),
                 },
                 {
                     path: 'overview',
@@ -45,16 +34,16 @@ export default new Router({
                     // component: () => import('./views/import/Import.vue'),
                     // component: () => import('./views/import/test.vue'),
                 },
-                {
-                    path: 'service',
-                    name: 'ServiceCall',
-                    component: () => import('./views/KnowledgeGraph/ServiceCall.vue'),
-                },
-                {
-                    path: 'timestamp',
-                    name: 'EventTimeStamp',
-                    component: () => import('./views/KnowledgeGraph/EventTimeStamp.vue'),
-                }
+                // {
+                //     path: 'service',
+                //     name: 'ServiceCall',
+                //     component: () => import('./views/KnowledgeGraph/ServiceCall.vue'),
+                // },
+                // {
+                //     path: 'timestamp',
+                //     name: 'EventTimeStamp',
+                //     component: () => import('./views/KnowledgeGraph/EventTimeStamp.vue'),
+                // }
             ]
         }
     ]

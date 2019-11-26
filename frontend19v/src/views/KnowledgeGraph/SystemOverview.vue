@@ -47,40 +47,48 @@
         </marker>
       </defs>
     </svg>
+
     <!-- 右下角的对节点进行操作的 button -->
     <div id="button-group">
-      <el-radio-group v-model="radio">
-        <!-- 普通点击 -->
-        <el-tooltip class="item" effect="dark" content="查看" placement="top-start">
-          <el-radio-button label="1">
-            <i class="el-icon-view"></i>
-          </el-radio-button>
-        </el-tooltip>
-        <!-- 添加节点 -->
-        <el-tooltip class="item" effect="dark" content="添加节点" placement="top-start">
-          <el-radio-button label="2">
-            <i class="el-icon-plus"></i>
-          </el-radio-button>
-        </el-tooltip>
-        <!-- 添加关系 -->
-        <el-tooltip class="item" effect="dark" content="添加关系" placement="top-start">
-          <el-radio-button label="3">
-            <i class="el-icon-share"></i>
-          </el-radio-button>
-        </el-tooltip>
-        <!-- 删除 -->
-        <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-          <el-radio-button label="4">
-            <i class="el-icon-delete"></i>
-          </el-radio-button>
-        </el-tooltip>
-        <!-- 修改 -->
-        <el-tooltip class="item" effect="dark" content="修改" placement="top-start">
-          <el-radio-button label="5">
-            <i class="el-icon-edit"></i>
-          </el-radio-button>
-        </el-tooltip>
-      </el-radio-group>
+      <el-row>
+        <el-col :span="6">
+          <el-button @click="back">重新导入</el-button>
+        </el-col>
+        <el-col :span="18">
+          <el-radio-group v-model="radio">
+            <!-- 普通点击 -->
+            <el-tooltip class="item" effect="dark" content="查看" placement="top-start">
+              <el-radio-button label="1">
+                <i class="el-icon-view"></i>
+              </el-radio-button>
+            </el-tooltip>
+            <!-- 添加节点 -->
+            <el-tooltip class="item" effect="dark" content="添加节点" placement="top-start">
+              <el-radio-button label="2">
+                <i class="el-icon-plus"></i>
+              </el-radio-button>
+            </el-tooltip>
+            <!-- 添加关系 -->
+            <el-tooltip class="item" effect="dark" content="添加关系" placement="top-start">
+              <el-radio-button label="3">
+                <i class="el-icon-share"></i>
+              </el-radio-button>
+            </el-tooltip>
+            <!-- 删除 -->
+            <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+              <el-radio-button label="4">
+                <i class="el-icon-delete"></i>
+              </el-radio-button>
+            </el-tooltip>
+            <!-- 修改 -->
+            <el-tooltip class="item" effect="dark" content="修改" placement="top-start">
+              <el-radio-button label="5">
+                <i class="el-icon-edit"></i>
+              </el-radio-button>
+            </el-tooltip>
+          </el-radio-group>
+        </el-col>
+      </el-row>
     </div>
     <!-- 右侧属性卡片 -->
     <el-card class="display-property">
@@ -493,19 +501,30 @@ export default {
       }
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
+    back() {
+      console.log("fsag");
+      console.log(this.$router);
+      this.$router.push({
+        path: "/import"
+      });
+    },
     getData() {
       $("#fountainG").show();
       this.nodes = [];
       this.links = [];
 
       let formData = new FormData();
-      formData.append('systemName', this.$route.query.env);
+      formData.append("systemName", this.$route.query.env);
 
       axios
-        .get(reqUrl + "/api/getSystemNodesAndLinks"+'?systemName='+this.$route.query.env)
+        .get(
+          reqUrl +
+            "/api/getSystemNodesAndLinks" +
+            "?systemName=" +
+            this.$route.query.env
+        )
         .then(response => {
           $("#fountainG").hide();
           response.data.nodes.forEach(x => {

@@ -25,28 +25,27 @@
               <span slot="title">Entity/Relation Characteristic</span>
             </el-menu-item> -->
 
-            <el-submenu index="KnowledgeGraph">
+            <!-- <el-submenu index="KnowledgeGraph">
               <template slot="title">
                 <i class="el-icon-view"></i>
                 <span slot="title">Knowledge Graph</span>
               </template>
               <el-menu-item-group>
-                <!-- <span slot="title">Knowledge Graph</span> -->
                 <el-menu-item index="SystemOverview">System Overview</el-menu-item>
                 <el-menu-item index="ServiceCall">Service Call</el-menu-item>
                 <el-menu-item index="EventTimeStamp">Event-TimeStamp</el-menu-item>
               </el-menu-item-group>
-            </el-submenu>
+            </el-submenu> -->
 
-            <el-menu-item index="CauseRel">
-              <i class="el-icon-share"></i>
+            <el-menu-item index="SystemOverview">
+              <i class="el-icon-view"></i>
               <span slot="title">
-                Causality Diagram
+                System Overview
               </span>
             </el-menu-item>
 
-            <el-menu-item index="ClassGraph">
-              <i class="el-icon-wallet"></i>
+            <el-menu-item index="show">
+              <i class="el-icon-share"></i>
               <span slot="title">
                 Hierarchical View Of Classes
               </span>

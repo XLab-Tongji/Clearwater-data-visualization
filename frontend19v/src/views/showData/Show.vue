@@ -6,7 +6,6 @@
           <span>知识图谱</span>
         </div>
         <div class="systemOverview">
-          <system/>
         </div>
       </el-card>
 
