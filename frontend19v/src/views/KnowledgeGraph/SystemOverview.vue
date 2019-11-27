@@ -250,8 +250,6 @@ export default {
       notify: {},
       sourceNodeId: 0,
       targetNodeId: 0,
-      offset_X: 0,
-      offset_Y: 0,
       finCoor: 0,
       staCoor: 0,
       force: 3000,

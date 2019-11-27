@@ -25,7 +25,7 @@ export default new Router({
                 {
                     path: '/show',
                     name: 'show',
-                    component: () => import('./views/showData/Show.vue'),
+                    component: () => import('./views/showData/test.vue'),
                 },
                 {
                     path: 'overview',

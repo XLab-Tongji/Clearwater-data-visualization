@@ -1,0 +1,187 @@
+{
+    "nodes": [
+        {
+            "name": "svc1",
+            "id": 86,
+            "type": "Service",
+            "properties": {
+                "uri": "http://localhost/KGns/#svc1",
+                "Service_attributes__response_time": 1
+            }
+        },
+        {
+            "name": "pod1",
+            "id": 73,
+            "type": "Pod",
+            "properties": {
+                "uri": "http://localhost/KGns/#pod1"
+            }
+        },
+        {
+            "name": "c2",
+            "id": 87,
+            "type": "Container",
+            "properties": {
+                "uri": "http://localhost/KGns/#c2",
+                "Container_attributes__container_fs_reads_bytes_total": 256,
+                "Container_attributes__container_fs_writes_bytes_total": 512
+            }
+        },
+        {
+            "name": "c1",
+            "id": 74,
+            "type": "Container",
+            "properties": {
+                "uri": "http://localhost/KGns/#c1",
+                "Container_attributes__container_fs_reads_bytes_total": 1024,
+                "Container_attributes__container_fs_writes_bytes_total": 512
+            }
+        }
+    ],
+    "links": [
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 10
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 3
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 4
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 7,
+            "sid": 12
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 11,
+            "sid": 10
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 11,
+            "sid": 9
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 11,
+            "sid": 39
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 40,
+            "sid": 4
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 4
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 7,
+            "sid": 3
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 3
+        },
+        {
+            "name": "rel__provide",
+            "type": "rel__provide",
+            "tid": 86,
+            "sid": 73
+        },
+        {
+            "name": "rel__Service_ns",
+            "type": "rel__Service_ns",
+            "tid": 72,
+            "sid": 86
+        },
+        {
+            "name": "rel__provide",
+            "type": "rel__provide",
+            "tid": 86,
+            "sid": 73
+        },
+        {
+            "name": "rel__contain",
+            "type": "rel__contain",
+            "tid": 87,
+            "sid": 73
+        },
+        {
+            "name": "rel__contain",
+            "type": "rel__contain",
+            "tid": 74,
+            "sid": 73
+        },
+        {
+            "name": "rel__Pod_ns",
+            "type": "rel__Pod_ns",
+            "tid": 72,
+            "sid": 73
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 40,
+            "sid": 9
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 11,
+            "sid": 9
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 40,
+            "sid": 6
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 8,
+            "sid": 10
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 11,
+            "sid": 10
+        },
+        {
+            "name": "rdfs__domain",
+            "type": "rdfs__domain",
+            "tid": 40,
+            "sid": 6
+        },
+        {
+            "name": "rdfs__range",
+            "type": "rdfs__range",
+            "tid": 40,
+            "sid": 4
+        }
+    ]
+}
