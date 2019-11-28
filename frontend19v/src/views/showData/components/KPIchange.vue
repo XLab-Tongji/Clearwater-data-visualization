@@ -1,10 +1,5 @@
 <template>
   <div>
-    <div class="select">
-      <el-select v-model="value" placeholder="选择想要查询的KPI" @change="change">
-        <el-option v-for="item in kpis" :key="item.value" :label="item.label" :value="item.value"></el-option>
-      </el-select>
-    </div>
     <chart :options="options" :init-options="initOptions" autoresize />
   </div>
 </template>
@@ -23,37 +18,6 @@ export default {
   },
   data() {
     return {
-      kpis: [
-        {
-          value: "选项1",
-          label: "CPU_usage"
-        },
-        {
-          value: "选项2",
-          label: "Network_Output_Packets"
-        },
-        {
-          value: "选项3",
-          label: "Network_Input_Packets"
-        },
-        {
-          value: "选项4",
-          label: "Network_Output_Bytes"
-        },
-        {
-          value: "选项5",
-          label: "Network_Input_Bytes"
-        },
-        {
-          value: "选项6",
-          label: "MEM_Usage"
-        },
-        {
-          value: "选项7",
-          label: "Latency"
-        }
-      ],
-      value: "",
       initOptions: {
         renderer: "canvas"
       },
@@ -73,14 +37,8 @@ export default {
     };
   },
   methods: {
-    change(){
-      let formData = new FormData();
-      formData.append("kpi", this.value);
-      axios.post(global.url+"",).then(res=>{
-        setData(res);
-      })
-    },
     setData(d) {
+      console.log(d)
       let data = d.SST;
       let a = [];
       let b = [];
@@ -115,9 +73,6 @@ export default {
         date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
       return Y + M + D + h + m + s;
     }
-  },
-  mounted() {
-
   }
 };
 </script>

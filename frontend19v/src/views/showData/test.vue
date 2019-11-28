@@ -1,26 +1,23 @@
 <template>
   <div>
-      <Graph/>
-      <!-- <Ima/> -->
-      <BE/>
-      <KPI/>
+      <KB/>
+      <SG/>
+      <Ima/>
   </div>
 </template>
 
 <script>
-import KPI from './components/KPIchange';
-import BE from './components/BeginEndTable'
-import Ima from './components/Image'
-import Graph from './components/Graph'
+import KB from '../showData/components/KB';
+import SG from '../showData/components/SG'
+import Ima from '../showData/components/Image'
 
 import d from './data/data.json'
 
 export default {
     components:{
-        KPI,
-        BE,
-        Ima,
-        Graph
+        KB,
+        SG,
+        Ima
     },
 }
 </script>

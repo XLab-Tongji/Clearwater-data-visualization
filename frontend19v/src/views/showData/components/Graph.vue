@@ -28,25 +28,8 @@ export default {
         links: {},
         nodes: {}
       },
-      nodes: [
-        {
-          name: "svc1",
-          id: "svc1",
-          type: 1,
-        },
-        {
-          name: "pod1",
-          id: "pod1",
-          type: 2,
-        }
-      ],
-      links: [
-        {
-          value: 20,
-          tid: "svc1",
-          sid: "pod1"
-        }
-      ]
+      nodes: [],
+      links: [],
     };
   },
   computed: {
@@ -70,15 +53,11 @@ export default {
       };
     }
   },
-  mounted(){
-      this.links.map(i=>{
-          if(i.tid=='svc1'&&i.sid=='pod1'){
-              console.log(i.value);
-          }
-      })
-      console.log()
-  },
   methods: {
+    setData(data){
+      this.nodes = data.nodes;
+      this.links = data.links;
+    },
     showLinkLabel(e) {
       // 功能：hover 上 link 后显示 label
       // 思路：监听鼠标的 mouseover 事件，当鼠标移动到 link 上时获取到 link 的 id，

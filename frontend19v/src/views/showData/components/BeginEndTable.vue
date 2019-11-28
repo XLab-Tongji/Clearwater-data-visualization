@@ -7,30 +7,27 @@
 
 <script>
 import axios from "axios";
-import global from '../global'
-
-import d from "../data/data.json";
+import global from "../global";
 
 export default {
-    data() {
-      return {
-          options:[]
-      }
-    },
-    methods:{
-        test(){
-            let data = d.Alarm;
-            data.map(i=>{
-                let tmp={};
-                tmp.begin = global.timestampToTime(i[0]);
-                tmp.end = global.timestampToTime(i[1]);
-                this.options.push(tmp);
-            })
-        }
-    },
-    mounted(){
-        this.test();
+  data() {
+    return {
+      options: []
+    };
+  },
+  methods: {
+    setData(param) {
+      let data = param.Alarm;
+      console.log(data);
+      data.map(i => {
+        let tmp = {};
+        tmp.begin = global.timestampToTime(i[0]);
+        tmp.end = global.timestampToTime(i[1]);
+        this.options.push(tmp);
+      });
+      console.log(this.options);
     }
+  }
 };
 </script>
 

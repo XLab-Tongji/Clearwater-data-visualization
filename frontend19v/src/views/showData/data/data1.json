@@ -1,0 +1,100 @@
+{
+    "nodes": [
+        {
+            "name": "DailyTesing_HW",
+            "id": "DailyTesing_HW",
+            "type": "event"
+        },
+        {
+            "name": "CPU_Usage",
+            "id": "CPU_Usage",
+            "type": "kpi"
+        },
+        {
+            "name": "Network_Output_Packets",
+            "id": "Network_Output_Packets",
+            "type": "kpi"
+        },
+        {
+            "name": "Network_Input_Packets",
+            "id": "Network_Input_Packets",
+            "type": "kpi"
+        },
+        {
+            "name": "Network_Output_Bytes",
+            "id": "Network_Output_Bytes",
+            "type": "kpi"
+        },
+        {
+            "name": "MEM_Usage",
+            "id": "MEM_Usage",
+            "type": "kpi"
+        },
+        {
+            "name": "Network_Input_Bytes",
+            "id": "Network_Input_Bytes",
+            "type": "kpi"
+        }
+    ],
+    "links": [
+        {
+            "_id": {
+                "$oid": "5ddf68a900f29635925fc71e"
+            },
+            "value": "0.7664772727272728",
+            "tid": "DailyTesing_HW",
+            "sid": "CPU_Usage"
+        },
+        {
+            "_id": {
+                "$oid": "5ddf68bc00f29635925fc720"
+            },
+            "value": "0.8874053030303031",
+            "tid": "DailyTesing_HW",
+            "sid": "Network_Output_Packets"
+        },
+        {
+            "_id": {
+                "$oid": "5ddf68c700f29635925fc722"
+            },
+            "value": "0.8144886363636363",
+            "tid": "DailyTesing_HW",
+            "sid": "Network_Input_Packets"
+        },
+        {
+            "_id": {
+                "$oid": "5ddf68ca00f29635925fc724"
+            },
+            "value": "0.7848484848484849",
+            "tid": "DailyTesing_HW",
+            "sid": "Network_Output_Bytes"
+        },
+        {
+            "_id": {
+                "$oid": "5ddf68cd00f29635925fc726"
+            },
+            "value": "0.7615530303030303",
+            "tid": "DailyTesing_HW",
+            "sid": "MEM_Usage"
+        },
+        {
+            "_id": {
+                "$oid": "5ddf68d000f29635925fc728"
+            },
+            "value": "0.8030303030303031",
+            "tid": "DailyTesing_HW",
+            "sid": "Network_Input_Bytes"
+        }
+    ],
+    "kpis": [
+        "CPU_Usage",
+        "Network_Output_Packets",
+        "Network_Input_Packets",
+        "Network_Output_Bytes",
+        "MEM_Usage",
+        "Network_Input_Bytes"
+    ],
+    "events": [
+        "DailyTesing_HW"
+    ]
+}
