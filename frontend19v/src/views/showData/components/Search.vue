@@ -21,9 +21,6 @@
 
 <script>
 export default {
-  props: {
-    data: Object
-  },
   data() {
     return {
       form: {
@@ -39,16 +36,18 @@ export default {
   },
   methods: {
     onclick() {
-        this.data.links.map(i=>{
+        this.mydata.links.map(i=>{
             if(i.tid==this.form.event && i.sid==this.form.kpi){
                 this.vaule = i.value;
             }
         })
     },
-    setData() {
+    setData(data) {
+      console.log(data);
+    //   console.log(JSON.stringify(data))
       let kpi = [];
       let event = [];
-      this.data.nodes.map(i => {
+      data.nodes.map(i => {
         if (i.type == "kpi") {
           kpi.push(i.name);
         } else if (i.type == "event") {

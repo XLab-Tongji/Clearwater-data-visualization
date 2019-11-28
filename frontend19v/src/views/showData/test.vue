@@ -1,8 +1,8 @@
 <template>
   <div>
-      <KB/>
+      <!-- <KB/> -->
       <SG/>
-      <Ima/>
+      <!-- <Ima/> -->
   </div>
 </template>
 

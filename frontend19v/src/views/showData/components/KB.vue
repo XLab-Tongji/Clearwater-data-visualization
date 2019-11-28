@@ -2,14 +2,14 @@
   <div class="KB">
     <div class="select">
       <el-select v-model="value" placeholder="选择想要查询的KPI" @change="change">
-        <el-option v-for="item in kpis" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-option v-for="item in kpi" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
     </div>
     <div class="K">
-      <K ref="k"/>
+      <K ref="k" />
     </div>
     <div class="B">
-      <B ref="b"/>
+      <B ref="b" />
     </div>
   </div>
 </template>
@@ -17,8 +17,8 @@
 <script>
 import K from "../components/KPIchange";
 import B from "../components/BeginEndTable";
-
-import d from '../data/data.json'
+import axios from 'axios';
+import global from '../global';
 
 export default {
   components: {
@@ -27,33 +27,33 @@ export default {
   },
   data() {
     return {
-      kpis: [
+      kpi: [
         {
-          value: "选项1",
+          value: "CPU_usage",
           label: "CPU_usage"
         },
         {
-          value: "选项2",
+          value: "Network_Output_Packets",
           label: "Network_Output_Packets"
         },
         {
-          value: "选项3",
+          value: "Network_Input_Packets",
           label: "Network_Input_Packets"
         },
         {
-          value: "选项4",
+          value: "Network_Output_Bytes",
           label: "Network_Output_Bytes"
         },
         {
-          value: "选项5",
+          value: "Network_Input_Bytes",
           label: "Network_Input_Bytes"
         },
         {
-          value: "选项6",
+          value: "MEM_Usage",
           label: "MEM_Usage"
         },
         {
-          value: "选项7",
+          value: "Latency",
           label: "Latency"
         }
       ],
@@ -62,19 +62,19 @@ export default {
   },
   methods: {
     change() {
-        this.setK(d);
-        this.setB(d);
-    //   let formData = new FormData();
-    //   formData.append("kpi", this.value);
-    //   axios.post(global.url + "").then(res => {
-    //     setData(res);
-    //   });
+      let formData = new FormData();
+      formData.append("kpi", this.value);
+      console.log(this.value)
+      axios.post(global.url + "/getClusterCSV",formData).then(res => {
+        this.setK(res.data);
+        this.setB(res.data);
+      });
     },
-    setK(data){
-        this.$refs.k.setData(data)
+    setK(data) {
+      this.$refs.k.setData(data);
     },
-    setB(data){
-        this.$refs.b.setData(data)
+    setB(data) {
+      this.$refs.b.setData(data);
     }
   }
 };
