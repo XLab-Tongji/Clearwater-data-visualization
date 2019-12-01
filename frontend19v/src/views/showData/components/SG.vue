@@ -1,7 +1,7 @@
 <template>
   <div class="SG">
     <div class="S">
-      <!-- <S ref="s"/> -->
+      <S ref="s"/>
     </div>
     <div class="G">
       <Graph ref="g" />
@@ -14,8 +14,6 @@ import S from "../components/Search";
 import Graph from "../components/Graph";
 import axios from "axios";
 import global from "../global";
-
-import d from "../data/data1.json";
 
 export default {
   components: {
@@ -35,17 +33,29 @@ export default {
       this.$refs.s.setData(data);
     }
   },
-  mounted() {
-    console.log("mounted")
-  },
   created() {
-    console.log("created")
     axios.get(global.url+"/getCorrelation").then(res => {
         this.setG(res.data);
+        this.setS(res.data);
     });
   }
 };
 </script>
 
 <style>
+.SG {
+  display: grid;
+  grid-template-columns: 1fr, 1fr;
+  grid-column-gap: 30px;
+}
+.S {
+  grid-column: 1/2;
+  justify-self: start;
+  align-self: center;
+}
+.G {
+  grid-column: 2/3;
+  justify-self: center;
+  align-self: center;
+}
 </style>

@@ -18,14 +18,13 @@ export default {
   methods: {
     setData(param) {
       let data = param.Alarm;
-      console.log(data);
+      this.options = [];
       data.map(i => {
         let tmp = {};
         tmp.begin = global.timestampToTime(i[0]);
         tmp.end = global.timestampToTime(i[1]);
         this.options.push(tmp);
       });
-      console.log(this.options);
     }
   }
 };

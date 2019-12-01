@@ -32,35 +32,23 @@ export default {
         event: []
       },
       vaule:'',
+      data:{},
     };
   },
   methods: {
     onclick() {
-        this.mydata.links.map(i=>{
+        this.data.links.map(i=>{
             if(i.tid==this.form.event && i.sid==this.form.kpi){
                 this.vaule = i.value;
             }
         })
     },
     setData(data) {
-      console.log(data);
-    //   console.log(JSON.stringify(data))
-      let kpi = [];
-      let event = [];
-      data.nodes.map(i => {
-        if (i.type == "kpi") {
-          kpi.push(i.name);
-        } else if (i.type == "event") {
-          event.push(i.name);
-        }
-      });
-      this.options.kpi = kpi;
-      this.options.event = event;
+      this.options.kpi = data.kpis;
+      this.options.event = data.events;
+      this.data = data;
     }
   },
-  mounted() {
-      this.setData();
-  }
 };
 </script>
 

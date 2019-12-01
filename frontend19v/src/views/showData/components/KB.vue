@@ -52,10 +52,6 @@ export default {
           value: "MEM_Usage",
           label: "MEM_Usage"
         },
-        {
-          value: "Latency",
-          label: "Latency"
-        }
       ],
       value: ""
     };
@@ -81,4 +77,19 @@ export default {
 </script>
 
 <style>
+.KB {
+  display: grid;
+  grid-template-columns: 1fr, 1fr;
+  grid-column-gap: 30px;
+}
+.K {
+  grid-column: 1/2;
+  justify-self: start;
+  align-self: center;
+}
+.B {
+  grid-column: 2/3;
+  justify-self: center;
+  align-self: center;
+}
 </style>
