@@ -45,16 +45,16 @@ export default {
 <style>
 .SG {
   display: grid;
-  grid-template-columns: 1fr, 1fr;
+  grid-template-rows: 1fr, 1fr;
   grid-column-gap: 30px;
 }
 .S {
-  grid-column: 1/2;
+  grid-row: 1/2;
   justify-self: start;
   align-self: center;
 }
 .G {
-  grid-column: 2/3;
+  grid-row: 2/3;
   justify-self: center;
   align-self: center;
 }

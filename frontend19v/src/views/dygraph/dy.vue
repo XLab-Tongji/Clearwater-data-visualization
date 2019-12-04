@@ -16,9 +16,15 @@ export default {
         });
       }
       // console.log(csv);
+      let width = document.documentElement.clientWidth;
+      let height = document.documentElement.clientHeight;
+      console.log(width);
+      console.log(height);
       let g = new Dygraph(document.getElementById("hi"), csv, {
         valueRange: [-1, 1],
-        drawAxesAtZero: true
+        drawAxesAtZero: true,
+        height:height/2,
+        width:width/2
       });
     }
   }

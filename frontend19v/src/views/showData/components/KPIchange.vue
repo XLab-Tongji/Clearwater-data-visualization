@@ -42,7 +42,7 @@ export default {
   methods: {
     setData(d) {
       console.log(d)
-      this.$refs.dy.setData(d);
+      this.$refs.dy.setData(d)
       // let data = d.SST;
       // let a = [];
       // let b = [];
@@ -83,37 +83,6 @@ export default {
 
 
 <style>
-.graph {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 450px;
-}
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both;
-}
-.box-card {
-  width: 60%;
-}
-.box-card2 {
-  width: 40%;
-}
-.box-card3 {
-  height: 270px;
-}
 </style>
 
 

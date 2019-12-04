@@ -8,17 +8,19 @@
     <div class="K">
       <K ref="k" />
     </div>
-    <div class="B">
-      <B ref="b" />
-    </div>
+    <el-collapse class="B">
+      <el-collapse-item title="点击查看时间表" name="1">
+        <B ref="b" />
+      </el-collapse-item>
+    </el-collapse>
   </div>
 </template>
 
 <script>
 import K from "../components/KPIchange";
 import B from "../components/BeginEndTable";
-import axios from 'axios';
-import global from '../global';
+import axios from "axios";
+import global from "../global";
 
 export default {
   components: {
@@ -43,7 +45,7 @@ export default {
         {
           value: "Network_Input_Bytes",
           label: "Network_Input_Bytes"
-        },
+        }
       ],
       value: ""
     };
@@ -52,8 +54,8 @@ export default {
     change() {
       let formData = new FormData();
       formData.append("kpi", this.value);
-      console.log(this.value)
-      axios.post(global.url + "/getClusterCSV",formData).then(res => {
+      console.log(this.value);
+      axios.post(global.url + "/getClusterCSV", formData).then(res => {
         this.setK(res.data);
         this.setB(res.data);
       });
@@ -69,19 +71,5 @@ export default {
 </script>
 
 <style>
-.KB {
-  display: grid;
-  grid-template-columns: 1fr, 1fr;
-  grid-column-gap: 30px;
-}
-.K {
-  grid-column: 1/2;
-  justify-self: start;
-  align-self: center;
-}
-.B {
-  grid-column: 2/3;
-  justify-self: center;
-  align-self: center;
-}
+
 </style>

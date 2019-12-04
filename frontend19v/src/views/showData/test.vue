@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <el-card class="kpi">
+  <div class="algo">
+    <div class="kpi">
       <KB />
-    </el-card>
-    <el-card class="graph">
+    </div>
+    <div class="graph">
       <SG />
-    </el-card>
-    <el-card class="img">
+    </div>
+    <div class="img">
       <Ima />
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -29,4 +29,27 @@ export default {
 </script>
 
 <style>
+.algo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: calc(100vh) auto;
+  grid-column-gap: 30px;
+}
+.kpi {
+  grid-column: 1/2;
+  grid-row: 1/2;
+  justify-self: center;
+  align-self: center;
+}
+.graph {
+  grid-column: 2/3;
+  grid-row: 1/2;
+  justify-self: center;
+  align-self: center;
+}
+.img {
+  grid-row: 2/3;
+  justify-self: center;
+  align-self: center;
+}
 </style>
