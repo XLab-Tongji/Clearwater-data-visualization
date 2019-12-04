@@ -1,52 +1,20 @@
 <template>
-  <div class="Show">
-    <div class="graph">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>知识图谱</span>
-        </div>
-        <div class="systemOverview">
-        </div>
-      </el-card>
-
-      <el-card class="box-card2">
-        <div slot="header" class="clearfix">
-          <span>说明</span>
-        </div>
-        <div>
-          <chart :options="options" :init-options="initOptions" autoresize />
-        </div>
-      </el-card>
-    </div>
-    <div class="word">
-      <el-card class="box-card3">
-        <div slot="header" class="clearfix">
-          <span>数据</span>
-        </div>
-        <div class="text item">
-          <span>
-          </span>
-        </div>
-      </el-card>
-    </div>
-    <div class="addCsv">
-      <input type="file" ref="csv" />
-      <el-button @click.prevent="onclick" icon="el-icon-search" circle></el-button>
-    </div>
+  <div>
+    <chart :options="options" :init-options="initOptions" autoresize />
   </div>
 </template>
 
 <script>
 import Papa from "papaparse";
-import ECharts from "../../components/ECharts";
+import ECharts from "@/components/ECharts";
 import "echarts/lib/chart/line";
+import axios from 'axios'
 
-import SystemOverview from '../KnowledgeGraph/SystemOverview'
+import global from '../global'
 
 export default {
   components: {
-    chart: ECharts,
-    system:SystemOverview,
+    chart: ECharts
   },
   data() {
     return {
@@ -69,23 +37,23 @@ export default {
     };
   },
   methods: {
-    onclick() {
-      let file = this.$refs.csv.files[0];
+    setData(d) {
+      console.log(d)
+      let data = d.SST;
+      let a = [];
+      let b = [];
+      data.map(i => {
+        a.push(i[0]);
+        b.push(i[1]);
+      });
+      let ans = [];
+      ans.push(a);
+      ans.push(b);
 
-      if (file) {
-        let reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = env => {
-          let result = env.target.result;
-          let parsed = Papa.parse(result);
-          parsed.data[1].map(i => {
-            this.options.xAxis.data.push(this.timestampToTime(i));
-          });
-          this.options.series.data.push(...parsed.data[0]);
-          // console.log(JSON.stringify(this.options));
-        };
-        reader.onerror = function() {};
-      }
+      ans[0].map(i => {
+        this.options.xAxis.data.push(this.timestampToTime(i));
+      });
+      this.options.series.data.push(...ans[1]);
     },
     timestampToTime(timestamp) {
       var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
