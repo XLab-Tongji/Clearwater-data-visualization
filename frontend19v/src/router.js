@@ -18,6 +18,11 @@ export default new Router({
             component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
             children: [
                 {
+                    path: 'test',
+                    name: 'test',
+                    component: () => import('./views/dygraph/dy.vue'),
+                },
+                {
                     path: 'import',
                     name: 'import',
                     component: () => import('./views/import/Import.vue'),

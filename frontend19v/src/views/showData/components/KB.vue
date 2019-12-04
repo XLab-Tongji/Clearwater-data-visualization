@@ -29,10 +29,6 @@ export default {
     return {
       kpi: [
         {
-          value: "CPU_usage",
-          label: "CPU_usage"
-        },
-        {
           value: "Network_Output_Packets",
           label: "Network_Output_Packets"
         },
@@ -47,10 +43,6 @@ export default {
         {
           value: "Network_Input_Bytes",
           label: "Network_Input_Bytes"
-        },
-        {
-          value: "MEM_Usage",
-          label: "MEM_Usage"
         },
       ],
       value: ""
