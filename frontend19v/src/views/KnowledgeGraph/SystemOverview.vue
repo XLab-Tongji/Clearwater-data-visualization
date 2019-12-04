@@ -526,6 +526,7 @@ export default {
             this.$route.query.env
         )
         .then(response => {
+          console.log(response.data)
           $("#fountainG").hide();
           response.data.nodes.forEach(x => {
             x.svgSym = nodeIcons[x.type];

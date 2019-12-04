@@ -18,12 +18,12 @@ export default new Router({
             component: () => import( /* webpackChunkName: "about" */ './views/MainPage.vue'),
             children: [
                 {
-                    path: '/import',
+                    path: 'import',
                     name: 'import',
                     component: () => import('./views/import/Import.vue'),
                 },
                 {
-                    path: '/show',
+                    path: 'show',
                     name: 'show',
                     component: () => import('./views/showData/Show.vue'),
                 },
