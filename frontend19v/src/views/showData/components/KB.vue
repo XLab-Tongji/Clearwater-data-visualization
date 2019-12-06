@@ -8,11 +8,13 @@
     <div class="K">
       <K ref="k" />
     </div>
-    <el-collapse class="B">
-      <el-collapse-item title="点击查看时间表" name="1">
-        <B ref="b" />
-      </el-collapse-item>
-    </el-collapse>
+    <div class="B">
+      <el-collapse>
+        <el-collapse-item title="点击查看时间表" name="1">
+          <B ref="b" />
+        </el-collapse-item>
+      </el-collapse>
+    </div>
   </div>
 </template>
 
@@ -71,5 +73,21 @@ export default {
 </script>
 
 <style>
-
+/* .KB {
+  display: grid;
+  grid-template-columns: auto 200px;
+  grid-template-rows:50px auto 50px;
+  grid-column-gap: 30px;
+}
+.select {
+  grid-row: 1/2;
+  justify-self: center;
+  align-self: center;
+}
+.B {
+  grid-column: 2/3;
+  grid-row: 2/3;
+  justify-self: center;
+  align-self: center;
+} */
 </style>

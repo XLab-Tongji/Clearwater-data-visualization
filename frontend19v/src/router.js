@@ -36,8 +36,9 @@ export default new Router({
                     path: 'overview',
                     name: 'SystemOverview',
                     component: () => import('./views/KnowledgeGraph/SystemOverview.vue'),
-                    // component: () => import('./views/import/Import.vue'),
-                    // component: () => import('./views/import/test.vue'),
+                    // meta:{
+                    //     keepAlive:true
+                    // }
                 },
                 // {
                 //     path: 'service',
