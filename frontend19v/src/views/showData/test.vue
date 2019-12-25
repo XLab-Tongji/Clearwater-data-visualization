@@ -4,7 +4,7 @@
       <KB />
     </div>
     <div class="graph">
-      <SG />
+      <SG/>
     </div>
     <div class="img">
       <Ima />
@@ -14,7 +14,8 @@
 
 <script>
 import KB from "../showData/components/KB";
-import SG from "../showData/components/SG";
+// import SG from "../showData/components/SG";
+import SG from '../showData/components/new'
 import Ima from "../showData/components/Image";
 
 import d from "./data/data.json";

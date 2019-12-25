@@ -1,5 +1,23 @@
 <script>
-import global from '../global'
+import global from "../global";
+const kpis = [
+  {
+    value: "1",
+    label: "Network_Output_Packets"
+  },
+  {
+    value: "2",
+    label: "Network_Input_Packets"
+  },
+  {
+    value: "3",
+    label: "Network_Output_Bytes"
+  },
+  {
+    value: "4",
+    label: "Network_Input_Bytes"
+  }
+];
 const url = global.base_url;
 const timestampToTime = timestamp => {
   var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -20,5 +38,6 @@ const timestampToTime = timestamp => {
 export default {
   url,
   timestampToTime,
+  kpis,
 };
 </script>

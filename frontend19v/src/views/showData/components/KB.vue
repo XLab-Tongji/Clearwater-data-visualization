@@ -31,24 +31,7 @@ export default {
   },
   data() {
     return {
-      kpi: [
-        {
-          value: "Network_Output_Packets",
-          label: "Network_Output_Packets"
-        },
-        {
-          value: "Network_Input_Packets",
-          label: "Network_Input_Packets"
-        },
-        {
-          value: "Network_Output_Bytes",
-          label: "Network_Output_Bytes"
-        },
-        {
-          value: "Network_Input_Bytes",
-          label: "Network_Input_Bytes"
-        }
-      ],
+      kpi: global.kpis,
       value: ""
     };
   },

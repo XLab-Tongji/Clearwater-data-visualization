@@ -6,15 +6,15 @@
           <el-option v-for="item in options.kpi" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="选择事件:">
+      <!-- <el-form-item label="选择事件:">
         <el-select v-model="form.event" placeholder="选择想要查询的Event">
           <el-option v-for="item in options.event" :key="item" :label="item" :value="item"></el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="onclick">确认</el-button>
       </el-form-item>
-      <span>关联度：{{this.vaule}} </span>
+      <!-- <span>关联度：{{this.vaule}} </span> -->
     </el-form>
   </div>
 </template>
