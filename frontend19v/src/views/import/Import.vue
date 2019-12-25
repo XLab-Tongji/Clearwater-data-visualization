@@ -20,8 +20,9 @@ import ImportEnv from "./ImportEnv";
 import ImportType from "./ImportType";
 
 import axios from "axios";
+import global from '../global'
 
-const url = "http://0.0.0.0:8088/bbs/api";
+const url = global.base_url;
 
 export default {
   components: {

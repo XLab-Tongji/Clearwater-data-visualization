@@ -175,15 +175,17 @@
 import D3Network from "../../components/vue-d3-network/src/d3-systemOverview.vue";
 import SearchTree from "../../components/SearchTree.vue";
 import Timeline from "../../components/Timeline";
-import axios from "axios";
 import { nodeIcons } from "@/lib/nodeIcons.js";
 import $ from "jquery";
 import LoadingEffect from "../../components/LoadingEffect";
 import backurl from "../../Global";
 
-HTMLCollection.prototype.forEach = Array.prototype.forEach;
+import axios from "axios";
+import global from '../global'
 
-const reqUrl = "http://localhost:8088/bbs";
+const reqUrl = global.base_url;
+
+HTMLCollection.prototype.forEach = Array.prototype.forEach;
 Array.prototype.indexOf = function(val) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == val) return i;
@@ -521,7 +523,7 @@ export default {
       axios
         .get(
           reqUrl +
-            "/api/getSystemNodesAndLinks" +
+            "/getSystemNodesAndLinks" +
             "?systemName=" +
             this.$route.query.env
         )
@@ -659,10 +661,10 @@ export default {
           });
           // 删除请求（先删除关系->怕后端出问题
           axios
-            .post(reqUrl + "/api/delLinks", removeLinkList)
+            .post(reqUrl + "/delLinks", removeLinkList)
             .then(response => {
               axios
-                .post(reqUrl + "/api/delNodes", removeNodeList)
+                .post(reqUrl + "/delNodes", removeNodeList)
                 .then(response => {})
                 .catch(error => {
                   console.log(error);
@@ -684,7 +686,7 @@ export default {
               if (value) {
                 node.name = value;
                 axios
-                  .post(reqUrl + "/api/modifyOneNode", node)
+                  .post(reqUrl + "/modifyOneNode", node)
                   .then(response => {
                     if (response) {
                       _this.$message({
@@ -721,7 +723,7 @@ export default {
             // value 不为空
             if (value) {
               link.name = value;
-              axios.post(reqUrl + "/api/modifyOneLink", link).then(response => {
+              axios.post(reqUrl + "/modifyOneLink", link).then(response => {
                 if (response) {
                   this.$message({
                     type: "success",
@@ -968,10 +970,10 @@ export default {
         this.links.push(newLink);
 
         axios
-          .post(reqUrl + "/api/addNewNode", newNode)
+          .post(reqUrl + "/addNewNode", newNode)
           .then(response => {
             axios
-              .post(reqUrl + "/api/addNewLink", newLink)
+              .post(reqUrl + "/addNewLink", newLink)
               .then(response => {})
               .catch(function(error) {
                 console.log(error);
@@ -1021,7 +1023,7 @@ export default {
 
         this.nodes.push(newNode);
         axios
-          .post(reqUrl + "/api/addNewNode", newNode)
+          .post(reqUrl + "/addNewNode", newNode)
           .then(response => {})
           .catch(function(error) {
             console.log(error);
